@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "mapper/version"
+require "perpetuity/version"
 
 Gem::Specification.new do |s|
-  s.name        = "mapper"
-  s.version     = Mapper::VERSION
+  s.name        = "Perpetuity"
+  s.version     = Perpetuity::VERSION
   s.authors     = ["Jamie Gaskins"]
   s.email       = ["jgaskins@gmail.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "https://github.com/jgaskins/perpetuity.git"
+  s.summary     = %q{Persistence layer for Ruby that allows persistence of plain-old Ruby objects}
+  s.description = %q{}
 
   s.rubyforge_project = "mapper"
 
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  s.add_development_dependency "rspec"
+  s.add_runtime_dependency "mongo"
+  s.add_runtime_dependency "bson_ext"
 end

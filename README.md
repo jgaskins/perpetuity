@@ -1,13 +1,13 @@
-# Mapper
+# Perpetuity
 
-Mapper is a simple Ruby object persistence layer that attempts to follow Martin Fowler's Data Mapper pattern, allowing you to use plain-old Ruby objects (POROs) in your Rails apps in order to decouple your domain logic from the database as well as speed up your tests without creating piles of extra classes/modules with minimal functionality. Your objects will hopefully eventually be able to be persisted into whichever backend you like. Right now, only MongoDB is supported. Other schemaless persistence solutions should be relatively simple to implement. I haven't tried it yet, but I imagine anything that requires a schema might be more difficult.
+Perpetuity is a simple Ruby object persistence layer that attempts to follow Martin Fowler's Data Mapper pattern, allowing you to use plain-old Ruby objects (POROs) in your Rails apps in order to decouple your domain logic from the database as well as speed up your tests without creating piles of extra classes/modules with minimal functionality. Your objects will hopefully eventually be able to be persisted into whichever backend you like. Right now, only MongoDB is supported. Other schemaless persistence solutions should be relatively simple to implement. I haven't tried it yet, but I imagine anything that requires a schema might be more difficult.
 
 ## Installation
 
 Add the following to your Gemfile and run `bundle` to install it.
 
 ```ruby
-gem 'mapper', git: 'https://github.com/jgaskins/mapper.git'
+gem 'perpetuity', git: 'https://github.com/jgaskins/perpetuity.git'
 ```
 
 ## Configuration
@@ -15,7 +15,7 @@ gem 'mapper', git: 'https://github.com/jgaskins/mapper.git'
 The only currently supported persistence method is MongoDB. Other solutions can probably be implemented easily.
 
 ```ruby
-Mapper.config.data_source = Mapper::MongoDB.new host: 'mongodb.example.com', db: 'example_db'
+Perpetuity.config.data_source = Perpetuity::MongoDB.new host: 'mongodb.example.com', db: 'example_db'
 ```
 
 ## Saving Objects
@@ -29,24 +29,24 @@ article = Article.new
 article.title = 'New Article'
 article.body = 'This is an article.'
 
-article_mapper = Mapper.new article
+article_mapper = Perpetuity.new article
 article_mapper.insert
 ```
 
 ## Loading Objects
 
-Loading articles is as easy as a single call to `Mapper.load`. Required parameters are the class of the object and a hash of criteria for finding the object.
+Loading objects is as easy as a single call to `Perpetuity.retrieve`. Required parameters are the class of the object and a hash of criteria for finding the object.
 
 ```ruby
-article = Mapper.retrieve Article, id: 1
-user = Mapper.retrieve User, email: 'user@example.com'
+article = Perpetuity.retrieve Article, id: 1
+user = Perpetuity.retrieve User, email: 'user@example.com'
 ```
 
 So far, the query interface is too simple. What I'd like to have it able to do would be something like the following:
 
 ```ruby
-user = Mapper.retrieve User, post_count: { greater_than: 100, less_than: 1000 }
-article = Mapper.retrieve
+user = Perpetuity.retrieve User, post_count: { greater_than: 100, less_than: 1000 }
+article = Perpetuity.retrieve
 ```
 
 Counting `:greater_than` and `:less_than` as aliases for `:gt` and `:lt`, respectively, might be nice.
@@ -82,7 +82,7 @@ end
 ```ruby
 author = User.new 'Jamie'
 article = Article.new 'Don\'t Panic', author, 'Forty-two.'
-article_mapper = Mapper.new article
+article_mapper = Perpetuity.new article
 article_mapper.insert
 ```
 

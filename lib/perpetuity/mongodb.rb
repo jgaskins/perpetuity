@@ -1,7 +1,7 @@
 require 'mongo'
 require 'bson'
 
-class Mapper
+class Perpetuity
   class MongoDB
     def initialize options
       @host = options[:host] || 'localhost'
@@ -28,8 +28,8 @@ class Mapper
     end
     
     def insert object
-      mapper = Mapper.new object
-      collection(object.class).insert mapper.object_attributes
+      perp = Perpetuity.new object
+      collection(object.class).insert perp.object_attributes
     end
     
     def count klass

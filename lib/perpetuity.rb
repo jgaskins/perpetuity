@@ -1,8 +1,8 @@
-require "mapper/version"
-require "mapper/mongodb"
-require "mapper/config"
+require "perpetuity/version"
+require "perpetuity/mongodb"
+require "perpetuity/config"
 
-class Mapper
+class Perpetuity
   def initialize object
     @object = object
   end
@@ -16,23 +16,23 @@ class Mapper
   end
   
   def insert
-    Mapper.data_source.insert @object
+    Perpetuity.data_source.insert @object
   end
   
   def self.retrieve klass, criteria
-    Mapper.data_source.retrieve klass, criteria
+    Perpetuity.data_source.retrieve klass, criteria
   end
   
   def self.count klass
-    Mapper.data_source.count klass
+    Perpetuity.data_source.count klass
   end
   
   def self.all klass
-    Mapper.data_source.all klass
+    Perpetuity.data_source.all klass
   end
   
   def self.delete klass
-    Mapper.data_source.delete klass
+    Perpetuity.data_source.delete klass
   end
   
   def object_attributes

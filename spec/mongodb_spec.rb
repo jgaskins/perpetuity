@@ -1,4 +1,4 @@
-require "mapper"
+require "perpetuity"
 
 # This will be the class we'll be persisting to test this out.
 class Article
@@ -9,11 +9,11 @@ class Article
   end
 end
 
-describe Mapper::MongoDB do
-  let(:mongodb) { Mapper::MongoDB.new db: 'mapper_gem_test' }
+describe Perpetuity::MongoDB do
+  let(:mongodb) { Perpetuity::MongoDB.new db: 'perpetuity_gem_test' }
   
   before(:all) do
-    Mapper.config.data_source = mongodb
+    Perpetuity.config.data_source = mongodb
   end
   
   before(:each) do
@@ -25,19 +25,19 @@ describe Mapper::MongoDB do
   
   it "saves an object" do
     article = Article.new
-    article_mapper = Mapper.new(article)
-    article_mapper.insert
+    article_perp = Perpetuity.new(article)
+    article_perp.insert
     
-    Mapper.count(Article).should == 1
-    saved_article = Mapper.all(Article)[0]
+    Perpetuity.count(Article).should == 1
+    saved_article = Perpetuity.all(Article)[0]
     saved_article.title.should == article.title
     saved_article.body.should == article.body
   end
   
   it "deletes all instances of a class" do
-    Mapper.new(Article.new).insert
-    Mapper.delete Article
-    Mapper.all(Article).should be_empty
+    Perpetuity.new(Article.new).insert
+    Perpetuity.delete Article
+    Perpetuity.all(Article).should be_empty
   end
   
   

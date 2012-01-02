@@ -1,3 +1,3 @@
-class Mapper
+class Perpetuity
   VERSION = "0.0.1.dev"
 end
