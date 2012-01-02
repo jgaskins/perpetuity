@@ -4,7 +4,7 @@ Perpetuity is a simple Ruby object persistence layer that attempts to follow Mar
 
 Your objects will hopefully eventually be able to be persisted into whichever backend you like. Right now, only MongoDB is supported. Other schemaless persistence solutions should be relatively simple to implement. I haven't tried it yet, but I imagine anything that requires a schema might be more difficult.
 
-The idea is that your objects don't have a clue what a database is. They don't include any persistence logic inside them whatsoever.
+The idea is that your objects don't have a clue what a database is. They don't include any persistence logic inside them whatsoever. This idea was inspired by [a blog post by Steve Klabnik](http://blog.steveklabnik.com/posts/2011-12-30-active-record-considered-harmful) and [Avdi Grimm's Objects on Rails](http://avdi.org/devblog/2011/11/15/early-access-beta-of-objects-on-rails-now-available-2/).
 
 ## Installation
 
@@ -55,14 +55,23 @@ user = Perpetuity.retrieve User, email: 'user@example.com'
 So far, the query interface is too simple. What I'd like to have it able to do would be something like the following:
 
 ```ruby
-user = Perpetuity.retrieve User, post_count: { greater_than: 100, less_than: 1000 }
-article = Perpetuity.retrieve(Article, published: false).or(views: { less_than: 10 }).sort(:date_published).reverse.limit(10)
-
+users = Perpetuity.retrieve User, post_count: { greater_than: 100, less_than: 1000 }
+articles = Perpetuity.retrieve Article, tags: { includes: ['ruby', 'rails'] }
+comments = Perpetuity.retrieve Comment, article_id: { in: articles.map(&:id) }
 ```
 
-This will return a Perpetuity::Retrieval object, which will lazily retrieve the objects from the database.
+This will return a Perpetuity::Retrieval object, which will lazily retrieve the objects from the database. They will wait to hit the DB when you begin iterating over the objects so you can continue chaining methods.
 
-Counting `:greater_than` and `:less_than` as aliases for `:gt` and `:lt`, respectively, might be nice.
+```ruby
+articles = Perpetuity.retrieve(Article, published: false).or(views: { less_than: 10 })
+articles = articles.sort(:date_published).reverse.limit(10)
+
+articles.each do |article| # This is when the DB gets hit
+  # Display the pretty articles
+end
+```
+
+Counting `:gt` and `:lt` as aliases for `:greater_than` and `:less_than`, respectively, might be nice.
 
 ## Objects That Associate with Other Objects
 
@@ -103,7 +112,7 @@ article_mapper.insert
 
 ## Specifying Persistence Logic
 
-I know what you're thinking: "This is all well and good, Jamie, but I need to be able to specify some of the persistence logic necessary for my class. I can't rely on your defaults for *everything*."
+I know what you're thinking: "This is all well and good, Jamie, but I need to be able to specify some of the persistence logic necessary for my class."
 
 It's true, sometimes you do need to do this. For example, your blog articles should be stored using their parameterized names as keys for SEO purposes. Your users can't have duplicate e-mail addresses. You can't show the same cat picture twice in two consecutive posts.
 
@@ -111,12 +120,10 @@ In order to place restrictions or customisations on your persisted data, simply 
 
 ```ruby
 class ArticleMapper < Perpetuity::Mapper
-  map Article
   id ->(article) { article.name.parameterize }
 end
 
 class UserMapper < Perpetuity::Mapper
-  map User
   unique :email
 end
 ```
