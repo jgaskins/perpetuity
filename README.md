@@ -11,7 +11,7 @@ The idea is that your objects don't have a clue what a database is. They don't i
 Add the following to your Gemfile and run `bundle` to install it.
 
 ```ruby
-gem 'perpetuity', git: 'https://github.com/jgaskins/perpetuity.git'
+gem 'perpetuity', git: 'git://github.com/jgaskins/perpetuity.git'
 ```
 
 ## Configuration
