@@ -31,4 +31,12 @@ describe Perpetuity::Retrieval do
     
     subject.sort(:title).map(&:title).should == %w(A B C)
   end
+  
+  it "reverses the sort order of the results" do
+    Perpetuity.new(Article.new 'B').insert
+    Perpetuity.new(Article.new 'A').insert
+    Perpetuity.new(Article.new 'C').insert
+    
+    subject.sort(:title).reverse.map(&:title).should == %w(C B A)
+  end
 end

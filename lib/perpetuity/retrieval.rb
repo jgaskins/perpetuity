@@ -15,6 +15,13 @@ class Perpetuity
       retrieval
     end
 
+    def reverse
+      retrieval = clone
+      retrieval.sort_direction = retrieval.sort_direction == :descending ? :ascending : :descending
+
+      retrieval
+    end
+
     def to_a
       Perpetuity.data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction })
     end
