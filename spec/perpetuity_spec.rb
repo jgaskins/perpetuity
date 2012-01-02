@@ -1,12 +1,5 @@
 require 'perpetuity'
-
-class Article
-  attr_reader :title, :body
-  def initialize title='Title', body='body'
-    @title = title
-    @body = body
-  end
-end
+require "test_classes"
 
 describe Perpetuity do
   let(:mongodb) { Perpetuity::MongoDB.new db: 'perpetuity_gem_test' }

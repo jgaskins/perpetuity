@@ -1,13 +1,5 @@
 require "perpetuity"
-
-# This will be the class we'll be persisting to test this out.
-class Article
-  attr_reader :title, :body
-  def initialize title="Title", body="Body"
-    @title = title
-    @body = body
-  end
-end
+require "test_classes"
 
 describe Perpetuity::Retrieval do
   subject { Perpetuity::Retrieval.new Article, {} }
