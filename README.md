@@ -117,6 +117,7 @@ I know what you're thinking: "This is all well and good, Jamie, but I need to be
 It's true, sometimes you do need to do this. For example, your blog articles should be stored using their parameterized names as keys for SEO purposes. Your users can't have duplicate e-mail addresses. You can't show the same cat picture twice in two consecutive posts.
 
 In order to place restrictions or customisations on your persisted data, write a mapper class that inherits from the `Perpetuity::Mapper` class.
+
 ```ruby
 class ArticleMapper < Perpetuity::Mapper
   id ->(article) { article.name.parameterize }
