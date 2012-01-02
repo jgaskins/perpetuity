@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "perpetuity/version"
 
 Gem::Specification.new do |s|
-  s.name        = "Perpetuity"
+  s.name        = "perpetuity"
   s.version     = Perpetuity::VERSION
   s.authors     = ["Jamie Gaskins"]
   s.email       = ["jgaskins@gmail.com"]
