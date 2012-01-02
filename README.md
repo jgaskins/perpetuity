@@ -120,7 +120,7 @@ In order to place restrictions or customisations on your persisted data, write a
 
 ```ruby
 class ArticleMapper < Perpetuity::Mapper
-  id { article.name.parameterize }
+  id { article.name.parameterize } # article is the object being mapped, inferred from the name of the mapper class
 end
 
 class UserMapper < Perpetuity::Mapper
