@@ -1,4 +1,5 @@
 require "perpetuity/version"
+require "perpetuity/retrieval"
 require "perpetuity/mongodb"
 require "perpetuity/config"
 
@@ -20,7 +21,7 @@ class Perpetuity
   end
   
   def self.retrieve klass, criteria
-    Perpetuity.data_source.retrieve klass, criteria
+    Perpetuity::Retrieval.new klass, criteria
   end
   
   def self.count klass

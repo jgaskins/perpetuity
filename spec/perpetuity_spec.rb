@@ -49,6 +49,10 @@ describe Perpetuity do
     Perpetuity.all(Article).length.should == 1
   end
   
+  it "returns a Perpetuity::Retrieval object" do
+    Perpetuity.retrieve(Article, id: 1).should be_an_instance_of Perpetuity::Retrieval
+  end
+
   it "gets an item with a specific ID" do
     Perpetuity.new(Article.new).insert
     article = Perpetuity.all(Article)[0]
