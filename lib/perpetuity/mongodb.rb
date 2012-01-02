@@ -40,13 +40,20 @@ class Perpetuity
       database.drop_collection klass.to_s
     end
     
-    def retrieve klass, criteria
+    def retrieve klass, criteria, sort_info
       objects = []
+
+      # MongoDB uses '_id' as its ID field.
       if criteria.has_key?(:id)
         criteria[:_id] = criteria[:id]
         criteria.delete :id
       end
-      database.collection(klass.to_s).find(criteria).each do |document|
+
+      sort_field = sort_info[:attribute]
+      sort_direction = sort_info[:direction]
+      sort_criteria = [[sort_field, sort_direction]]
+
+      database.collection(klass.to_s).find(criteria).sort(sort_criteria).each do |document|
         object = klass.allocate
         document.each_pair do |k,v|
           k = '@_id' if k == '_id'
@@ -54,12 +61,12 @@ class Perpetuity
         end
         objects << object
       end
-      
+
       objects
     end
     
     def all klass
-      retrieve klass, {}
+      retrieve klass, {}, {}
     end
   end
 end
