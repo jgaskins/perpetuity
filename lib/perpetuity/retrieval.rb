@@ -9,7 +9,7 @@ class Perpetuity
     
     def sort attribute=:name
       retrieval = clone
-      retrieval.sort_attribute = attribute.to_s.prepend('@').to_sym
+      retrieval.sort_attribute = "@#{attribute.to_s}".to_sym
       retrieval.sort_direction = :ascending
 
       retrieval
