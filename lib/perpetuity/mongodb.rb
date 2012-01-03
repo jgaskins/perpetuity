@@ -56,7 +56,7 @@ class Perpetuity
       database.collection(klass.to_s).find(criteria).sort(sort_criteria).each do |document|
         object = klass.allocate
         document.each_pair do |k,v|
-          k = '@_id' if k == '_id'
+          k = "@#{k}" unless k[0] == '@'
           object.instance_variable_set(k, v)
         end
         objects << object

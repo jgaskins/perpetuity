@@ -6,6 +6,9 @@ describe Perpetuity do
   before(:all) do
     # Use MongoDB for now as its the only one supported.
     Perpetuity.config.data_source = mongodb
+  end
+
+  before(:each) do
     Perpetuity.delete Article
   end
 
@@ -20,8 +23,8 @@ describe Perpetuity do
   it "gets an object's attributes" do
     article = Article.new
     article_perp = Perpetuity.new(article)
-    article_perp.object_attributes.keys.should include :@title
-    article_perp.object_attributes.keys.should include :@body
+    article_perp.object_attributes.keys.should include :title
+    article_perp.object_attributes.keys.should include :body
   end
   
   it "persists an object" do
@@ -54,5 +57,14 @@ describe Perpetuity do
     retrieved.instance_variable_get(:@_id).should == article.instance_variable_get(:@_id)
     retrieved.title.should == article.title
     retrieved.body.should == article.body
+  end
+
+  it "gets an item by its attributes" do
+    article = Article.new
+    Perpetuity.new(article).insert
+    retrieved = Perpetuity.retrieve(Article, title: article.title)
+
+    retrieved.to_a.should have(1).item
+    retrieved.first.title.should == article.title
   end
 end

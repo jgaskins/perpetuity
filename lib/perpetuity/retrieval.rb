@@ -9,7 +9,7 @@ class Perpetuity
     
     def sort attribute=:name
       retrieval = clone
-      retrieval.sort_attribute = "@#{attribute.to_s}".to_sym
+      retrieval.sort_attribute = attribute
       retrieval.sort_direction = :ascending
 
       retrieval
@@ -32,6 +32,10 @@ class Perpetuity
 
     def map(&block)
       to_a.map(&block)
+    end
+
+    def first
+      to_a.first
     end
   end
 end

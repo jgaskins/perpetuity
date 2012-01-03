@@ -39,7 +39,7 @@ class Perpetuity
   def object_attributes
     attributes = {}
     @object.instance_variables.each do |ivar|
-      attributes[ivar] = @object.instance_variable_get(ivar)
+      attributes[ivar.to_s.sub('@', '').to_sym] = @object.instance_variable_get(ivar)
     end
     
     attributes
