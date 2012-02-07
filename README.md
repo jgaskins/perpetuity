@@ -88,39 +88,35 @@ Counting `:gt` and `:lt` as aliases for `:greater_than` and `:less_than`, respec
 
 ## Objects That Associate with Other Objects
 
-If an object has an attribute that isn't an array, hash, boolean, string or numeric value, that attribute will be persisted as a separate object. In the following code …
+If an object references another object (such as an article referencing its author), it must have a relationship identifier in its mapper class. For example:
 
 ```ruby
 class User
-  attr_accessor :articles
-  
-  def initialize name
-    @name = name
-  end
-  
-  def publish_article title, body
-    Article.new title, self, body
-  end
 end
 
 class Article
   attr_accessor :author
-  
-  def initialize title, author, body
-    @title = title
-    @author = author
-    @body = body
+
+  def initialize(author)
+    self.author = author
   end
+end
+
+class UserMapper < Perpetuity::Mapper
+  has_many Article
+end
+
+class ArticleMapper < Perpetuity::Mapper
+  belongs_to User, attribute: :author
 end
 ```
 
-```ruby
-author = User.new 'Jamie'
-article = Article.new 'Don\'t Panic', author, 'Forty-two.'
-ArticleMapper.insert article
-```
+This allows you to write the following:
 
-… the User object that represents the author will also be persisted if it isn't already.
+```ruby
+article = Article.first
+user = article.author # Lazy-loaded
+```
 
 ## Customizing persistence
 
