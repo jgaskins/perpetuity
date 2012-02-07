@@ -1,6 +1,6 @@
-class Perpetuity
+module Perpetuity
   class Retrieval
-    attr_accessor :sort_attribute, :sort_direction
+    attr_accessor :sort_attribute, :sort_direction, :result_limit
 
     def initialize klass, criteria
       @class = klass
@@ -23,7 +23,16 @@ class Perpetuity
     end
 
     def to_a
-      Perpetuity.data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction })
+      results = Perpetuity.configuration.data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction, limit: result_limit })
+      results.each do |result|
+        result.instance_eval do
+          def id
+            @_id
+          end
+        end
+      end
+      
+      results
     end
 
     def [] index
@@ -36,6 +45,17 @@ class Perpetuity
 
     def first
       to_a.first
+    end
+    
+    def limit lim
+      retrieval = clone
+      retrieval.result_limit = lim
+      
+      retrieval
+    end
+    
+    def count
+      to_a.count
     end
   end
 end

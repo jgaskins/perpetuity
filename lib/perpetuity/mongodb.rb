@@ -1,7 +1,7 @@
 require 'mongo'
 require 'bson'
 
-class Perpetuity
+module Perpetuity
   class MongoDB
     def initialize options
       @host = options[:host] || 'localhost'
@@ -14,33 +14,32 @@ class Perpetuity
       connect
       database.authenticate(@username, @password) if @username and @password
     end
-    
+
     def connect
-      @connection = Mongo::Connection.new @host, @port, pool_size: @pool_size
+      @connection ||= Mongo::Connection.new @host, @port, pool_size: @pool_size
     end
-    
+
     def database
       @connection.db(@db)
     end
-    
+
     def collection klass
-      database.collection klass.to_s
+      database.collection(klass.to_s)
     end
-    
-    def insert object
-      perp = Perpetuity.new object
-      collection(object.class).insert perp.object_attributes
+
+    def insert object, mapper
+      collection(object.class).insert mapper.attributes_for(object)
     end
-    
+
     def count klass
       database.collection(klass.to_s).count()
     end
-    
-    def delete klass
+
+    def delete_all klass
       database.drop_collection klass.to_s
     end
-    
-    def retrieve klass, criteria, sort_info
+
+    def retrieve klass, criteria, options
       objects = []
 
       # MongoDB uses '_id' as its ID field.
@@ -49,11 +48,12 @@ class Perpetuity
         criteria.delete :id
       end
 
-      sort_field = sort_info[:attribute]
-      sort_direction = sort_info[:direction]
+      sort_field = options[:attribute]
+      sort_direction = options[:direction]
       sort_criteria = [[sort_field, sort_direction]]
+      other_options = { limit: options[:limit] }
 
-      database.collection(klass.to_s).find(criteria).sort(sort_criteria).each do |document|
+      database.collection(klass.to_s).find(criteria, other_options).sort(sort_criteria).each do |document|
         object = klass.allocate
         document.each_pair do |k,v|
           k = "@#{k}" unless k[0] == '@'
@@ -64,9 +64,13 @@ class Perpetuity
 
       objects
     end
-    
+
     def all klass
       retrieve klass, {}, {}
+    end
+    
+    def delete object
+      collection(object.class.to_s).remove "_id" => object.id
     end
   end
 end
