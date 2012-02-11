@@ -27,10 +27,11 @@ module Perpetuity
     end
 
     def self.serializable_types
-      @serializable_types ||= [TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash]
+      @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash]
     end
 
     def self.insert object
+      raise "#{object} is invalid and cannot be persisted." if object.respond_to?(:valid?) and !object.valid?
       serializable_attributes = {}
       attributes_for(object).each_pair do |attribute, value|
         if serializable_types.include? value.class

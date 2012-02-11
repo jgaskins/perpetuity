@@ -21,26 +21,39 @@ describe Perpetuity::Mapper do
     ArticleMapper.mapped_class.should == Article
   end
 
-  it "persists an object" do
-    article = Article.new 'I have a title'
-    ArticleMapper.insert article
-    ArticleMapper.count.should == 1
-    ArticleMapper.first.title.should == 'I have a title'
-  end
+  describe 'persistence' do
+    it "persists an object" do
+      article = Article.new 'I have a title'
+      ArticleMapper.insert article
+      ArticleMapper.count.should == 1
+      ArticleMapper.first.title.should == 'I have a title'
+    end
 
-  it "gives an id to objects" do
-    article = Article.new
-    ArticleMapper.give_id_to article, 1
+    it "gives an id to objects" do
+      article = Article.new
+      ArticleMapper.give_id_to article, 1
 
-    article.id.should == 1
-  end
+      article.id.should == 1
+    end
 
-  it "assigns an id to persisted objects" do
-    article = Article.new
-    ArticleMapper.insert article
+    it "assigns an id to persisted objects" do
+      article = Article.new
+      ArticleMapper.insert article
 
-    persisted_article = ArticleMapper.first
-    article.id.should == persisted_article.id
+      persisted_article = ArticleMapper.first
+      article.id.should == persisted_article.id
+    end
+
+    it "checks for object validity before persisting" do
+      class Article
+        def valid?
+          !title.nil?
+        end
+      end
+
+      invalid_article = Article.new(title=nil)
+      expect { ArticleMapper.insert(invalid_article) }.to raise_error
+    end
   end
 
   describe "deletion" do
