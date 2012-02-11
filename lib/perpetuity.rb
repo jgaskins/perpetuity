@@ -86,6 +86,14 @@ module Perpetuity
       data_source.delete object
     end
 
+    def self.load_association! object, attribute
+      class_name = object.send(attribute)["class_name"]
+      id = object.send(attribute)["id"]
+
+      mapper = Module.const_get("#{class_name}Mapper")
+      associated_object = mapper.retrieve(id: id).first
+      object.send("#{attribute}=", associated_object)
+    end
   end
   
   

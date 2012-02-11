@@ -12,6 +12,7 @@ class ArticleMapper < Perpetuity::Mapper
 end
 
 class User
+  attr_accessor :name
   def initialize name="Foo"
     @name = name
   end

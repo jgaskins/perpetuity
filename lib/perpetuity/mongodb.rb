@@ -39,7 +39,7 @@ module Perpetuity
       database.drop_collection klass.to_s
     end
 
-    def retrieve klass, criteria, options
+    def retrieve klass, criteria, options = {}
       objects = []
 
       # MongoDB uses '_id' as its ID field.

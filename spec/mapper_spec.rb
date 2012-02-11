@@ -96,4 +96,41 @@ describe Perpetuity::Mapper do
       retrieved.first.title.should == article.title
     end
   end
+
+  describe 'associations with other objects' do
+    class Topic
+      attr_accessor :title
+      attr_accessor :creator
+    end
+
+    class TopicMapper < Perpetuity::Mapper
+      attribute :title, String
+      attribute :creator, User
+    end
+
+    let(:user) { User.new }
+    let(:topic) { Topic.new }
+    before do
+      TopicMapper.delete_all
+      UserMapper.delete_all
+      user.name = 'Flump'
+      topic.creator = user
+      topic.title = 'Title'
+    end
+
+    it 'can reference other objects' do
+      UserMapper.insert user
+      TopicMapper.insert topic
+      TopicMapper.first.creator.should == { 'class_name' => 'User', 'id' => user.id }
+    end
+
+    it 'can retrieve associated objects' do
+      UserMapper.insert user
+      TopicMapper.insert topic
+      topic = TopicMapper.first
+
+      TopicMapper.load_association! topic, :creator
+      topic.creator.name.should == 'Flump'
+    end
+  end
 end
