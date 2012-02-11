@@ -28,6 +28,21 @@ describe Perpetuity::Mapper do
     ArticleMapper.first.title.should == 'I have a title'
   end
 
+  it "gives an id to objects" do
+    article = Article.new
+    ArticleMapper.give_id_to article, 1
+
+    article.id.should == 1
+  end
+
+  it "assigns an id to persisted objects" do
+    article = Article.new
+    ArticleMapper.insert article
+
+    persisted_article = ArticleMapper.first
+    article.id.should == persisted_article.id
+  end
+
   describe "deletion" do
     it 'deletes an object' do
       2.times { ArticleMapper.insert Article.new }

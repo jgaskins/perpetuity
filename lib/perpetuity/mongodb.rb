@@ -27,8 +27,8 @@ module Perpetuity
       database.collection(klass.to_s)
     end
 
-    def insert object, mapper
-      collection(object.class).insert mapper.attributes_for(object)
+    def insert klass, attributes
+      collection(klass).insert attributes
     end
 
     def count klass

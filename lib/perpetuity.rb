@@ -26,8 +26,28 @@ module Perpetuity
       data_source.delete_all mapped_class
     end
 
+    def self.serializable_types
+      @serializable_types ||= [TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash]
+    end
+
     def self.insert object
-      data_source.insert object, self
+      serializable_attributes = {}
+      attributes_for(object).each_pair do |attribute, value|
+        if serializable_types.include? value.class
+          serializable_attributes[attribute] = value
+        elsif value.respond_to?(:id)
+          serializable_attributes[attribute] = { class_name: value.class.to_s, id: value.id }
+        else
+          raise "Must persist #{attribute} (#{value.inspect}) before persisting this #{object.inspect}."
+        end
+      end
+
+      new_id = data_source.insert mapped_class, serializable_attributes
+      give_id_to object, new_id
+    end
+
+    def self.give_id_to object, given_id
+      object.define_singleton_method :id, -> { given_id }
     end
     
     def self.attributes_for object
