@@ -82,6 +82,10 @@ module Perpetuity
       Perpetuity::Retrieval.new mapped_class, criteria
     end
 
+    def self.find id
+      retrieve(id: id).first
+    end
+
     def self.delete object
       data_source.delete object
     end

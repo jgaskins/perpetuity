@@ -79,10 +79,10 @@ describe Perpetuity::Mapper do
 
     it "gets an item with a specific ID" do
       ArticleMapper.insert Article.new
-      article = ArticleMapper.all[0]
-      retrieved = ArticleMapper.retrieve(id: article.instance_variable_get(:@_id))[0]
+      article = ArticleMapper.first
+      retrieved = ArticleMapper.find(article.id)
 
-      retrieved.instance_variable_get(:@_id).should == article.instance_variable_get(:@_id)
+      retrieved.id.should == article.id
       retrieved.title.should == article.title
       retrieved.body.should == article.body
     end
