@@ -95,39 +95,4 @@ module Perpetuity
       object.send("#{attribute}=", associated_object)
     end
   end
-  
-  
-  # def insert
-  #   # @object.instance_variables.each do |ivar|
-  #   #   ivalue = @object.instance_variable_get ivar
-  #   #   
-  #   #   # If it's not a serializable value, we need to save this value separately.
-  #   #   unless [String, Fixnum, Bignum, Hash, Array, TrueClass, FalseClass, NilClass].include? ivalue.class
-  #   #     unless ivalue.instance_variable_defined?(Perpetuity.data_source.id_attribute)
-  #   #     end
-  #   #   end
-  #   # end
-  # 
-  #   Perpetuity.data_source.insert @object
-  # end
-  # 
-  # 
-  # def self.count klass
-  #   Perpetuity.data_source.count klass
-  # end
-  # 
-  # def self.all klass
-  #   Perpetuity.data_source.all klass
-  # end
-  # 
-  # 
-  # def object_attributes
-  #   attributes = {}
-  #   @object.instance_variables.each do |ivar|
-  #     ivar_symbol = ivar.to_s.sub('@', '').to_sym
-  #     attributes[ivar_symbol] = @object.instance_variable_get(ivar)
-  #   end
-  #   
-  #   attributes
-  # end
 end
