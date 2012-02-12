@@ -76,7 +76,10 @@ module Perpetuity
     end
 
     def self.all
-      data_source.all mapped_class
+      objects = data_source.all mapped_class
+      objects.each do |object|
+        object.define_singleton_method(:id) { @_id }
+      end
     end
 
     def self.retrieve criteria={}

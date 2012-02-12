@@ -40,8 +40,9 @@ describe Perpetuity::Mapper do
       article = Article.new
       ArticleMapper.insert article
 
-      persisted_article = ArticleMapper.first
-      article.id.should == persisted_article.id
+      [ArticleMapper.first, ArticleMapper.retrieve.first, ArticleMapper.all.first].each do |persisted_article|
+        article.id.should == persisted_article.id
+      end
     end
 
     it "checks for object validity before persisting" do
