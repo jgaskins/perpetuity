@@ -58,11 +58,11 @@ You can load all persisted objects of a particular class by invoking the `all` m
 ArticleMapper.all
 ```
 
-You can load specific objects by calling the `retrieve` method on that class's mapper class and passing in the criteria.
+You can load specific objects by calling the `retrieve` method (or `find` with an ID param) on that class's mapper class and passing in the criteria.
 
 ```ruby
-article = ArticleMapper.retrieve id: params[:id]
-user = UserMapper.retrieve email: 'user@example.com'
+article = ArticleMapper.find params[:id]
+user = UserMapper.retrieve(email: 'user@example.com').first
 ```
 
 So far, the query interface is too simple. What I'd like to have it able to do would be something like the following:
@@ -103,11 +103,10 @@ class Article
 end
 
 class UserMapper < Perpetuity::Mapper
-  has_many Article
 end
 
 class ArticleMapper < Perpetuity::Mapper
-  belongs_to User, attribute: :author
+  attribute :author
 end
 ```
 
@@ -126,19 +125,6 @@ Setting the ID of a record to a custom value (rather than using the DB default)
 class ArticleMapper < Perpetuity::Mapper
   id { article.name.parameterize } # article is the object being mapped, inferred from the name of the mapper class
 end
-
-## Validations
-
-You can validate presence, uniqueness, etc with the following syntax:
-
-class UserMapper < Perpetuity::Mapper
-  validations do
-    present :name, :email, :password
-    unique :email
-    format :email, with: /<pretend this validates an e-mail address>/
-  end
-end
-```
 
 ## Contributing
 
