@@ -99,7 +99,7 @@ module Perpetuity
       id = object.send(attribute)["id"]
 
       mapper = Module.const_get("#{class_name}Mapper")
-      associated_object = mapper.retrieve(id: id).first
+      associated_object = mapper.find(id)
       object.send("#{attribute}=", associated_object)
     end
   end
