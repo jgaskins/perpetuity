@@ -135,7 +135,7 @@ describe Perpetuity::Mapper do
     it 'can reference other objects' do
       UserMapper.insert user
       TopicMapper.insert topic
-      TopicMapper.first.creator.should == { 'class_name' => 'User', 'id' => user.id }
+      TopicMapper.first.creator.should == user.id
     end
 
     it 'can retrieve associated objects' do
