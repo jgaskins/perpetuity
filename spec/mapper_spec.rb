@@ -45,6 +45,14 @@ describe Perpetuity::Mapper do
       end
     end
 
+    it "allows mappers to set the id field" do
+      BookMapper.delete_all
+      book = Book.new(title='My Title')
+
+      BookMapper.insert book
+      BookMapper.first.id.should == 'my-title'
+    end
+
     it "checks for object validity before persisting" do
       class Article
         def valid?

@@ -21,3 +21,15 @@ end
 class UserMapper < Perpetuity::Mapper
   attribute :name, String
 end
+
+class Book
+  attr_accessor :title
+  def initialize title="Foo Bar"
+    @title = title
+  end
+end
+
+class BookMapper < Perpetuity::Mapper
+  id { title.gsub(/\W+/, '-').downcase }
+  attribute :title, String
+end

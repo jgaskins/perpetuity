@@ -23,6 +23,8 @@ module Perpetuity
     def self.insert object
       raise "#{object} is invalid and cannot be persisted." if object.respond_to?(:valid?) and !object.valid?
       serializable_attributes = {}
+      serializable_attributes[:id] = object.instance_eval(&@id) unless @id.nil?
+
       attributes_for(object).each_pair do |attribute, value|
         if serializable_types.include? value.class
           serializable_attributes[attribute] = value
@@ -91,6 +93,10 @@ module Perpetuity
       mapper = Module.const_get("#{class_name}Mapper")
       associated_object = mapper.find(id)
       object.send("#{attribute}=", associated_object)
+    end
+
+    def self.id &block
+      @id = block
     end
   end
 end
