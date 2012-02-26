@@ -59,39 +59,39 @@ module Perpetuity
 
     def self.mapped_class
       Module.const_get self.name.gsub('Mapper', '').to_sym
-      end
+    end
 
-      def self.first
-        retrieve.limit(1).first
-      end
+    def self.first
+      retrieve.limit(1).first
+    end
 
-      def self.all
-        objects = data_source.all mapped_class
-        objects.each do |object|
-          object.define_singleton_method(:id) { @_id }
-        end
-      end
-
-      def self.retrieve criteria={}
-        Perpetuity::Retrieval.new mapped_class, criteria
-      end
-
-      def self.find id
-        retrieve(id: id).first
-      end
-
-      def self.delete object
-        data_source.delete object
-      end
-
-      def self.load_association! object, attribute
-        class_name = @attributes[attribute].type
-        id = object.send(attribute)
-
-        mapper = Module.const_get("#{class_name}Mapper")
-        associated_object = mapper.find(id)
-        object.send("#{attribute}=", associated_object)
+    def self.all
+      objects = data_source.all mapped_class
+      objects.each do |object|
+        object.define_singleton_method(:id) { @_id }
       end
     end
+
+    def self.retrieve criteria={}
+      Perpetuity::Retrieval.new mapped_class, criteria
+    end
+
+    def self.find id
+      retrieve(id: id).first
+    end
+
+    def self.delete object
+      data_source.delete object
+    end
+
+    def self.load_association! object, attribute
+      class_name = @attributes[attribute].type
+      id = object.send(attribute)
+
+      mapper = Module.const_get("#{class_name}Mapper")
+      associated_object = mapper.find(id)
+      object.send("#{attribute}=", associated_object)
+    end
+  end
 end
 
