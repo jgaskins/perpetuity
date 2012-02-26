@@ -106,20 +106,21 @@ class UserMapper < Perpetuity::Mapper
 end
 
 class ArticleMapper < Perpetuity::Mapper
-  attribute :author
+  attribute :author, User
 end
 ```
 
 This allows you to write the following:
 
 ```ruby
-article = Article.first
+article = ArticleMapper.first
+ArticleMapper.load_association! article, :author
 user = article.author # Lazy-loaded
 ```
 
 ## Customizing persistence
 
-Setting the ID of a record to a custom value (rather than using the DB default)
+Setting the ID of a record to a custom value rather than using the DB default. *Note: This doesn't work yet.*
 
 ```ruby
 class ArticleMapper < Perpetuity::Mapper
