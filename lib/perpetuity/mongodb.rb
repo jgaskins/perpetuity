@@ -81,5 +81,9 @@ module Perpetuity
     def delete object
       collection(object.class.to_s).remove "_id" => object.id
     end
+
+    def update klass, id, new_data
+      collection(klass).update({ _id: id }, new_data)
+    end
   end
 end

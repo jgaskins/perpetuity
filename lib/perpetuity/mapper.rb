@@ -98,6 +98,12 @@ module Perpetuity
     def self.id &block
       @id = block
     end
+
+    def self.update object, new_data
+      id = object.is_a?(mapped_class) ? object.id : object
+
+      data_source.update mapped_class, id, new_data
+    end
   end
 end
 

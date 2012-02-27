@@ -166,4 +166,16 @@ describe Perpetuity::Mapper do
     saved_message.instance_variable_get(:@text).should == 'My Message!'.reverse
     saved_message.text.should == 'My Message!'
   end
+
+  describe 'updating' do
+    let(:article) { Article.new }
+    before do
+      ArticleMapper.insert article
+    end
+
+    it 'updates an object in the database' do
+      ArticleMapper.update article, title: 'I has a new title!'
+      ArticleMapper.first.title.should == 'I has a new title!'
+    end
+  end
 end
