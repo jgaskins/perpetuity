@@ -60,9 +60,13 @@ module Perpetuity
 
       database.collection(klass.to_s).find(criteria, other_options).sort(sort_criteria).each do |document|
         object = klass.allocate
-        document.each_pair do |k,v|
-          k = "@#{k}" unless k[0] == '@'
-          object.instance_variable_set(k, v)
+        document.each_pair do |attribute,value|
+          if object.respond_to?("#{attribute}=")
+            object.send("#{attribute}=", value)
+          else
+            attribute = "@#{attribute}" unless attribute[0] == '@'
+            object.instance_variable_set(attribute, value)
+          end
         end
         objects << object
       end

@@ -155,4 +155,15 @@ describe Perpetuity::Mapper do
       topic.creator.name.should == 'Flump'
     end
   end
+
+  # The Message class stores its data members differently internally than it receives them
+  it 'uses accessor methods to read/write data' do
+    MessageMapper.delete_all
+
+    message = Message.new 'My Message!'
+    MessageMapper.insert message
+    saved_message = MessageMapper.first
+    saved_message.instance_variable_get(:@text).should == 'My Message!'.reverse
+    saved_message.text.should == 'My Message!'
+  end
 end

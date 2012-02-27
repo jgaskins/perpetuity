@@ -33,3 +33,21 @@ class BookMapper < Perpetuity::Mapper
   id { title.gsub(/\W+/, '-').downcase }
   attribute :title, String
 end
+
+class Message
+  def initialize text="My Message!"
+    self.text = text
+  end
+
+  def text
+    @text.reverse
+  end
+
+  def text= new_text
+    @text = new_text.reverse
+  end
+end
+
+class MessageMapper < Perpetuity::Mapper
+  attribute :text, String
+end
