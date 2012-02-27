@@ -115,7 +115,7 @@ This allows you to write the following:
 ```ruby
 article = ArticleMapper.first
 ArticleMapper.load_association! article, :author
-user = article.author # Lazy-loaded
+user = article.author
 ```
 
 ## Customizing persistence
