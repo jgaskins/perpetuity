@@ -124,7 +124,7 @@ Setting the ID of a record to a custom value rather than using the DB default. *
 
 ```ruby
 class ArticleMapper < Perpetuity::Mapper
-  id { article.name.parameterize } # article is the object being mapped, inferred from the name of the mapper class
+  id { name.parameterize } # article is the object being mapped, inferred from the name of the mapper class
 end
 ```
 
