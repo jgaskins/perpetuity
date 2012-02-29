@@ -1,5 +1,5 @@
 class Article
-  attr_reader :title, :body
+  attr_accessor :title, :body, :views
   def initialize title="Title", body="Body", author=nil
     @title = title
     @body = body
@@ -9,6 +9,7 @@ end
 class ArticleMapper < Perpetuity::Mapper
   attribute :title, String
   attribute :body, String
+  attribute :views, Integer
 end
 
 class User
