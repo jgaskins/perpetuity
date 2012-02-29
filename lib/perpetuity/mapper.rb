@@ -17,7 +17,7 @@ module Perpetuity
     end
 
     def self.serializable_types
-      @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash]
+      @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash, Time, Date]
     end
 
     def self.insert object
