@@ -159,20 +159,20 @@ describe Perpetuity::Mapper do
     before do
       TopicMapper.delete_all
       UserMapper.delete_all
+
       user.name = 'Flump'
       topic.creator = user
       topic.title = 'Title'
+
+      UserMapper.insert user
+      TopicMapper.insert topic
     end
 
     it 'can reference other objects' do
-      UserMapper.insert user
-      TopicMapper.insert topic
       TopicMapper.first.creator.should == user.id
     end
 
     it 'can retrieve associated objects' do
-      UserMapper.insert user
-      TopicMapper.insert topic
       topic = TopicMapper.first
 
       TopicMapper.load_association! topic, :creator
