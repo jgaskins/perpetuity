@@ -54,13 +54,8 @@ describe Perpetuity::Mapper do
     end
 
     it "checks for object validity before persisting" do
-      class Article
-        def valid?
-          !title.nil?
-        end
-      end
-
       invalid_article = Article.new(title=nil)
+      invalid_article.stub(valid?: nil)
       expect { ArticleMapper.insert(invalid_article) }.to raise_error
     end
   end
