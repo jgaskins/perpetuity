@@ -120,11 +120,11 @@ user = article.author
 
 ## Customizing persistence
 
-Setting the ID of a record to a custom value rather than using the DB default. *Note: This doesn't work yet.*
+Setting the ID of a record to a custom value rather than using the DB default.
 
 ```ruby
 class ArticleMapper < Perpetuity::Mapper
-  id { name.parameterize } # article is the object being mapped, inferred from the name of the mapper class
+  id { title.gsub(/\W+/, '-') } # use the article's parameterized title attribute as its ID
 end
 ```
 
