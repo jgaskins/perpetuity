@@ -1,5 +1,5 @@
-require 'attribute_set'
-require 'attribute'
+require 'perpetuity/attribute_set'
+require 'perpetuity/attribute'
 require 'perpetuity/validations'
 
 module Perpetuity
