@@ -202,4 +202,35 @@ describe Perpetuity::Mapper do
       ArticleMapper.first.title.should == 'I has a new title!'
     end
   end
+
+  describe 'instantiation' do
+    let!(:article) { Article.new(title = 'My Title') }
+    let!(:mapper) { ArticleMapper.new(article) }
+
+    it 'can be instantiated' do
+      mapper.object.title.should == 'My Title'
+    end
+
+    it 'duplicates the object when instantiated' do
+      article.title = 'My New Title'
+
+      mapper.original_object.title.should == 'My Title'
+      mapper.object.title.should == 'My New Title'
+    end
+
+    it 'knows what data has changed since last loaded' do
+      article.title = 'My New Title'
+
+      mapper.changed_attributes.should == { title: 'My New Title' }
+    end
+
+    it 'saves data that has changed since last loaded' do
+      ArticleMapper.insert article
+      article.title = 'My New Title'
+
+      mapper.save
+
+      ArticleMapper.first.title.should == 'My New Title'
+    end
+  end
 end

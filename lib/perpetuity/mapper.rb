@@ -3,6 +3,13 @@ require 'attribute'
 
 module Perpetuity
   class Mapper
+    attr_accessor :object, :original_object
+
+    def initialize(object = nil)
+      @object = object
+      @original_object = object.dup
+    end
+
     def self.attribute name, type
       @attributes ||= AttributeSet.new
       @attributes << Attribute.new(name, type)
@@ -103,6 +110,22 @@ module Perpetuity
       id = object.is_a?(mapped_class) ? object.id : object
 
       data_source.update mapped_class, id, new_data
+    end
+
+    def changed_attributes
+      changes = {}
+
+      self.class.attributes.each do |attribute|
+        unless object.send(attribute) == original_object.send(attribute)
+          changes[attribute] = object.send(attribute)
+        end
+      end
+
+      changes
+    end
+
+    def save
+      self.class.update object, changed_attributes
     end
   end
 end
