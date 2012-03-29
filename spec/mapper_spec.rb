@@ -235,7 +235,7 @@ describe Perpetuity::Mapper do
 
     describe 'validations' do
       class Car
-        attr_accessor :make, :model
+        attr_accessor :make, :model, :seats
       end
 
       class CarMapper < Perpetuity::Mapper
@@ -244,7 +244,19 @@ describe Perpetuity::Mapper do
         attribute :seats, Integer
 
         validate do
+          present :make
         end
+      end
+
+      it 'raises an exception when inserting an invalid object' do
+        car = Car.new
+        expect { CarMapper.insert car }.to raise_error
+      end
+
+      it 'does not raise an exception when validations are met' do
+        car = Car.new
+        car.make = "Volkswagen"
+        expect { CarMapper.insert car }.not_to raise_error
       end
     end
   end

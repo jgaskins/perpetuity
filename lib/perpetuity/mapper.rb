@@ -30,6 +30,7 @@ module Perpetuity
 
     def self.insert object
       raise "#{object} is invalid and cannot be persisted." if object.respond_to?(:valid?) and !object.valid?
+      raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
       serializable_attributes = {}
       serializable_attributes[:id] = object.instance_eval(&@id) unless @id.nil?
 
@@ -114,13 +115,13 @@ module Perpetuity
     end
 
     def self.validate &block
-      @@validations ||= ValidationSet.new
+      @validations ||= ValidationSet.new
 
       validations.instance_exec &block
     end
 
     def self.validations
-      @@validations
+      @validations ||= ValidationSet.new
     end
 
     def changed_attributes
