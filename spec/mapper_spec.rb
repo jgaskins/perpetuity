@@ -232,5 +232,20 @@ describe Perpetuity::Mapper do
 
       ArticleMapper.first.title.should == 'My New Title'
     end
+
+    describe 'validations' do
+      class Car
+        attr_accessor :make, :model
+      end
+
+      class CarMapper < Perpetuity::Mapper
+        attribute :make, String
+        attribute :model, String
+        attribute :seats, Integer
+
+        validate do
+        end
+      end
+    end
   end
 end

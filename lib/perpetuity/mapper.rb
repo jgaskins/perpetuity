@@ -1,5 +1,6 @@
 require 'attribute_set'
 require 'attribute'
+require 'perpetuity/validations'
 
 module Perpetuity
   class Mapper
@@ -110,6 +111,16 @@ module Perpetuity
       id = object.is_a?(mapped_class) ? object.id : object
 
       data_source.update mapped_class, id, new_data
+    end
+
+    def self.validate &block
+      @@validations ||= ValidationSet.new
+
+      validations.instance_exec &block
+    end
+
+    def self.validations
+      @@validations
     end
 
     def changed_attributes
