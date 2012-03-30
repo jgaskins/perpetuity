@@ -1,5 +1,5 @@
 class Article
-  attr_reader :title, :body
+  attr_accessor :title, :body
   def initialize title="Title", body="Body", author=nil
     @title = title
     @body = body
