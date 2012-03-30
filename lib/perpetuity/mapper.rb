@@ -142,21 +142,3 @@ module Perpetuity
   end
 end
 
-# Allow users to use calls like mapper.retrieve(:attribute < value)
-class Symbol
-  def > object
-    Perpetuity.configuration.data_source.inequality self, :>, object
-  end
-
-  def < object
-    Perpetuity.configuration.data_source.inequality self, :<, object
-  end
-
-  def >= object
-    Perpetuity.configuration.data_source.inequality self, :>=, object
-  end
-
-  def <= object
-    Perpetuity.configuration.data_source.inequality self, :<=, object
-  end
-end

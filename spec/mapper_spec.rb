@@ -14,7 +14,7 @@ describe Perpetuity::Mapper do
 
   it "has correct attributes" do
     UserMapper.attributes.should == [:name]
-    ArticleMapper.attributes.should == [:title, :body, :views]
+    ArticleMapper.attributes.should == [:title, :body]
   end
 
   it "knows which class it maps" do
@@ -111,35 +111,6 @@ describe Perpetuity::Mapper do
 
       retrieved.to_a.should have(1).item
       retrieved.first.title.should == article.title
-    end
-
-    context "using inequalities" do
-      let(:popular_article) { Article.new title='popular!' }
-      let(:unpopular_article) { Article.new title='unpopular :-(' }
-      before do
-        popular_article.views = 1000
-        unpopular_article.views = 10
-        ArticleMapper.insert popular_article
-        ArticleMapper.insert unpopular_article
-      end
-
-      it "less than" do
-        ArticleMapper.retrieve(:views < 100).map(&:id).should == [unpopular_article.id]
-      end
-
-      it "less than or equal" do
-        ArticleMapper.retrieve(:views <= 1000).map(&:id).should include popular_article.id, unpopular_article.id
-        ArticleMapper.retrieve(:views <= 10).map(&:id).should == [unpopular_article.id]
-      end
-
-      it "greater than or equal" do
-        ArticleMapper.retrieve(:views >= 1000).map(&:id).should == [popular_article.id]
-        ArticleMapper.retrieve(:views >= 10).map(&:id).should include popular_article.id, unpopular_article.id
-      end
-
-      it "greater than" do
-        ArticleMapper.retrieve(:views > 100).map(&:id).should == [popular_article.id]
-      end
     end
   end
 

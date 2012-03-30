@@ -85,16 +85,5 @@ module Perpetuity
     def update klass, id, new_data
       collection(klass).update({ _id: id }, new_data)
     end
-
-    def inequality attribute, ineq, object
-      @ineqs ||= {
-        :>  => '$gt',
-        :<  => '$lt',
-        :>= => '$gte',
-        :<= => '$lte',
-      }
-
-      { attribute => { @ineqs[ineq] => object } }
-    end
   end
 end
