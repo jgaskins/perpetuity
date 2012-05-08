@@ -204,6 +204,10 @@ describe Perpetuity::Mapper do
       ArticleMapper.first.title.should == 'My New Title'
     end
 
+    it 'inserts objects into the DB when instantiated' do
+      expect { mapper.insert }.to change { mapper.class.count }.by(1)
+    end
+
     describe 'validations' do
       class Car
         attr_accessor :make, :model, :seats

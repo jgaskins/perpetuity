@@ -28,11 +28,39 @@ module Perpetuity
       @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash, Time, Date]
     end
 
+    def serializable_types
+      self.class.serializable_types
+    end
+
+    def validations
+      self.class.validations
+    end
+
+    def attributes_for object
+      self.class.attributes_for object
+    end
+
+    def data_source
+      self.class.data_source
+    end
+
+    def give_id_to object, new_id
+      self.class.give_id_to object, new_id
+    end
+
+    def mapped_class
+      self.class.mapped_class
+    end
+
     def self.insert object
+      new(object).insert
+    end
+
+    def insert
       raise "#{object} is invalid and cannot be persisted." if object.respond_to?(:valid?) and !object.valid?
       raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
       serializable_attributes = {}
-      serializable_attributes[:id] = object.instance_eval(&@id) unless @id.nil?
+      serializable_attributes[:id] = object.instance_eval(&self.class.id) unless self.class.id.nil?
 
       attributes_for(object).each_pair do |attribute, value|
         if serializable_types.include? value.class
@@ -105,7 +133,11 @@ module Perpetuity
     end
 
     def self.id &block
-      @id = block
+      if block_given?
+        @id = block
+      else
+        @id
+      end
     end
 
     def self.update object, new_data
