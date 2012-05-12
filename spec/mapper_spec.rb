@@ -17,6 +17,10 @@ describe Perpetuity::Mapper do
     ArticleMapper.attributes.should == [:title, :body]
   end
 
+  it 'returns an empty attribute list when no attributes have been assigned' do
+    EmptyMapper.attributes.should be_empty
+  end
+
   it "knows which class it maps" do
     ArticleMapper.mapped_class.should == Article
   end

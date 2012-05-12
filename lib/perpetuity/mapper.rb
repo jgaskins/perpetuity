@@ -11,13 +11,16 @@ module Perpetuity
       @original_object = object.dup
     end
 
+    def self.attribute_set
+      @attribute_set ||= AttributeSet.new
+    end
+
     def self.attribute name, type
-      @attributes ||= AttributeSet.new
-      @attributes << Attribute.new(name, type)
+      attribute_set << Attribute.new(name, type)
     end
 
     def self.attributes
-      @attributes.map(&:name)
+      attribute_set.map(&:name)
     end
 
     def self.delete_all
@@ -82,7 +85,7 @@ module Perpetuity
 
     def self.attributes_for object
       attrs = {}
-      @attributes.each do |attrib|
+      attribute_set.each do |attrib|
         attrs[attrib.name] = object.send(attrib.name)
       end
       attrs
@@ -124,7 +127,7 @@ module Perpetuity
     end
 
     def self.load_association! object, attribute
-      class_name = @attributes[attribute].type
+      class_name = attribute_set[attribute].type
       id = object.send(attribute)
 
       mapper = Module.const_get("#{class_name}Mapper")

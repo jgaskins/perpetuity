@@ -51,3 +51,6 @@ end
 class MessageMapper < Perpetuity::Mapper
   attribute :text, String
 end
+
+class EmptyMapper < Perpetuity::Mapper
+end
