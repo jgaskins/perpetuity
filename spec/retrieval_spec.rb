@@ -36,4 +36,8 @@ describe Perpetuity::Retrieval do
     ArticleMapper.retrieve.limit(1).count.should == 1
   end
 
+  it 'indicates whether it includes a specific item' do
+    subject.stub(to_a: [1])
+    subject.should include 1
+  end
 end

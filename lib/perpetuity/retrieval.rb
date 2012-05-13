@@ -1,5 +1,6 @@
 module Perpetuity
   class Retrieval
+    include Enumerable
     attr_accessor :sort_attribute, :sort_direction, :result_limit
 
     def initialize klass, criteria
@@ -22,6 +23,10 @@ module Perpetuity
       retrieval
     end
 
+    def each &block
+      to_a.each &block
+    end
+
     def to_a
       results = Perpetuity.configuration.data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction, limit: result_limit })
       results.each do |result|
@@ -38,24 +43,12 @@ module Perpetuity
     def [] index
       to_a[index]
     end
-
-    def map(&block)
-      to_a.map(&block)
-    end
-
-    def first
-      to_a.first
-    end
     
     def limit lim
       retrieval = clone
       retrieval.result_limit = lim
       
       retrieval
-    end
-    
-    def count
-      to_a.count
     end
   end
 end
