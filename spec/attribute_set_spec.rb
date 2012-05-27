@@ -1,17 +1,19 @@
-require 'perpetuity'
-require 'test_classes'
+require 'perpetuity/attribute_set'
+require 'perpetuity/attribute'
 
-describe Perpetuity::AttributeSet do
-  it 'contains attributes' do
-    subject << Perpetuity::Attribute.new(:article, Article)
-    subject.first.name.should == :article
-    subject.first.type.should == Article
-  end
+module Perpetuity
+  describe AttributeSet do
+    it 'contains attributes' do
+      subject << Attribute.new(:article, Object)
+      subject.first.name.should == :article
+      subject.first.type.should == Object
+    end
 
-  it 'can access attributes by name' do
-    subject << Perpetuity::Attribute.new(:article, Article)
-    subject << Perpetuity::Attribute.new(:user, User)
+    it 'can access attributes by name' do
+      subject << Attribute.new(:article, Object)
+      subject << Attribute.new(:user, Object)
 
-    subject[:user].type.should == User
+      subject[:user].type.should == Object
+    end
   end
 end
