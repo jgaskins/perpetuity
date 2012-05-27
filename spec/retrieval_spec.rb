@@ -27,8 +27,7 @@ describe Perpetuity::Retrieval do
   end
   
   it "limits the result set" do
-    2.times { ArticleMapper.insert Article.new }
-    ArticleMapper.retrieve.limit(1).count.should == 1
+    retrieval.limit(1).result_limit.should == 1
   end
 
   it 'indicates whether it includes a specific item' do
