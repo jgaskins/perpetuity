@@ -1,20 +1,8 @@
-require "perpetuity"
-require "test_classes"
+require 'perpetuity/retrieval'
 
 describe Perpetuity::Retrieval do
-  let(:retrieval) { Perpetuity::Retrieval.new Article, {} }
+  let(:retrieval) { Perpetuity::Retrieval.new Object, {} }
   subject { retrieval }
-
-  before(:all) do
-    Perpetuity.configure do
-      data_source Perpetuity::MongoDB.new db: 'perpetuity_gem_test'
-    end
-  end
-
-  before(:each) do
-    ArticleMapper.delete_all
-    UserMapper.delete_all
-  end
 
   it "sorts the results" do
     sorted = retrieval.sort(:name)
