@@ -1,7 +1,8 @@
 require 'perpetuity/retrieval'
 
 describe Perpetuity::Retrieval do
-  let(:retrieval) { Perpetuity::Retrieval.new Object, {} }
+  let(:data_source) { double('data_source') }
+  let(:retrieval) { Perpetuity::Retrieval.new Object, {}, data_source }
   subject { retrieval }
 
   it "sorts the results" do
@@ -21,5 +22,15 @@ describe Perpetuity::Retrieval do
   it 'indicates whether it includes a specific item' do
     subject.stub(to_a: [1])
     subject.should include 1
+  end
+
+  it 'retrieves data from the data source' do
+    return_object = Object.new
+    options = { attribute: nil, direction: nil, limit: nil }
+    data_source.should_receive(:retrieve).with(Object, {}, options).
+                and_return([return_object])
+    results = retrieval.to_a
+
+    results.should == [return_object]
   end
 end

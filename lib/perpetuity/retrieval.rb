@@ -3,9 +3,10 @@ module Perpetuity
     include Enumerable
     attr_accessor :sort_attribute, :sort_direction, :result_limit
 
-    def initialize klass, criteria
+    def initialize klass, criteria, data_source = Perpetuity.configuration.data_source
       @class = klass
       @criteria = criteria
+      @data_source = data_source
     end
     
     def sort attribute=:name
@@ -28,7 +29,7 @@ module Perpetuity
     end
 
     def to_a
-      results = Perpetuity.configuration.data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction, limit: result_limit })
+      results = @data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction, limit: result_limit })
       results.each do |result|
         result.instance_eval do
           def id
