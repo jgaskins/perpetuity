@@ -1,22 +1,5 @@
 module Perpetuity
-  class ValidationSet
-    include Enumerable
-
-    def initialize
-      @validations = []
-    end
-
-    def validations
-      @validations
-    end
-
-    def << object
-      @validations << object
-    end
-
-    def each &block
-      validations.each &block
-    end
+  class ValidationSet < Set
 
     def valid? object
       each do |validation|

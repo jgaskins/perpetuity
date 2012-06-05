@@ -4,7 +4,7 @@ module Perpetuity
   describe ValidationSet do
     let(:validation_set) { ValidationSet.new }
     it 'is empty when created' do
-      validation_set.validations.should be_empty
+      validation_set.should be_empty
     end
 
     it 'can add validations' do
