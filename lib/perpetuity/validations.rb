@@ -18,9 +18,6 @@ module Perpetuity
     end
   end
 
-  class Validation
-  end
-
   module Validations
     class Presence
       def initialize attribute

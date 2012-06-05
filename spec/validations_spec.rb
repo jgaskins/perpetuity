@@ -67,8 +67,4 @@ module Perpetuity
       end
     end
   end
-
-  describe Perpetuity::Validation do
-
-  end
 end
