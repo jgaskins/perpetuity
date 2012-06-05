@@ -32,6 +32,7 @@ module Perpetuity
 
     describe 'validation types' do
       let(:valid_object) { double('valid object') }
+      let(:invalid_object) { double('invalid object') }
 
       it 'validates presence of an attribute' do
         valid_object.stub(email: 'me@example.com')
@@ -51,19 +52,19 @@ module Perpetuity
       end
 
       it 'invalidates when attribute is too short' do
-        valid_object.stub(email: 'foo')
+        invalid_object.stub(email: 'foo')
         validation_set.length :email, at_least: 4
 
         validation_set.count.should == 1
-        validation_set.should_not be_valid(valid_object)
+        validation_set.should be_invalid(invalid_object)
       end
 
       it 'invalidates when attribute is too long' do
-        valid_object.stub(email: 'me@example.com')
+        invalid_object.stub(email: 'me@example.com')
         subject.length :email, at_most: 4
 
         subject.count.should == 1
-        subject.should_not be_valid(valid_object)
+        subject.should be_invalid(invalid_object)
       end
     end
   end

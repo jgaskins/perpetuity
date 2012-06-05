@@ -9,6 +9,10 @@ module Perpetuity
       true
     end
 
+    def invalid? object
+      !valid? object
+    end
+
     def present attribute
       self << Perpetuity::Validations::Presence.new(attribute)
     end
