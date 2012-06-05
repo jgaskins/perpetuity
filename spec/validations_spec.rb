@@ -51,6 +51,22 @@ module Perpetuity
         validation_set.should be_valid(valid_object)
       end
 
+      it 'validates length within a range' do
+        valid_object.stub(email: 'me@example.com')
+        validation_set.length :email, between: (14..14)
+
+        validation_set.should have(1).items
+        validation_set.should be_valid(valid_object)
+      end
+
+      it 'invalidates length within a range' do
+        invalid_object.stub(email: 'me@example.com')
+        validation_set.length :email, between: (0..13)
+
+        validation_set.should have(1).items
+        validation_set.should be_invalid(invalid_object)
+      end
+
       it 'invalidates when attribute is too short' do
         invalid_object.stub(email: 'foo')
         validation_set.length :email, at_least: 4

@@ -37,6 +37,11 @@ module Perpetuity
       def initialize attribute, options
         @attribute = attribute
         @options = options
+
+        if range = options.delete(:between)
+          @options[:at_least] ||= range.min
+          @options[:at_most] ||= range.max
+        end
       end
 
       def pass? object
