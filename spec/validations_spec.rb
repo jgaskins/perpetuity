@@ -19,7 +19,7 @@ module Perpetuity
       v.stub(pass?: true)
       validation_set << v
 
-      validation_set.valid?(double('object')).should be_true
+      validation_set.should be_valid(double('object'))
     end
 
     it 'invalidates an object' do
@@ -27,7 +27,7 @@ module Perpetuity
       v.stub(pass?: false)
       validation_set << v
 
-      validation_set.valid?(double('object')).should be_false
+      validation_set.should_not be_valid(double('object'))
     end
 
     describe 'validation types' do
@@ -38,7 +38,7 @@ module Perpetuity
         validation_set.present :email
 
         validation_set.count.should == 1
-        validation_set.valid?(valid_object).should be_true
+        validation_set.should be_valid(valid_object)
       end
 
       it 'validates length of an attribute' do
@@ -47,7 +47,7 @@ module Perpetuity
         validation_set.length :email, at_least: 14
 
         validation_set.count.should == 2
-        validation_set.valid?(valid_object).should be_true
+        validation_set.should be_valid(valid_object)
       end
 
       it 'invalidates when attribute is too short' do
@@ -55,7 +55,7 @@ module Perpetuity
         validation_set.length :email, at_least: 4
 
         validation_set.count.should == 1
-        validation_set.valid?(valid_object).should be_false
+        validation_set.should_not be_valid(valid_object)
       end
 
       it 'invalidates when attribute is too long' do
@@ -63,7 +63,7 @@ module Perpetuity
         subject.length :email, at_most: 4
 
         subject.count.should == 1
-        subject.valid?(valid_object).should be_false
+        subject.should_not be_valid(valid_object)
       end
     end
   end
