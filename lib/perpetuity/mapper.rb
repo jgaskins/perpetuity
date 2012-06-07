@@ -76,6 +76,7 @@ module Perpetuity
 
       new_id = data_source.insert mapped_class, serializable_attributes
       give_id_to object, new_id
+      new_id
     end
 
     def self.give_id_to object, given_id

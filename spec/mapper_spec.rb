@@ -33,6 +33,11 @@ describe Perpetuity::Mapper do
       ArticleMapper.first.title.should == 'I have a title'
     end
 
+    it 'returns the id of the persisted object' do
+      article = Article.new
+      ArticleMapper.insert(article).should == article.id
+    end
+
     it "gives an id to objects" do
       article = Article.new
       ArticleMapper.give_id_to article, 1
