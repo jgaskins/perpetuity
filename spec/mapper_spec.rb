@@ -71,9 +71,10 @@ describe Perpetuity::Mapper do
     end
 
     it 'deletes an object with a given id' do
-      2.times { ArticleMapper.insert Article.new }
-      ArticleMapper.delete ArticleMapper.first.id
-      ArticleMapper.count.should == 1
+      article_id = ArticleMapper.insert Article.new
+      expect {
+        ArticleMapper.delete article_id
+      }.to change { ArticleMapper.count }.by -1
     end
     
     describe "#delete_all" do
