@@ -60,7 +60,6 @@ module Perpetuity
     end
 
     def insert
-      raise "#{object} is invalid and cannot be persisted." if object.respond_to?(:valid?) and !object.valid?
       raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
       serializable_attributes = {}
       serializable_attributes[:id] = object.instance_eval(&self.class.id) unless self.class.id.nil?
