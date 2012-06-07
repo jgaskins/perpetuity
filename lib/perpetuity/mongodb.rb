@@ -78,8 +78,10 @@ module Perpetuity
       retrieve klass, {}, {}
     end
     
-    def delete object
-      collection(object.class.to_s).remove "_id" => object.id
+    def delete object, klass=nil
+      id = object.respond_to?(:id) ? object.id : object
+      klass ||= object.class
+      collection(klass.to_s).remove "_id" => id
     end
 
     def update klass, id, new_data

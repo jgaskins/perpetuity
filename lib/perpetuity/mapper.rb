@@ -122,7 +122,7 @@ module Perpetuity
     end
 
     def self.delete object
-      data_source.delete object
+      data_source.delete object, mapped_class
     end
 
     def self.load_association! object, attribute

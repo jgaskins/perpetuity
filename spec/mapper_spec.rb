@@ -64,6 +64,12 @@ describe Perpetuity::Mapper do
       ArticleMapper.delete ArticleMapper.first
       ArticleMapper.count.should == 1
     end
+
+    it 'deletes an object with a given id' do
+      2.times { ArticleMapper.insert Article.new }
+      ArticleMapper.delete ArticleMapper.first.id
+      ArticleMapper.count.should == 1
+    end
     
     describe "#delete_all" do
       it "should delete all objects of a certain class" do
