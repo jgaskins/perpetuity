@@ -30,13 +30,6 @@ module Perpetuity
 
     def to_a
       results = @data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction, limit: result_limit })
-      results.each do |result|
-        result.instance_eval do
-          def id
-            @_id
-          end
-        end
-      end
       
       results
     end

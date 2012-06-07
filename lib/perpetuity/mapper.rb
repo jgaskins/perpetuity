@@ -104,7 +104,7 @@ module Perpetuity
     end
 
     def self.first
-      retrieve.limit(1).first
+      data_source.first mapped_class
     end
 
     def self.all
