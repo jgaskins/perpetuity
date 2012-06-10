@@ -1,7 +1,8 @@
+$:.unshift('lib').uniq!
 require 'perpetuity'
-require "test_classes"
+require 'test_classes'
 
-describe Perpetuity::Mapper do
+describe Perpetuity do
   before(:all) do
     # Use MongoDB for now as its the only one supported.
     mongodb = Perpetuity::MongoDB.new db: 'perpetuity_gem_test'
@@ -10,19 +11,6 @@ describe Perpetuity::Mapper do
 
   before(:each) do
     ArticleMapper.delete_all
-  end
-
-  it "has correct attributes" do
-    UserMapper.attributes.should == [:name]
-    ArticleMapper.attributes.should == [:title, :body]
-  end
-
-  it 'returns an empty attribute list when no attributes have been assigned' do
-    EmptyMapper.attributes.should be_empty
-  end
-
-  it "knows which class it maps" do
-    ArticleMapper.mapped_class.should == Article
   end
 
   describe 'persistence' do
@@ -182,17 +170,6 @@ describe Perpetuity::Mapper do
     end
   end
 
-  # The Message class stores its data members differently internally than it receives them
-  it 'uses accessor methods to read/write data' do
-    MessageMapper.delete_all
-
-    message = Message.new 'My Message!'
-    MessageMapper.insert message
-    saved_message = MessageMapper.first
-    saved_message.instance_variable_get(:@text).should == 'My Message!'.reverse
-    saved_message.text.should == 'My Message!'
-  end
-
   describe 'updating' do
     let(:article) { Article.new }
     before do
@@ -208,24 +185,6 @@ describe Perpetuity::Mapper do
   describe 'instantiation' do
     let!(:article) { Article.new(title = 'My Title') }
     let!(:mapper) { ArticleMapper.new(article) }
-
-    it 'can be instantiated' do
-      mapper.object.title.should == 'My Title'
-    end
-
-    it 'duplicates the object when instantiated' do
-      article.title = 'My New Title'
-
-      mapper.original_object.title.should == 'My Title'
-      mapper.object.title.should == 'My New Title'
-    end
-
-    it 'knows what data has changed since last loaded' do
-      article.title = 'My New Title'
-
-      mapper.changed_attributes.should == { title: 'My New Title' }
-    end
-
     it 'saves data that has changed since last loaded' do
       ArticleMapper.insert article
       article.title = 'My New Title'
@@ -238,32 +197,43 @@ describe Perpetuity::Mapper do
     it 'inserts objects into the DB when instantiated' do
       expect { mapper.insert }.to change { mapper.class.count }.by(1)
     end
+  end
 
-    describe 'validations' do
-      class Car
-        attr_accessor :make, :model, :seats
-      end
+  describe 'validations' do
+    class Car
+      attr_accessor :make, :model, :seats
+    end
 
-      class CarMapper < Perpetuity::Mapper
-        attribute :make, String
-        attribute :model, String
-        attribute :seats, Integer
+    class CarMapper < Perpetuity::Mapper
+      attribute :make, String
+      attribute :model, String
+      attribute :seats, Integer
 
-        validate do
-          present :make
-        end
-      end
-
-      it 'raises an exception when inserting an invalid object' do
-        car = Car.new
-        expect { CarMapper.insert car }.to raise_error
-      end
-
-      it 'does not raise an exception when validations are met' do
-        car = Car.new
-        car.make = "Volkswagen"
-        expect { CarMapper.insert car }.not_to raise_error
+      validate do
+        present :make
       end
     end
+
+    it 'raises an exception when inserting an invalid object' do
+      car = Car.new
+      expect { CarMapper.insert car }.to raise_error
+    end
+
+    it 'does not raise an exception when validations are met' do
+      car = Car.new
+      car.make = "Volkswagen"
+      expect { CarMapper.insert car }.not_to raise_error
+    end
+  end
+
+  # The Message class stores its data members differently internally than it receives them
+  it 'uses accessor methods to read/write data' do
+    MessageMapper.delete_all
+
+    message = Message.new 'My Message!'
+    MessageMapper.insert message
+    saved_message = MessageMapper.first
+    saved_message.instance_variable_get(:@text).should == 'My Message!'.reverse
+    saved_message.text.should == 'My Message!'
   end
 end
