@@ -1,11 +1,11 @@
 module Perpetuity
   class Configuration
-    def data_source db=nil
-      if db.nil?
-        @@db
-      else
-        @@db = db
+    def data_source *args
+      if args.any?
+        @db = args.pop
       end
+
+      @db
     end
   end
 end
