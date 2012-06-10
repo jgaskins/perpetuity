@@ -4,12 +4,12 @@ require 'bson'
 module Perpetuity
   class MongoDB
     def initialize options
-      @host = options[:host] || 'localhost'
-      @port = options[:port] || 27017
-      @db = options[:db]
-      @pool_size = options[:pool_size] || 5
-      @username = options[:username]
-      @password = options[:password]
+      @host      = options.fetch(:host, 'localhost')
+      @port      = options.fetch(:port, 27017)
+      @db        = options.fetch(:db)
+      @pool_size = options.fetch(:pool_size, 5)
+      @username  = options[:username]
+      @password  = options[:password]
       
       connect
       database.authenticate(@username, @password) if @username and @password
