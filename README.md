@@ -77,16 +77,15 @@ This will return a Perpetuity::Retrieval object, which will lazily retrieve the 
 
 ```ruby
 articles = ArticleMapper.retrieve(published: false).or(views: { less_than: 10 })
-articles = articles.sort(:date_published).reverse.limit(10)
+articles = articles.sort(:date_published).reverse
+articles = articles.page(2).per_page(10) # built-in pagination
 
 articles.each do |article| # This is when the DB gets hit
   # Display the pretty articles
 end
 ```
 
-Counting `:gt` and `:lt` as aliases for `:greater_than` and `:less_than`, respectively, might be nice.
-
-## Objects That Associate with Other Objects
+## Associations with Other Objects
 
 If an object references another object (such as an article referencing its author), it must have a relationship identifier in its mapper class. For example:
 
@@ -130,4 +129,4 @@ end
 
 ## Contributing
 
-Right now, this code is pretty bare and there's a bit of duplication in the tests … and possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests or issues or tweets or e-mails and I'll do what I can for them.
+Right now, this code is pretty bare and there are possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests or issues or tweets or e-mails and I'll do what I can for them.
