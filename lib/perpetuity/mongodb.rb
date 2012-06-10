@@ -41,7 +41,7 @@ module Perpetuity
     end
 
     def delete_all klass
-      database.drop_collection klass.to_s
+      database.collection(klass.to_s).remove
     end
 
     def first klass
