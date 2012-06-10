@@ -24,9 +24,29 @@ describe Perpetuity::Retrieval do
     subject.should include 1
   end
 
+  it 'can be empty' do
+    retrieval.stub(to_a: [])
+    retrieval.should be_empty
+  end
+
+  describe 'pagination' do
+    let(:paginated) { retrieval.page(2) }
+    it 'paginates data' do
+      paginated.result_page.should == 2
+    end
+
+    it 'defaults to 20 items per page' do
+      paginated.quantity_per_page.should == 20
+    end
+
+    it 'sets the number of items per page' do
+      paginated.per_page(50).quantity_per_page.should == 50
+    end
+  end
+
   it 'retrieves data from the data source' do
     return_object = Object.new
-    options = { attribute: nil, direction: nil, limit: nil }
+    options = { attribute: nil, direction: nil, limit: nil, page: nil }
     data_source.should_receive(:retrieve).with(Object, {}, options).
                 and_return([return_object])
     results = retrieval.to_a

@@ -124,6 +124,27 @@ describe Perpetuity::Mapper do
     end
   end
 
+  describe 'pagination' do
+    it 'specifies the page we want' do
+      ArticleMapper.retrieve.should respond_to :page
+    end
+
+    it 'specify the quantity per page' do
+      ArticleMapper.retrieve.should respond_to :per_page
+    end
+
+    it 'returns an empty set when there is no data for that page' do
+      data = ArticleMapper.retrieve.page(2)
+      data.should be_empty
+    end
+
+    it 'specifies per-page quantity' do
+      5.times { |i| ArticleMapper.insert Article.new i }
+      data = ArticleMapper.retrieve.page(3).per_page(2)
+      data.should have(1).item
+    end
+  end
+
   describe 'associations with other objects' do
     class Topic
       attr_accessor :title

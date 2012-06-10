@@ -1,7 +1,7 @@
 module Perpetuity
   class Retrieval
     include Enumerable
-    attr_accessor :sort_attribute, :sort_direction, :result_limit
+    attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :quantity_per_page
 
     def initialize klass, criteria, data_source = Perpetuity.configuration.data_source
       @class = klass
@@ -24,18 +24,41 @@ module Perpetuity
       retrieval
     end
 
+    def page page
+      retrieval = clone
+      retrieval.result_page = page
+      retrieval.quantity_per_page = 20
+      retrieval
+    end
+
+    def per_page per
+      retrieval = clone
+      retrieval.quantity_per_page = per
+      retrieval
+    end
+
     def each &block
       to_a.each &block
     end
 
     def to_a
-      results = @data_source.retrieve(@class, @criteria, { attribute: sort_attribute, direction: sort_direction, limit: result_limit })
+      options = {
+        attribute: sort_attribute,
+        direction: sort_direction,
+        limit: result_limit || quantity_per_page,
+        page: result_page
+      }
+      results = @data_source.retrieve(@class, @criteria, options)
       
       results
     end
 
     def [] index
       to_a[index]
+    end
+
+    def empty?
+      to_a.empty?
     end
     
     def limit lim

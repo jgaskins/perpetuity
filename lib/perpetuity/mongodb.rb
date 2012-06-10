@@ -65,6 +65,9 @@ module Perpetuity
       sort_direction = options[:direction]
       sort_criteria = [[sort_field, sort_direction]]
       other_options = { limit: options[:limit] }
+      if options[:page]
+        other_options = other_options.merge skip: (options[:page] - 1) * options[:limit]
+      end
 
       database.collection(klass.to_s).find(criteria, other_options).sort(sort_criteria).each do |document|
         object = klass.allocate
