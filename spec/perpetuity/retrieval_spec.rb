@@ -45,12 +45,12 @@ describe Perpetuity::Retrieval do
   end
 
   it 'retrieves data from the data source' do
-    return_object = Object.new
+    return_data = { id: 0, a: 1, b: 2 }
     options = { attribute: nil, direction: nil, limit: nil, page: nil }
     data_source.should_receive(:retrieve).with(Object, {}, options).
-                and_return([return_object])
+                and_return([return_data])
     results = retrieval.to_a
 
-    results.should == [return_object]
+    results.map(&:id).should == [0]
   end
 end

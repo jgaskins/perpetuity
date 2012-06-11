@@ -52,8 +52,15 @@ module Perpetuity
         page: result_page
       }
       results = @data_source.retrieve(@class, @criteria, options)
-      
-      results
+      objects = []
+      results.each do |result|
+        object = @class.allocate
+        inject_data object, result
+
+        objects << object
+      end
+
+      objects
     end
 
     def [] index

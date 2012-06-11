@@ -3,6 +3,8 @@ require 'bson'
 
 module Perpetuity
   class MongoDB
+    attr_accessor :connection, :host, :port, :db, :pool_size, :username, :password
+
     def initialize options
       @host      = options.fetch(:host, 'localhost')
       @port      = options.fetch(:port, 27017)
@@ -10,16 +12,19 @@ module Perpetuity
       @pool_size = options.fetch(:pool_size, 5)
       @username  = options[:username]
       @password  = options[:password]
-      
-      connect
-      database.authenticate(@username, @password) if @username and @password
     end
 
     def connect
+      database.authenticate(@username, @password) if @username and @password
       @connection ||= Mongo::Connection.new @host, @port, pool_size: @pool_size
     end
 
+    def connected?
+      !!@connection
+    end
+
     def database
+      connect unless connected?
       @connection.db(@db)
     end
 
@@ -37,7 +42,7 @@ module Perpetuity
     end
 
     def count klass
-      database.collection(klass.to_s).count
+      collection(klass).count
     end
 
     def delete_all klass
@@ -45,11 +50,10 @@ module Perpetuity
     end
 
     def first klass
-      data = database.collection(klass.to_s).find_one
-      object = klass.allocate
-      inject_data object, data
+      document = database.collection(klass.to_s).find_one
+      document[:id] = document.delete("_id")
 
-      object
+      document
     end
 
     def retrieve klass, criteria, options = {}

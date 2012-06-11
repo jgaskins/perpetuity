@@ -99,14 +99,24 @@ module Perpetuity
     end
 
     def self.first
-      data_source.first mapped_class
+      data = data_source.first mapped_class
+      object = mapped_class.allocate
+      inject_data object, data
+
+      object
     end
 
     def self.all
-      objects = data_source.all mapped_class
-      objects.each do |object|
-        object.define_singleton_method(:id) { @_id }
+      results = data_source.all mapped_class
+      objects = []
+      results.each do |result|
+        object = mapped_class.allocate
+        inject_data object, result
+
+        objects << object
       end
+
+      objects
     end
 
     def self.retrieve criteria={}

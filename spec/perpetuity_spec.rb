@@ -33,12 +33,26 @@ describe Perpetuity do
       article.id.should == 1
     end
 
-    it "assigns an id to persisted objects" do
-      article = Article.new
-      ArticleMapper.insert article
+    describe 'id injection' do
+      let(:article) { Article.new }
+      before do
+        ArticleMapper.insert article
+      end
 
-      [ArticleMapper.first, ArticleMapper.retrieve.first, ArticleMapper.all.first].each do |persisted_article|
-        article.id.should == persisted_article.id
+      it 'assigns an id to the inserted object' do
+        article.should respond_to :id
+      end
+
+      it "assigns an id using Mapper.first" do
+        article.id.should == ArticleMapper.first.id
+      end
+
+      it 'assigns an id using Mapper.retrieve.first' do
+        article.id.should == ArticleMapper.retrieve.first.id
+      end
+
+      it 'assigns an id using Mapper.all.first' do
+        article.id.should == ArticleMapper.all.first.id
       end
     end
 

@@ -17,6 +17,13 @@ module Perpetuity
       ArticleMapper.mapped_class.should == Article
     end
 
+    it 'gets the data from the first DB record and puts it into an object' do
+      ArticleMapper.stub(data_source: double('data_source'))
+      ArticleMapper.data_source.should_receive(:first).with(Article)
+                               .and_return title: 'Moby Dick'
+      ArticleMapper.first.title.should == 'Moby Dick'
+    end
+
     describe 'instantiation' do
       let!(:article) { Article.new(title = 'My Title') }
       let!(:mapper) { ArticleMapper.new(article) }
