@@ -34,10 +34,6 @@ module Perpetuity
       @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash, Time, Date]
     end
 
-    def serializable_types
-      self.class.serializable_types
-    end
-
     def validations
       self.class.validations
     end
@@ -64,7 +60,7 @@ module Perpetuity
       serializable_attributes[:id] = object.instance_exec(&self.class.id) unless self.class.id.nil?
 
       attributes_for(object).each_pair do |attribute, value|
-        if serializable_types.include? value.class
+        if self.class.serializable_types.include? value.class
           serializable_attributes[attribute] = value
         elsif value.respond_to?(:id)
           serializable_attributes[attribute] = value.id
