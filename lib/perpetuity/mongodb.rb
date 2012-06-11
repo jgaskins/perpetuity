@@ -70,32 +70,11 @@ module Perpetuity
       end
 
       database.collection(klass.to_s).find(criteria, other_options).sort(sort_criteria).each do |document|
-        object = klass.allocate
-        inject_data object, document
-        objects << object
+        document[:id] = document.delete("_id")
+        objects << document
       end
 
       objects
-    end
-
-    def inject_data object, data
-      data.each_pair do |attribute,value|
-        if object.respond_to?("#{attribute}=")
-          object.send("#{attribute}=", value)
-        else
-          attribute = "@#{attribute}" unless attribute[0] == '@'
-          object.instance_variable_set(attribute, value)
-        end
-        inject_id object, value
-      end
-    end
-
-    def inject_id object, id
-      object.instance_eval do
-        def id
-          @_id
-        end
-      end
     end
 
     def all klass

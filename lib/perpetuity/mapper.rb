@@ -1,9 +1,12 @@
 require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
 require 'perpetuity/validations'
+require 'perpetuity/data_injectable'
 
 module Perpetuity
   class Mapper
+    extend DataInjectable
+    include DataInjectable
     attr_accessor :object, :original_object
 
     def initialize(object = nil)
@@ -47,10 +50,6 @@ module Perpetuity
       self.class.data_source
     end
 
-    def give_id_to object, new_id
-      self.class.give_id_to object, new_id
-    end
-
     def mapped_class
       self.class.mapped_class
     end
@@ -77,10 +76,6 @@ module Perpetuity
       new_id = data_source.insert mapped_class, serializable_attributes
       give_id_to object, new_id
       new_id
-    end
-
-    def self.give_id_to object, given_id
-      object.define_singleton_method :id, -> { given_id }
     end
 
     def self.attributes_for object
