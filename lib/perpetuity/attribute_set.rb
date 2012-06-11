@@ -1,3 +1,5 @@
+require 'set'
+
 module Perpetuity
   class AttributeSet < Set
     def [] name
