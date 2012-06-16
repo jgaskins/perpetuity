@@ -9,16 +9,12 @@ describe Perpetuity do
     Perpetuity.configure { data_source mongodb }
   end
 
-  before(:each) do
-    ArticleMapper.delete_all
-  end
-
   describe 'persistence' do
     it "persists an object" do
       article = Article.new 'I have a title'
-      ArticleMapper.insert article
-      ArticleMapper.count.should == 1
-      ArticleMapper.first.title.should == 'I have a title'
+      expect { ArticleMapper.insert article }.
+        to change { ArticleMapper.count }.by 1
+      ArticleMapper.find(article.id).title.should == 'I have a title'
     end
 
     it 'returns the id of the persisted object' do
@@ -35,41 +31,38 @@ describe Perpetuity do
 
     describe 'id injection' do
       let(:article) { Article.new }
-      before do
-        ArticleMapper.insert article
-      end
 
       it 'assigns an id to the inserted object' do
+        ArticleMapper.insert article
         article.should respond_to :id
       end
 
       it "assigns an id using Mapper.first" do
-        article.id.should == ArticleMapper.first.id
+        ArticleMapper.first.should respond_to :id
       end
 
       it 'assigns an id using Mapper.retrieve.first' do
-        article.id.should == ArticleMapper.retrieve.first.id
+        ArticleMapper.retrieve.first.should respond_to :id
       end
 
       it 'assigns an id using Mapper.all.first' do
-        article.id.should == ArticleMapper.all.first.id
+        ArticleMapper.all.first.should respond_to :id
       end
     end
 
     it "allows mappers to set the id field" do
-      BookMapper.delete_all
       book = Book.new(title='My Title')
 
       BookMapper.insert book
-      BookMapper.first.id.should == 'my-title'
+      book.id.should == 'my-title'
     end
   end
 
   describe "deletion" do
     it 'deletes an object' do
       2.times { ArticleMapper.insert Article.new }
-      ArticleMapper.delete ArticleMapper.first
-      ArticleMapper.count.should == 1
+      expect { ArticleMapper.delete ArticleMapper.first }.
+        to change { ArticleMapper.count }.by -1
     end
 
     it 'deletes an object with a given id' do
@@ -90,16 +83,13 @@ describe Perpetuity do
 
   describe "retrieval" do
     it "gets all the objects of a class" do
-      ArticleMapper.insert Article.new
-      ArticleMapper.all.count.should == 1
-
-      ArticleMapper.insert Article.new
-      ArticleMapper.all.count.should == 2
+      expect { ArticleMapper.insert Article.new }.
+        to change { ArticleMapper.all.count }.by 1
     end
     
     it "has an ID when retrieved" do
       ArticleMapper.insert Article.new
-      ArticleMapper.first.id.should_not be_nil
+      ArticleMapper.first.should respond_to :id
     end
     
     it "returns a Perpetuity::Retrieval object" do
@@ -107,8 +97,8 @@ describe Perpetuity do
     end
 
     it "gets an item with a specific ID" do
-      ArticleMapper.insert Article.new
-      article = ArticleMapper.first
+      article = Article.new
+      ArticleMapper.insert article
       retrieved = ArticleMapper.find(article.id)
 
       retrieved.id.should == article.id
@@ -121,7 +111,7 @@ describe Perpetuity do
       ArticleMapper.insert article
       retrieved = ArticleMapper.retrieve(title: article.title)
 
-      retrieved.to_a.should have(1).item
+      retrieved.to_a.should_not be_empty
       retrieved.first.title.should == article.title
     end
   end
@@ -141,6 +131,7 @@ describe Perpetuity do
     end
 
     it 'specifies per-page quantity' do
+      ArticleMapper.delete_all
       5.times { |i| ArticleMapper.insert Article.new i }
       data = ArticleMapper.retrieve.page(3).per_page(2)
       data.should have(1).item
@@ -161,9 +152,6 @@ describe Perpetuity do
     let(:user) { User.new }
     let(:topic) { Topic.new }
     before do
-      TopicMapper.delete_all
-      UserMapper.delete_all
-
       user.name = 'Flump'
       topic.creator = user
       topic.title = 'Title'
@@ -173,14 +161,14 @@ describe Perpetuity do
     end
 
     it 'can reference other objects' do
-      TopicMapper.first.creator.should == user.id
+      TopicMapper.find(topic.id).creator.should == user.id
     end
 
     it 'can retrieve associated objects' do
-      topic = TopicMapper.first
+      retrieved_topic = TopicMapper.first
 
-      TopicMapper.load_association! topic, :creator
-      topic.creator.name.should == 'Flump'
+      TopicMapper.load_association! retrieved_topic, :creator
+      retrieved_topic.creator.name.should == 'Flump'
     end
   end
 
@@ -192,7 +180,7 @@ describe Perpetuity do
 
     it 'updates an object in the database' do
       ArticleMapper.update article, title: 'I has a new title!'
-      ArticleMapper.first.title.should == 'I has a new title!'
+      ArticleMapper.find(article.id).title.should == 'I has a new title!'
     end
   end
 
@@ -205,7 +193,7 @@ describe Perpetuity do
 
       mapper.save
 
-      ArticleMapper.first.title.should == 'My New Title'
+      ArticleMapper.find(article.id).title.should == 'My New Title'
     end
 
     it 'inserts objects into the DB when instantiated' do
@@ -242,11 +230,9 @@ describe Perpetuity do
 
   # The Message class stores its data members differently internally than it receives them
   it 'uses accessor methods to read/write data' do
-    MessageMapper.delete_all
-
     message = Message.new 'My Message!'
     MessageMapper.insert message
-    saved_message = MessageMapper.first
+    saved_message = MessageMapper.find(message.id)
     saved_message.instance_variable_get(:@text).should == 'My Message!'.reverse
     saved_message.text.should == 'My Message!'
   end
