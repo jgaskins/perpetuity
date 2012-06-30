@@ -6,7 +6,7 @@ module Perpetuity
   describe Mapper do
     it 'has correct attributes' do
       UserMapper.attributes.should == [:name]
-      ArticleMapper.attributes.should == [:title, :body]
+      ArticleMapper.attributes.should == [:title, :body, :comments]
     end
 
     it 'returns an empty attribute list when no attributes have been assigned' do
@@ -22,6 +22,38 @@ module Perpetuity
       ArticleMapper.data_source.should_receive(:first).with(Article)
                                .and_return title: 'Moby Dick'
       ArticleMapper.first.title.should == 'Moby Dick'
+    end
+
+    context 'with unserializable attributes' do
+      let(:serialized_attrs) do
+        [
+          {
+            type: :object,
+            class: 'Comment',
+            attributes: {
+              body: 'Body',
+            }
+          }
+        ]
+      end
+
+      it 'serializes attributes' do
+        article = Article.new
+        article.comments = [Comment.new]
+        ArticleMapper.attributes_for(article)[:comments].should == serialized_attrs
+      end
+
+      describe 'unserializes attributes' do
+        let(:comments) { Mapper.unserialize(serialized_attrs)  }
+        subject { comments.first }
+
+        it { should be_a Comment }
+        its(:body) { should == 'Body' }
+      end
+    end
+
+    it 'knows which mapper is needed for other classes' do
+      Mapper.mapper_for(Article).should be ArticleMapper
     end
 
     describe 'instantiation' do

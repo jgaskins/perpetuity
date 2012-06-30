@@ -80,9 +80,48 @@ module Perpetuity
     def self.attributes_for object
       attrs = {}
       attribute_set.each do |attrib|
-        attrs[attrib.name] = object.send(attrib.name)
+        value = object.send(attrib.name)
+
+        if attrib.type == Array
+          new_array = []
+          value.each do |i|
+            if serializable_types.include? i.class
+              new_array << i
+            else
+              new_array << {
+                :type => :object,
+                :class => i.class.to_s,
+                attributes: mapper_for(i.class).attributes_for(i)
+              }
+            end
+          end
+
+          attrs[attrib.name] = new_array
+        else
+          attrs[attrib.name] = value
+        end
       end
       attrs
+    end
+
+    def self.unserialize(data)
+      if data.is_a?(Hash) && data.keys.map(&:to_s) == %w( type class attributes )
+        klass = Module.const_get(data[:class] || data["class"])
+        object = klass.allocate
+        inject_data object, (data[:attributes] || data["attributes"])
+
+        object
+      elsif data.is_a? Array
+        data.map { |i| unserialize i }
+      elsif data.is_a? Hash
+        Hash[data.map{|k,v| [k, unserialize(v)]}]
+      else
+        data
+      end
+    end
+
+    def self.mapper_for klass
+      Module.const_get "#{klass}Mapper"
     end
 
     def self.data_source

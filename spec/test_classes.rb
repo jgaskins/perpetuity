@@ -1,13 +1,26 @@
 class Article
-  attr_accessor :title, :body
+  attr_accessor :title, :body, :comments
   def initialize title="Title", body="Body", author=nil
     @title = title
     @body = body
+    @comments = []
   end
 end
 
 class ArticleMapper < Perpetuity::Mapper
   attribute :title, String
+  attribute :body, String
+  attribute :comments, Array
+end
+
+class Comment
+  attr_reader :body
+  def initialize body='Body'
+    @body = body
+  end
+end
+
+class CommentMapper < Perpetuity::Mapper
   attribute :body, String
 end
 

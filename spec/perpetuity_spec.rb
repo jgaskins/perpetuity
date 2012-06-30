@@ -50,6 +50,26 @@ describe Perpetuity do
       end
     end
 
+    describe 'persisting arrays' do
+      let(:article) { Article.new }
+
+      it 'persists arrays' do
+        article.comments << 1 << 2 << 3
+        ArticleMapper.insert article
+        ArticleMapper.find(article.id).comments.should == [1, 2, 3]
+      end
+
+      it 'persists arrays with unserializable objects in them' do
+        comment = Comment.new('my comment')
+        article.comments << comment
+        ArticleMapper.insert article
+        ArticleMapper.find(article.id).comments.first.tap do |persisted_comment|
+          persisted_comment.should be_a Comment
+          persisted_comment.body.should == comment.body
+        end
+      end
+    end
+
     it "allows mappers to set the id field" do
       book = Book.new(title='My Title')
 
