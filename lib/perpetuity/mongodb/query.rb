@@ -1,0 +1,19 @@
+require 'perpetuity/mongodb/query_attribute'
+
+module Perpetuity
+  class MongoDB
+    class Query
+      def initialize &block
+        @query = instance_exec &block
+      end
+
+      def to_db
+        @query.to_db
+      end
+
+      def method_missing missing_method
+        QueryAttribute.new missing_method
+      end
+    end
+  end
+end

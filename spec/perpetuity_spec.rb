@@ -134,6 +134,63 @@ describe Perpetuity do
       retrieved.to_a.should_not be_empty
       retrieved.first.title.should == article.title
     end
+
+    describe "Array-like syntax" do
+      let(:draft) { Article.new 'Draft', 'draft content', nil, Time.now + 30 }
+      let(:published) { Article.new 'Published', 'content', nil, Time.now - 30, 3 }
+      before do
+        ArticleMapper.insert draft
+        ArticleMapper.insert published
+      end
+
+      it 'selects objects using equality' do
+        selected = ArticleMapper.select { title == 'Published' }
+        selected.map(&:id).should include published.id
+        selected.map(&:id).should_not include draft.id
+      end
+
+      it 'selects objects using greater-than' do
+        selected = ArticleMapper.select { published_at < Time.now }
+        ids = selected.map(&:id)
+        ids.should include published.id
+        ids.should_not include draft.id
+      end
+
+      it 'selects objects using greater-than-or-equal' do
+        selected = ArticleMapper.select { views >= 3 }
+        ids = selected.map(&:id)
+        ids.should include published.id
+        ids.should_not include draft.id
+      end
+
+      it 'selects objects using less-than' do
+        selected = ArticleMapper.select { views < 3 }
+        ids = selected.map(&:id)
+        ids.should include draft.id
+        ids.should_not include published.id
+      end
+
+      it 'selects objects using less-than-or-equal' do
+        selected = ArticleMapper.select { views <= 0 }
+        ids = selected.map(&:id)
+        ids.should include draft.id
+        ids.should_not include published.id
+      end
+
+      it 'selects objects using inequality' do
+        selected = ArticleMapper.select { title.not_equal? 'Draft' }
+        ids = selected.map(&:id)
+        ids.should_not include draft.id
+        ids.should include published.id
+      end
+
+      it 'selects objects using regular expressions' do
+        selected = ArticleMapper.select { title =~ /Pub/ }
+        ids = selected.map(&:id)
+        ids.should include published.id
+        ids.should_not include draft.id
+      end
+    end
   end
 
   describe 'pagination' do

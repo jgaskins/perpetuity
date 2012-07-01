@@ -2,6 +2,7 @@ require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
+require 'perpetuity/mongodb/query'
 
 module Perpetuity
   class Mapper
@@ -159,6 +160,11 @@ module Perpetuity
 
     def self.retrieve criteria={}
       Perpetuity::Retrieval.new mapped_class, criteria
+    end
+
+    def self.select &block
+      query = data_source.class::Query.new(&block).to_db
+      retrieve query
     end
 
     def self.find id
