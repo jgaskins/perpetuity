@@ -6,7 +6,7 @@ module Perpetuity
   describe Mapper do
     it 'has correct attributes' do
       UserMapper.attributes.should == [:name]
-      ArticleMapper.attributes.should == [:title, :body, :comments]
+      ArticleMapper.attributes.should == [:title, :body, :comments, :published_at, :views]
     end
 
     it 'returns an empty attribute list when no attributes have been assigned' do
