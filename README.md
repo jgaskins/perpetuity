@@ -58,26 +58,20 @@ You can load all persisted objects of a particular class by invoking the `all` m
 ArticleMapper.all
 ```
 
-You can load specific objects by calling the `retrieve` method (or `find` with an ID param) on that class's mapper class and passing in the criteria.
+You can load specific objects by calling the `find` method with an ID param on that class's mapper class and passing in the criteria. You may also specify more general criteria using the `select` method with a block similar to `Enumerable#select`.
 
 ```ruby
 article = ArticleMapper.find params[:id]
-user = UserMapper.retrieve(email: 'user@example.com').first
-```
-
-So far, the query interface is too simple. What I'd like to have it able to do would be something like the following:
-
-```ruby
-users = UserMapper.retrieve post_count: { greater_than: 100, less_than: 1000 }
-articles = ArticleMapper.retrieve tags: { includes: ['ruby', 'rails'] }
-comments = CommentMapper.retrieve article_id: { in: articles.map(&:id) }
+users = UserMapper.select { email == 'me@example.com' }
+articles = ArticleMapper.select { published_at < Time.now }
+comments = CommentMapper.select { article_id.in articles.map(&:id) }
 ```
 
 This will return a Perpetuity::Retrieval object, which will lazily retrieve the objects from the database. They will wait to hit the DB when you begin iterating over the objects so you can continue chaining methods.
 
 ```ruby
-articles = ArticleMapper.retrieve(published: false).or(views: { less_than: 10 })
-articles = articles.sort(:date_published).reverse
+articles = ArticleMapper.select { published_at < Time.now }
+articles = articles.sort(:published_at).reverse
 articles = articles.page(2).per_page(10) # built-in pagination
 
 articles.each do |article| # This is when the DB gets hit
