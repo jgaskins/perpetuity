@@ -4,7 +4,7 @@ module Perpetuity
   class MongoDB
     class Query
       def initialize &block
-        @query = instance_exec &block
+        @query = instance_exec(&block)
       end
 
       def to_db

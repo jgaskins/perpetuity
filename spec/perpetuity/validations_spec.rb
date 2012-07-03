@@ -38,7 +38,7 @@ module Perpetuity
         valid_object.stub(email: 'me@example.com')
         validation_set.present :email
 
-        validation_set.count.should == 1
+        validation_set.count.should eq 1
         validation_set.should be_valid(valid_object)
       end
 
@@ -47,7 +47,7 @@ module Perpetuity
         validation_set.length :email, at_most: 14
         validation_set.length :email, at_least: 14
 
-        validation_set.count.should == 2
+        validation_set.count.should eq 2
         validation_set.should be_valid(valid_object)
       end
 
@@ -71,7 +71,7 @@ module Perpetuity
         invalid_object.stub(email: 'foo')
         validation_set.length :email, at_least: 4
 
-        validation_set.count.should == 1
+        validation_set.count.should eq 1
         validation_set.should be_invalid(invalid_object)
       end
 
@@ -79,7 +79,7 @@ module Perpetuity
         invalid_object.stub(email: 'me@example.com')
         subject.length :email, at_most: 4
 
-        subject.count.should == 1
+        subject.count.should eq 1
         subject.should be_invalid(invalid_object)
       end
     end

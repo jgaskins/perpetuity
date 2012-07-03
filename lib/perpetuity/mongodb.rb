@@ -6,12 +6,13 @@ module Perpetuity
     attr_accessor :connection, :host, :port, :db, :pool_size, :username, :password
 
     def initialize options
-      @host      = options.fetch(:host, 'localhost')
-      @port      = options.fetch(:port, 27017)
-      @db        = options.fetch(:db)
-      @pool_size = options.fetch(:pool_size, 5)
-      @username  = options[:username]
-      @password  = options[:password]
+      @host       = options.fetch(:host, 'localhost')
+      @port       = options.fetch(:port, 27017)
+      @db         = options.fetch(:db)
+      @pool_size  = options.fetch(:pool_size, 5)
+      @username   = options[:username]
+      @password   = options[:password]
+      @connection = nil
     end
 
     def connect

@@ -9,7 +9,7 @@ module Perpetuity
           object.instance_variable_set(attribute, value)
         end
       end
-      give_id_to object if object.instance_variable_get(:@id)
+      give_id_to object if object.instance_variables.include?(:@id)
     end
 
     def give_id_to object, *args

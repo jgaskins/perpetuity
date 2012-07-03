@@ -57,7 +57,9 @@ module Perpetuity
     def insert
       raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
       serializable_attributes = {}
-      serializable_attributes[:id] = object.instance_exec(&self.class.id) unless self.class.id.nil?
+      if o_id = object.instance_exec(&self.class.id)
+        serializable_attributes[:id] = o_id
+      end
 
       attributes_for(object).each_pair do |attribute, value|
         if self.class.serializable_types.include? value.class
@@ -188,7 +190,7 @@ module Perpetuity
       if block_given?
         @id = block
       else
-        @id
+        @id ||= -> { nil }
       end
     end
 
@@ -201,7 +203,7 @@ module Perpetuity
     def self.validate &block
       @validations ||= ValidationSet.new
 
-      validations.instance_exec &block
+      validations.instance_exec(&block)
     end
 
     def self.validations

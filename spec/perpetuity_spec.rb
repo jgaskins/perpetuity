@@ -14,19 +14,19 @@ describe Perpetuity do
       article = Article.new 'I have a title'
       expect { ArticleMapper.insert article }.
         to change { ArticleMapper.count }.by 1
-      ArticleMapper.find(article.id).title.should == 'I have a title'
+      ArticleMapper.find(article.id).title.should eq 'I have a title'
     end
 
     it 'returns the id of the persisted object' do
       article = Article.new
-      ArticleMapper.insert(article).should == article.id
+      ArticleMapper.insert(article).should eq article.id
     end
 
     it "gives an id to objects" do
       article = Article.new
       ArticleMapper.give_id_to article, 1
 
-      article.id.should == 1
+      article.id.should eq 1
     end
 
     describe 'id injection' do
@@ -56,7 +56,7 @@ describe Perpetuity do
       it 'persists arrays' do
         article.comments << 1 << 2 << 3
         ArticleMapper.insert article
-        ArticleMapper.find(article.id).comments.should == [1, 2, 3]
+        ArticleMapper.find(article.id).comments.should eq [1, 2, 3]
       end
 
       it 'persists arrays with unserializable objects in them' do
@@ -65,38 +65,37 @@ describe Perpetuity do
         ArticleMapper.insert article
         ArticleMapper.find(article.id).comments.first.tap do |persisted_comment|
           persisted_comment.should be_a Comment
-          persisted_comment.body.should == comment.body
+          persisted_comment.body.should eq comment.body
         end
       end
     end
 
     it "allows mappers to set the id field" do
-      book = Book.new(title='My Title')
+      book = Book.new('My Title')
 
       BookMapper.insert book
-      book.id.should == 'my-title'
+      book.id.should eq 'my-title'
     end
   end
 
   describe "deletion" do
     it 'deletes an object' do
       2.times { ArticleMapper.insert Article.new }
-      expect { ArticleMapper.delete ArticleMapper.first }.
-        to change { ArticleMapper.count }.by -1
+      expect { ArticleMapper.delete ArticleMapper.first }.to change { ArticleMapper.count }.by(-1)
     end
 
     it 'deletes an object with a given id' do
       article_id = ArticleMapper.insert Article.new
       expect {
         ArticleMapper.delete article_id
-      }.to change { ArticleMapper.count }.by -1
+      }.to change { ArticleMapper.count }.by(-1)
     end
     
     describe "#delete_all" do
       it "should delete all objects of a certain class" do
         ArticleMapper.insert Article.new
         ArticleMapper.delete_all
-        ArticleMapper.count.should == 0
+        ArticleMapper.count.should eq 0
       end
     end
   end
@@ -121,9 +120,9 @@ describe Perpetuity do
       ArticleMapper.insert article
       retrieved = ArticleMapper.find(article.id)
 
-      retrieved.id.should == article.id
-      retrieved.title.should == article.title
-      retrieved.body.should == article.body
+      retrieved.id.should eq article.id
+      retrieved.title.should eq article.title
+      retrieved.body.should eq article.body
     end
 
     it "gets an item by its attributes" do
@@ -132,7 +131,7 @@ describe Perpetuity do
       retrieved = ArticleMapper.retrieve(title: article.title)
 
       retrieved.to_a.should_not be_empty
-      retrieved.first.title.should == article.title
+      retrieved.first.title.should eq article.title
     end
 
     describe "Array-like syntax" do
@@ -238,14 +237,14 @@ describe Perpetuity do
     end
 
     it 'can reference other objects' do
-      TopicMapper.find(topic.id).creator.should == user.id
+      TopicMapper.find(topic.id).creator.should eq user.id
     end
 
     it 'can retrieve associated objects' do
       retrieved_topic = TopicMapper.first
 
       TopicMapper.load_association! retrieved_topic, :creator
-      retrieved_topic.creator.name.should == 'Flump'
+      retrieved_topic.creator.name.should eq 'Flump'
     end
   end
 
@@ -257,12 +256,12 @@ describe Perpetuity do
 
     it 'updates an object in the database' do
       ArticleMapper.update article, title: 'I has a new title!'
-      ArticleMapper.find(article.id).title.should == 'I has a new title!'
+      ArticleMapper.find(article.id).title.should eq 'I has a new title!'
     end
   end
 
   describe 'instantiation' do
-    let!(:article) { Article.new(title = 'My Title') }
+    let!(:article) { Article.new('My Title') }
     let!(:mapper) { ArticleMapper.new(article) }
     it 'saves data that has changed since last loaded' do
       ArticleMapper.insert article
@@ -270,7 +269,7 @@ describe Perpetuity do
 
       mapper.save
 
-      ArticleMapper.find(article.id).title.should == 'My New Title'
+      ArticleMapper.find(article.id).title.should eq 'My New Title'
     end
 
     it 'inserts objects into the DB when instantiated' do
@@ -310,7 +309,7 @@ describe Perpetuity do
     message = Message.new 'My Message!'
     MessageMapper.insert message
     saved_message = MessageMapper.find(message.id)
-    saved_message.instance_variable_get(:@text).should == 'My Message!'.reverse
-    saved_message.text.should == 'My Message!'
+    saved_message.instance_variable_get(:@text).should eq 'My Message!'.reverse
+    saved_message.text.should eq 'My Message!'
   end
 end

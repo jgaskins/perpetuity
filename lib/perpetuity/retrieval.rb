@@ -41,7 +41,7 @@ module Perpetuity
     end
 
     def each &block
-      to_a.each &block
+      to_a.each(&block)
     end
 
     def to_a

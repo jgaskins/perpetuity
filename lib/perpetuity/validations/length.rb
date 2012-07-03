@@ -3,6 +3,8 @@ module Perpetuity
     class Length
       def initialize attribute, options
         @attribute = attribute
+        @at_least  = nil
+        @at_most   = nil
         options.each do |option, value|
           send option, value
         end

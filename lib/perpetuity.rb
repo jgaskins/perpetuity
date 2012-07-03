@@ -6,7 +6,7 @@ require "perpetuity/mapper"
 
 module Perpetuity
   def self.configure &block
-    configuration.instance_exec &block  
+    configuration.instance_exec(&block)
   end
   
   def self.configuration
