@@ -267,23 +267,6 @@ describe Perpetuity do
     end
   end
 
-  describe 'instantiation' do
-    let!(:article) { Article.new('My Title') }
-    let!(:mapper) { ArticleMapper.new(article) }
-    it 'saves data that has changed since last loaded' do
-      ArticleMapper.insert article
-      article.title = 'My New Title'
-
-      mapper.save
-
-      ArticleMapper.find(article.id).title.should eq 'My New Title'
-    end
-
-    it 'inserts objects into the DB when instantiated' do
-      expect { mapper.insert }.to change { mapper.class.count }.by(1)
-    end
-  end
-
   describe 'validations' do
     class Car
       attr_accessor :make, :model, :seats

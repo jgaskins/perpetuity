@@ -9,11 +9,6 @@ module Perpetuity
     extend DataInjectable
     attr_accessor :object, :original_object
 
-    def initialize(object = nil)
-      @object = object
-      @original_object = object.dup
-    end
-
     def self.attribute_set
       @attribute_set ||= AttributeSet.new
     end
@@ -34,35 +29,15 @@ module Perpetuity
       @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash, Time, Date]
     end
 
-    def validations
-      self.class.validations
-    end
-
-    def attributes_for object
-      self.class.attributes_for object
-    end
-
-    def data_source
-      self.class.data_source
-    end
-
-    def mapped_class
-      self.class.mapped_class
-    end
-
     def self.insert object
-      new(object).insert
-    end
-
-    def insert
       raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
       serializable_attributes = {}
-      if o_id = object.instance_exec(&self.class.id)
+      if o_id = object.instance_exec(&id)
         serializable_attributes[:id] = o_id
       end
 
       attributes_for(object).each_pair do |attribute, value|
-        if self.class.serializable_types.include? value.class
+        if serializable_types.include? value.class
           serializable_attributes[attribute] = value
         elsif value.respond_to?(:id)
           serializable_attributes[attribute] = value.id
@@ -72,12 +47,8 @@ module Perpetuity
       end
 
       new_id = data_source.insert mapped_class, serializable_attributes
-      give_id new_id
+      give_id_to object, new_id
       new_id
-    end
-
-    def give_id new_id
-      self.class.give_id_to object, new_id
     end
 
     def self.attributes_for object
@@ -208,22 +179,6 @@ module Perpetuity
 
     def self.validations
       @validations ||= ValidationSet.new
-    end
-
-    def changed_attributes
-      changes = {}
-
-      self.class.attributes.each do |attribute|
-        unless object.send(attribute) == original_object.send(attribute)
-          changes[attribute] = object.send(attribute)
-        end
-      end
-
-      changes
-    end
-
-    def save
-      self.class.update object, changed_attributes
     end
   end
 end
