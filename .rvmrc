@@ -1,1 +1,1 @@
-rvm use ruby-perf@perpetuity --create
+rvm use @perpetuity --create
