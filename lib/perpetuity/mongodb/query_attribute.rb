@@ -37,6 +37,10 @@ module Perpetuity
         QueryExpression.new self, :matches, regexp
       end
 
+      def in collection
+        QueryExpression.new self, :in, collection
+      end
+
       def to_sym
         name
       end

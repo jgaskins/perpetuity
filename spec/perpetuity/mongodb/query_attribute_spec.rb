@@ -35,5 +35,9 @@ module Perpetuity
     it 'checks for regexp matches' do
       (attribute =~ /value/).should be_a MongoDB::QueryExpression
     end
+
+    it 'checks for inclusion' do
+      (attribute.in [1, 2, 3]).should be_a MongoDB::QueryExpression
+    end
   end
 end

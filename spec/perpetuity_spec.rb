@@ -189,6 +189,13 @@ describe Perpetuity do
         ids.should include published.id
         ids.should_not include draft.id
       end
+
+      it 'selects objects using inclusion' do
+        selected = ArticleMapper.select { title.in %w( Published ) }
+        ids = selected.map(&:id)
+        ids.should include published.id
+        ids.should_not include draft.id
+      end
     end
   end
 
