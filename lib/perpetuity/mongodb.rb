@@ -62,8 +62,12 @@ module Perpetuity
 
       # MongoDB uses '_id' as its ID field.
       if criteria.has_key?(:id)
-        criteria[:_id] = criteria[:id]
-        criteria.delete :id
+        criteria = {
+          '$or' => [
+            { _id: BSON::ObjectId.from_string(criteria[:id].to_s) },
+            { _id: criteria[:id].to_s }
+          ]
+        }
       end
 
       sort_field = options[:attribute]

@@ -81,5 +81,12 @@ module Perpetuity
            .and_return(values)
       mongo.all(Object).should == values
     end
+
+    it 'retrieves by id if the id is a string' do
+      time = Time.now.utc
+      id = mongo.insert Article, {inserted: time}
+      objects = mongo.retrieve(Article, id: id.to_s).to_a
+      objects.map{|i| i["inserted"].to_f}.first.should be_within(0.001).of time.to_f
+    end
   end
 end
