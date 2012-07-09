@@ -12,7 +12,7 @@ end
 class ArticleMapper < Perpetuity::Mapper
   attribute :title, String
   attribute :body, String
-  attribute :comments, Array
+  attribute :comments, Array, embedded: true
   attribute :published_at, Time
   attribute :views, Integer
 end

@@ -13,8 +13,8 @@ module Perpetuity
       @attribute_set ||= AttributeSet.new
     end
 
-    def self.attribute name, type
-      attribute_set << Attribute.new(name, type)
+    def self.attribute name, type, options = {}
+      attribute_set << Attribute.new(name, type, options)
     end
 
     def self.attributes
@@ -62,11 +62,11 @@ module Perpetuity
             if serializable_types.include? i.class
               new_array << i
             else
-              new_array << {
-                :type => :object,
-                :class => i.class.to_s,
-                attributes: mapper_for(i.class).attributes_for(i)
-              }
+              if attrib.embedded?
+                new_array << Marshal.dump(i)
+              else
+                new_array << i.id
+              end
             end
           end
 
@@ -79,12 +79,8 @@ module Perpetuity
     end
 
     def self.unserialize(data)
-      if data.is_a?(Hash) && data.keys.map(&:to_s) == %w( type class attributes )
-        klass = Module.const_get(data[:class] || data["class"])
-        object = klass.allocate
-        inject_data object, (data[:attributes] || data["attributes"])
-
-        object
+      if data.is_a?(String) && data.start_with?("\u0004")
+        Marshal.load(data)
       elsif data.is_a? Array
         data.map { |i| unserialize i }
       elsif data.is_a? Hash

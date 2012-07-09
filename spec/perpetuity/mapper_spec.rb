@@ -13,6 +13,10 @@ module Perpetuity
       EmptyMapper.attributes.should be_empty
     end
 
+    it 'can have embedded attributes' do
+      ArticleMapper.attribute_set[:comments].should be_embedded
+    end
+
     it "knows which class it maps" do
       ArticleMapper.mapped_class.should eq Article
     end
@@ -26,15 +30,7 @@ module Perpetuity
 
     context 'with unserializable attributes' do
       let(:serialized_attrs) do
-        [
-          {
-            type: :object,
-            class: 'Comment',
-            attributes: {
-              body: 'Body',
-            }
-          }
-        ]
+        [ Marshal.dump(Comment.new) ]
       end
 
       it 'serializes attributes' do
