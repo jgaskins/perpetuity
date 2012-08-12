@@ -1,4 +1,3 @@
-$:.unshift('lib').uniq!
 require 'perpetuity/mapper'
 require 'test_classes'
 

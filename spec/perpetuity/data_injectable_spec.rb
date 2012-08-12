@@ -1,4 +1,3 @@
-$:.unshift('lib').uniq!
 require 'perpetuity/data_injectable'
 
 module Perpetuity

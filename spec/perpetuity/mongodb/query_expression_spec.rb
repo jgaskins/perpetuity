@@ -1,4 +1,3 @@
-$:.unshift('lib').uniq!
 require 'perpetuity/mongodb/query_expression'
 
 module Perpetuity

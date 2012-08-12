@@ -1,4 +1,3 @@
-$:.unshift('lib').uniq!
 require 'perpetuity/config'
 
 module Perpetuity
