@@ -13,13 +13,8 @@ module Perpetuity
     end
 
     def give_id_to object, *args
-      if args.any?
-        id = args.pop
-        object.define_singleton_method(:id) { id }
-      else
-        def object.id
-          @id
-        end
+      object.define_singleton_method :id do
+        args.first || object.instance_variable_get(:@id)
       end
     end
   end
