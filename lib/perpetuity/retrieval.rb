@@ -1,4 +1,5 @@
 require 'perpetuity/data_injectable'
+require 'perpetuity/mapper'
 
 module Perpetuity
   class Retrieval
