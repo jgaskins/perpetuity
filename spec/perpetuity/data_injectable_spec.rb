@@ -1,13 +1,11 @@
 require 'perpetuity/data_injectable'
 
 module Perpetuity
-  class InjectableClass
-    extend DataInjectable
-  end
-
   describe DataInjectable do
-    let(:klass) { InjectableClass }
+    let(:klass) { Class.new }
     let(:object) { klass.new }
+
+    before { klass.extend DataInjectable }
 
     it 'injects data into an object' do
       klass.inject_data object, { a: 1, b: 2 }
