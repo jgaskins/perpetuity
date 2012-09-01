@@ -17,10 +17,8 @@ module Perpetuity
         id = args.pop
         object.define_singleton_method(:id) { id }
       else
-        object.instance_exec do
-          def id
-            @id
-          end
+        def object.id
+          @id
         end
       end
     end
