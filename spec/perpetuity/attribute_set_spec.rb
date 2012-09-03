@@ -1,19 +1,19 @@
 require 'perpetuity/attribute_set'
-require 'perpetuity/attribute'
 
 module Perpetuity
   describe AttributeSet do
     it 'contains attributes' do
-      subject << Attribute.new(:article, Object)
-      subject.first.name.should eq :article
-      subject.first.type.should eq Object
+      attribute = double('Attribute')
+      subject << attribute
+
+      subject.first.should eq attribute
     end
 
     it 'can access attributes by name' do
-      subject << Attribute.new(:article, Object)
-      subject << Attribute.new(:user, Object)
+      user_attribute = double('Attribute', name: :user)
+      subject << user_attribute
 
-      subject[:user].type.should eq Object
+      subject[:user].should eq user_attribute
     end
   end
 end
