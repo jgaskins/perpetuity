@@ -2,7 +2,7 @@ require 'perpetuity/attribute'
 
 module Perpetuity
   describe Attribute do
-    subject { Perpetuity::Attribute.new :article, Object }
+    subject { Attribute.new :article, Object }
     it 'has a name' do
       subject.name.should == :article
     end
@@ -12,7 +12,7 @@ module Perpetuity
     end
 
     it 'can be embedded' do
-      attribute = Perpetuity::Attribute.new :article, Object, embedded: true
+      attribute = Attribute.new :article, Object, embedded: true
       attribute.should be_embedded
     end
   end
