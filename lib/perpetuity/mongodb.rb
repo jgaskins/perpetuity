@@ -1,5 +1,4 @@
 require 'mongo'
-require 'bson'
 
 module Perpetuity
   class MongoDB
