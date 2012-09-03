@@ -44,7 +44,7 @@ module Perpetuity
     end
 
     it 'knows which mapper is needed for other classes' do
-      Mapper.mapper_for(Article).should be ArticleMapper
+      Mapper[Article].should be ArticleMapper
     end
   end
 end

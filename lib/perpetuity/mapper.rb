@@ -90,7 +90,7 @@ module Perpetuity
       end
     end
 
-    def self.mapper_for klass
+    def self.[] klass
       Module.const_get "#{klass}Mapper"
     end
 
