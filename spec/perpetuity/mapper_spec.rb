@@ -3,28 +3,24 @@ require 'test_classes'
 
 module Perpetuity
   describe Mapper do
+    let(:mapper) { Class.new(Mapper) }
+
     it 'has correct attributes' do
-      UserMapper.attributes.should eq [:name]
-      ArticleMapper.attributes.should eq [:title, :body, :comments, :published_at, :views]
+      mapper.attribute :name, String
+      mapper.attributes.should eq [:name]
     end
 
     it 'returns an empty attribute list when no attributes have been assigned' do
-      EmptyMapper.attributes.should be_empty
+      mapper.attributes.should be_empty
     end
 
     it 'can have embedded attributes' do
-      ArticleMapper.attribute_set[:comments].should be_embedded
+      mapper.attribute :comments, Array, embedded: true
+      mapper.attribute_set[:comments].should be_embedded
     end
 
     it "knows which class it maps" do
       ArticleMapper.mapped_class.should eq Article
-    end
-
-    it 'gets the data from the first DB record and puts it into an object' do
-      ArticleMapper.stub(data_source: double('data_source'))
-      ArticleMapper.data_source.should_receive(:first).with(Article)
-                               .and_return title: 'Moby Dick'
-      ArticleMapper.first.title.should eq 'Moby Dick'
     end
 
     context 'with unserializable attributes' do
