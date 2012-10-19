@@ -3,25 +3,25 @@ require 'test_classes'
 
 module Perpetuity
   describe Mapper do
-    let(:mapper) { Class.new(Mapper) }
+    let(:mapper) { Mapper[Article] }
+    subject { mapper }
+
+    it { should be_a Mapper }
 
     it 'has correct attributes' do
-      mapper.attribute :name, String
-      mapper.attributes.should eq [:name]
+      Mapper.new { attribute :name, String }.attributes.should eq [:name]
     end
 
     it 'returns an empty attribute list when no attributes have been assigned' do
-      mapper.attributes.should be_empty
+      Mapper.new.attributes.should be_empty
     end
 
     it 'can have embedded attributes' do
-      mapper.attribute :comments, Array, embedded: true
-      mapper.attribute_set[:comments].should be_embedded
+      mapper_with_embedded_attrs = Mapper.new { attribute :comments, Array, embedded: true }
+      mapper_with_embedded_attrs.attribute_set[:comments].should be_embedded
     end
 
-    it "knows which class it maps" do
-      ArticleMapper.mapped_class.should eq Article
-    end
+    its(:mapped_class) { should eq Article }
 
     context 'with unserializable attributes' do
       let(:serialized_attrs) do
@@ -31,20 +31,16 @@ module Perpetuity
       it 'serializes attributes' do
         article = Article.new
         article.comments = [Comment.new]
-        ArticleMapper.attributes_for(article)[:comments].should eq serialized_attrs
+        mapper.attributes_for(article)[:comments].should eq serialized_attrs
       end
 
       describe 'unserializes attributes' do
-        let(:comments) { Mapper.unserialize(serialized_attrs)  }
+        let(:comments) { mapper.unserialize(serialized_attrs)  }
         subject { comments.first }
 
         it { should be_a Comment }
         its(:body) { should eq 'Body' }
       end
-    end
-
-    it 'knows which mapper is needed for other classes' do
-      Mapper[Article].should be ArticleMapper
     end
   end
 end

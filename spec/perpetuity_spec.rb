@@ -221,35 +221,28 @@ describe Perpetuity do
   end
 
   describe 'associations with other objects' do
-    class Topic
-      attr_accessor :title
-      attr_accessor :creator
-    end
-
-    class TopicMapper < Perpetuity::Mapper
-      attribute :title, String
-      attribute :creator, User
-    end
-
     let(:user) { User.new }
     let(:topic) { Topic.new }
+    let(:user_mapper) { Perpetuity::Mapper[User] }
+    let(:topic_mapper) { Perpetuity::Mapper[Topic] }
+
     before do
       user.name = 'Flump'
       topic.creator = user
       topic.title = 'Title'
 
-      Perpetuity::Mapper[User].insert user
-      Perpetuity::Mapper[Topic].insert topic
+      user_mapper.insert user
+      topic_mapper.insert topic
     end
 
     it 'can reference other objects' do
-      Perpetuity::Mapper[Topic].find(topic.id).creator.should eq user.id
+      topic_mapper.find(topic.id).creator.should eq user.id
     end
 
     it 'can retrieve associated objects' do
-      retrieved_topic = Perpetuity::Mapper[Topic].first
+      retrieved_topic = topic_mapper.first
 
-      Perpetuity::Mapper[Topic].load_association! retrieved_topic, :creator
+      topic_mapper.load_association! retrieved_topic, :creator
       retrieved_topic.creator.name.should eq 'Flump'
     end
   end
@@ -267,29 +260,17 @@ describe Perpetuity do
   end
 
   describe 'validations' do
-    class Car
-      attr_accessor :make, :model, :seats
-    end
-
-    class CarMapper < Perpetuity::Mapper
-      attribute :make, String
-      attribute :model, String
-      attribute :seats, Integer
-
-      validate do
-        present :make
-      end
-    end
+    let(:car_mapper) { Perpetuity::Mapper[Car] }
 
     it 'raises an exception when inserting an invalid object' do
       car = Car.new
-      expect { Perpetuity::Mapper[Car].insert car }.to raise_error
+      expect { car_mapper.insert car }.to raise_error
     end
 
     it 'does not raise an exception when validations are met' do
       car = Car.new
       car.make = "Volkswagen"
-      expect { Perpetuity::Mapper[Car].insert car }.not_to raise_error
+      expect { car_mapper.insert car }.not_to raise_error
     end
   end
 

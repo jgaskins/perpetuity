@@ -56,7 +56,7 @@ module Perpetuity
       objects = []
       results.each do |result|
         object = @class.allocate
-        inject_data object, Mapper.unserialize(result)
+        inject_data object, Mapper.new.unserialize(result)
 
         objects << object
       end

@@ -6,30 +6,44 @@ require 'perpetuity/mongodb/query'
 
 module Perpetuity
   class Mapper
-    extend DataInjectable
+    include DataInjectable
     attr_accessor :object, :original_object
 
-    def self.attribute_set
+    def initialize(klass=Object, &block)
+      @mapped_class = klass
+      instance_exec &block if block_given?
+    end
+
+    def self.generate_for(klass=Object, &block)
+      mapper = new(klass, &block)
+      mappers[klass] = mapper
+    end
+
+    def self.mappers
+      @mappers ||= {}
+    end
+
+    def attribute_set
       @attribute_set ||= AttributeSet.new
     end
 
-    def self.attribute name, type, options = {}
+    def attribute name, type, options = {}
       attribute_set << Attribute.new(name, type, options)
     end
 
-    def self.attributes
+    def attributes
       attribute_set.map(&:name)
     end
 
-    def self.delete_all
+    def delete_all
       data_source.delete_all mapped_class
     end
 
-    def self.serializable_types
+    def serializable_types
       @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash, Time, Date]
     end
 
-    def self.insert object
+    def insert object
       raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
       serializable_attributes = {}
       if o_id = object.instance_exec(&id)
@@ -51,7 +65,7 @@ module Perpetuity
       new_id
     end
 
-    def self.attributes_for object
+    def attributes_for object
       attrs = {}
       attribute_set.each do |attrib|
         value = object.send(attrib.name)
@@ -78,7 +92,7 @@ module Perpetuity
       attrs
     end
 
-    def self.unserialize(data)
+    def unserialize(data)
       if data.is_a?(String) && data.start_with?("\u0004")
         Marshal.load(data)
       elsif data.is_a? Array
@@ -91,22 +105,22 @@ module Perpetuity
     end
 
     def self.[] klass
-      Module.const_get "#{klass}Mapper"
+      mappers[klass]
     end
 
-    def self.data_source
+    def data_source
       Perpetuity.configuration.data_source
     end
 
-    def self.count
+    def count
       data_source.count mapped_class
     end
 
-    def self.mapped_class
-      Module.const_get self.name.gsub('Mapper', '').to_sym
+    def mapped_class
+      @mapped_class
     end
 
-    def self.first
+    def first
       data = data_source.first mapped_class
       object = mapped_class.allocate
       inject_data object, data
@@ -114,7 +128,7 @@ module Perpetuity
       object
     end
 
-    def self.all
+    def all
       results = data_source.all mapped_class
       objects = []
       results.each do |result|
@@ -127,33 +141,33 @@ module Perpetuity
       objects
     end
 
-    def self.retrieve criteria={}
+    def retrieve criteria={}
       Perpetuity::Retrieval.new mapped_class, criteria
     end
 
-    def self.select &block
+    def select &block
       query = data_source.class::Query.new(&block).to_db
       retrieve query
     end
 
-    def self.find id
+    def find id
       retrieve(id: id).first
     end
 
-    def self.delete object
+    def delete object
       data_source.delete object, mapped_class
     end
 
-    def self.load_association! object, attribute
+    def load_association! object, attribute
       class_name = attribute_set[attribute].type
       id = object.send(attribute)
 
-      mapper = Module.const_get("#{class_name}Mapper")
+      mapper = Mapper[class_name]
       associated_object = mapper.find(id)
       object.send("#{attribute}=", associated_object)
     end
 
-    def self.id &block
+    def id &block
       if block_given?
         @id = block
       else
@@ -161,19 +175,19 @@ module Perpetuity
       end
     end
 
-    def self.update object, new_data
+    def update object, new_data
       id = object.is_a?(mapped_class) ? object.id : object
 
       data_source.update mapped_class, id, new_data
     end
 
-    def self.validate &block
+    def validate &block
       @validations ||= ValidationSet.new
 
       validations.instance_exec(&block)
     end
 
-    def self.validations
+    def validations
       @validations ||= ValidationSet.new
     end
   end

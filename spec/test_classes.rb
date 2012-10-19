@@ -9,7 +9,7 @@ class Article
   end
 end
 
-class ArticleMapper < Perpetuity::Mapper
+Perpetuity::Mapper.generate_for(Article) do
   attribute :title, String
   attribute :body, String
   attribute :comments, Array, embedded: true
@@ -24,7 +24,7 @@ class Comment
   end
 end
 
-class CommentMapper < Perpetuity::Mapper
+Perpetuity::Mapper.generate_for(Comment) do
   attribute :body, String
 end
 
@@ -35,7 +35,7 @@ class User
   end
 end
 
-class UserMapper < Perpetuity::Mapper
+Perpetuity::Mapper.generate_for User do
   attribute :name, String
 end
 
@@ -46,7 +46,7 @@ class Book
   end
 end
 
-class BookMapper < Perpetuity::Mapper
+Perpetuity::Mapper.generate_for Book do
   id { title.gsub(/\W+/, '-').downcase }
   attribute :title, String
 end
@@ -65,9 +65,29 @@ class Message
   end
 end
 
-class MessageMapper < Perpetuity::Mapper
+Perpetuity::Mapper.generate_for Message do
   attribute :text, String
 end
 
-class EmptyMapper < Perpetuity::Mapper
+class Topic
+  attr_accessor :title, :creator
+end
+
+Perpetuity::Mapper.generate_for(Topic) do
+  attribute :title, String
+  attribute :creator, User
+end
+
+class Car
+  attr_accessor :make, :model, :seats
+end
+
+Perpetuity::Mapper.generate_for(Car) do
+  attribute :make, String
+  attribute :model, String
+  attribute :seats, Integer
+
+  validate do
+    present :make
+  end
 end
