@@ -122,7 +122,7 @@ module Perpetuity
 
     def first
       data = data_source.first mapped_class
-      object = mapped_class.allocate
+      object = mapped_class.new
       inject_data object, data
 
       object
@@ -132,7 +132,7 @@ module Perpetuity
       results = data_source.all mapped_class
       objects = []
       results.each do |result|
-        object = mapped_class.allocate
+        object = mapped_class.new
         inject_data object, result
 
         objects << object

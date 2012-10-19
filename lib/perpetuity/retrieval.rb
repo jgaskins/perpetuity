@@ -55,7 +55,7 @@ module Perpetuity
       results = @data_source.retrieve(@class, @criteria, options)
       objects = []
       results.each do |result|
-        object = @class.allocate
+        object = @class.new
         inject_data object, Mapper.new.unserialize(result)
 
         objects << object
