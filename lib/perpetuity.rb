@@ -12,4 +12,12 @@ module Perpetuity
   def self.configuration
     @@configuration ||= Configuration.new
   end
+
+  def self.generate_mapper_for klass, &block
+    Mapper.generate_for klass, &block
+  end
+
+  def self.[] klass
+    Mapper[klass]
+  end
 end

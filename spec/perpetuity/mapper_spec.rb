@@ -1,9 +1,12 @@
 require 'perpetuity/mapper'
-require 'test_classes'
 
 module Perpetuity
   describe Mapper do
-    let(:mapper) { Mapper[Article] }
+    let(:mapper) do
+      Mapper.new do
+      end
+    end
+
     subject { mapper }
 
     it { should be_a Mapper }
@@ -21,7 +24,7 @@ module Perpetuity
       mapper_with_embedded_attrs.attribute_set[:comments].should be_embedded
     end
 
-    its(:mapped_class) { should eq Article }
+    its(:mapped_class) { should eq Object }
 
     context 'with unserializable attributes' do
       let(:serialized_attrs) do
