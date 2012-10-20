@@ -27,22 +27,24 @@ module Perpetuity
     its(:mapped_class) { should eq Object }
 
     context 'with unserializable attributes' do
+      let(:unserializable_object) { 1.to_c }
       let(:serialized_attrs) do
-        [ Marshal.dump(Comment.new) ]
+        [ Marshal.dump(unserializable_object) ]
       end
 
       it 'serializes attributes' do
-        article = Article.new
-        article.comments = [Comment.new]
-        mapper.attributes_for(article)[:comments].should eq serialized_attrs
+        object = Object.new
+        object.stub(sub_objects: [unserializable_object])
+        mapper.attribute :sub_objects, Array, embedded: true
+        mapper.attributes_for(object)[:sub_objects].should eq serialized_attrs
       end
 
       describe 'unserializes attributes' do
         let(:comments) { mapper.unserialize(serialized_attrs)  }
         subject { comments.first }
 
-        it { should be_a Comment }
-        its(:body) { should eq 'Body' }
+        it { should be_a Complex }
+        it { should eq unserializable_object }
       end
     end
   end
