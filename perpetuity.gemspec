@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Jamie Gaskins"]
   s.email       = ["jgaskins@gmail.com"]
   s.homepage    = "https://github.com/jgaskins/perpetuity.git"
-  s.summary     = %q{Persistence layer for Ruby that allows persistence of Ruby objects}
-  s.description = %q{Persistence layer for Ruby that allows persistence of Ruby objects}
+  s.summary     = %q{Persistence library allowing persistence of Ruby objects}
+  s.description = %q{Persistence library allowing persistence of Ruby objects without adding persistence concerns to domain objects.}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
