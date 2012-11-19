@@ -39,25 +39,11 @@ module Perpetuity
       data_source.delete_all mapped_class
     end
 
-    def serializable_types
-      @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, String, Array, Hash, Time, Date]
-    end
-
     def insert object
       raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
-      serializable_attributes = {}
+      serializable_attributes = serialize(object)
       if o_id = object.instance_exec(&id)
         serializable_attributes[:id] = o_id
-      end
-
-      attributes_for(object).each_pair do |attribute, value|
-        if serializable_types.include? value.class
-          serializable_attributes[attribute] = value
-        elsif value.respond_to?(:id)
-          serializable_attributes[attribute] = value.id
-        else
-          raise "Must persist #{attribute} (#{value.inspect}) before persisting this #{object.inspect}."
-        end
       end
 
       new_id = data_source.insert mapped_class, serializable_attributes
@@ -65,42 +51,52 @@ module Perpetuity
       new_id
     end
 
-    def attributes_for object
+    def serialize object
       attrs = {}
       attribute_set.each do |attrib|
         value = object.send(attrib.name)
+        attrib_name = attrib.name.to_s
 
-        if attrib.type == Array
-          new_array = []
-          value.each do |i|
-            if serializable_types.include? i.class
-              new_array << i
-            else
-              if attrib.embedded?
-                new_array << Marshal.dump(i)
-              else
-                new_array << i.id
-              end
-            end
+        if value.respond_to? :each
+          attrs[attrib_name] = serialize_enumerable(value)
+        elsif data_source.can_serialize? value
+          attrs[attrib_name] = value
+        elsif Mapper[value.class]
+          if attrib.embedded?
+            attrs[attrib_name] = Mapper[value.class].serialize(value).merge '__metadata__' =>  { 'class' => value.class }
+          else
+            attrs[attrib_name] = {
+              '__metadata__' =>  {
+                'class' => value.class.to_s,
+                'id' => value.id
+              }
+            }
           end
-
-          attrs[attrib.name] = new_array
         else
-          attrs[attrib.name] = value
+          if attrib.embedded?
+            attrs[attrib_name] = Marshal.dump(value)
+          end
         end
       end
+
       attrs
     end
 
-    def unserialize(data)
-      if data.is_a?(String) && data.start_with?("\u0004")
-        Marshal.load(data)
-      elsif data.is_a? Array
-        data.map { |i| unserialize i }
-      elsif data.is_a? Hash
-        Hash[data.map{|k,v| [k, unserialize(v)]}]
-      else
-        data
+    def serialize_enumerable enum
+      enum.map do |value|
+        if value.respond_to? :each
+          serialize_enumerable(value)
+        elsif data_source.can_serialize? value
+          value
+        elsif Mapper[value.class]
+          {
+            '__metadata__' => {
+              'class' => value.class.to_s
+            }
+          }.merge Mapper[value.class].serialize(value)
+        else
+          Marshal.dump(value)
+        end
       end
     end
 

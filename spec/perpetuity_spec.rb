@@ -243,8 +243,13 @@ describe Perpetuity do
       topic_mapper.insert topic
     end
 
-    it 'can reference other objects' do
-      topic_mapper.find(topic.id).creator.should eq user.id
+    describe 'referenced relationships' do
+      let(:creator) { topic_mapper.find(topic.id).creator }
+      subject { creator }
+
+      it { should be_a Perpetuity::Reference }
+      its(:klass) { should be User }
+      its(:id) { should be == user.id }
     end
 
     it 'can retrieve associated objects' do
@@ -289,5 +294,63 @@ describe Perpetuity do
     saved_message = Perpetuity::Mapper[Message].find(message.id)
     saved_message.instance_variable_get(:@text).should eq 'My Message!'.reverse
     saved_message.text.should eq 'My Message!'
+  end
+
+  describe 'serialization' do
+    let(:author) { User.new 'username' }
+    let(:comment) { Comment.new }
+    let(:article) { Article.new }
+    let(:mapper) { Perpetuity[Article] }
+    let(:serialized_value) do
+      {
+        'title' => article.title,
+        'body' => article.body,
+        'author' => {
+          '__metadata__' => {
+            'class' => author.class.to_s,
+            'id' => author.id
+          }
+        },
+        'comments' => [
+          {
+            '__metadata__' => {
+              'class' => comment.class.to_s
+            },
+            'body' => comment.body,
+            'author' => {
+              '__metadata__' => {
+                'class' => author.class.to_s,
+                'id' => author.id
+              }
+            }
+          },
+        ],
+        'published_at' => article.published_at,
+        'views' => article.views
+      } 
+    end
+
+    before do
+      article.author = author
+      article.comments = [comment]
+      comment.author = author
+
+      Perpetuity[User].insert author
+      Perpetuity[Article].insert article
+    end
+
+    it 'serializes objects into hashes' do
+      mapper.serialize(article).should be == serialized_value
+    end
+
+    it 'deserializes hashes into proper objects' do
+      unserialized = mapper.find article.id
+      unserialized.should be_a Article
+      unserialized.title.should be == article.title
+      unserialized.body.should be == article.body
+      unserialized.comments.first.tap do |unserialized_comment|
+        unserialized_comment.body.should be == comment.body
+      end
+    end
   end
 end
