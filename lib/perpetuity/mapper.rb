@@ -155,12 +155,11 @@ module Perpetuity
     end
 
     def load_association! object, attribute
-      class_name = attribute_set[attribute].type
-      id = object.send(attribute)
+      reference = object.send(attribute)
+      klass = reference.klass
+      id = reference.id
 
-      mapper = Mapper[class_name]
-      associated_object = mapper.find(id)
-      object.send("#{attribute}=", associated_object)
+      inject_attribute object, attribute, Mapper[klass].find(id)
     end
 
     def id &block

@@ -253,7 +253,7 @@ describe Perpetuity do
     end
 
     it 'can retrieve associated objects' do
-      retrieved_topic = topic_mapper.first
+      retrieved_topic = topic_mapper.find(topic.id)
 
       topic_mapper.load_association! retrieved_topic, :creator
       retrieved_topic.creator.name.should eq 'Flump'
