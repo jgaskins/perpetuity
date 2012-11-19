@@ -15,10 +15,8 @@ In the Data Mapper pattern, the objects you work with don't understand how to pe
 Add the following to your Gemfile and run `bundle` to install it.
 
 ```ruby
-gem 'perpetuity', github: 'jgaskins/perpetuity'
+gem 'perpetuity'
 ```
-
-Once it's got enough functionality to release, you'll be able to remove the `github` parameter.
 
 ## Configuration
 
