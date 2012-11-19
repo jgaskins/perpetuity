@@ -98,5 +98,14 @@ module Perpetuity
     def update klass, id, new_data
       collection(klass).update({ _id: id }, new_data)
     end
+
+    def can_serialize? value
+      serializable_types.include? value.class
+    end
+
+    private
+    def serializable_types
+      @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Float, String, Array, Hash, Time]
+    end
   end
 end

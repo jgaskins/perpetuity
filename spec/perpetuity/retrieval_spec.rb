@@ -54,5 +54,15 @@ module Perpetuity
 
       results.map(&:id).should == [0]
     end
+
+    describe 'unserializes attributes' do
+      let(:unserializable_object) { 1.to_c }
+      let(:serialized_attrs) { [ Marshal.dump(unserializable_object) ] }
+      let(:comments) { retrieval.unserialize(serialized_attrs)  }
+      subject { comments.first }
+
+      it { should be_a Complex }
+      it { should eq unserializable_object}
+    end
   end
 end

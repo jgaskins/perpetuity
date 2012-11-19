@@ -1,33 +1,3 @@
-class Article
-  attr_accessor :title, :body, :comments, :published_at, :views
-  def initialize title="Title", body="Body", author=nil, published_at=Time.now, views=0
-    @title = title
-    @body = body
-    @comments = []
-    @published_at = published_at
-    @views = views
-  end
-end
-
-Perpetuity.generate_mapper_for(Article) do
-  attribute :title, String
-  attribute :body, String
-  attribute :comments, Array, embedded: true
-  attribute :published_at, Time
-  attribute :views, Integer
-end
-
-class Comment
-  attr_reader :body
-  def initialize body='Body'
-    @body = body
-  end
-end
-
-Perpetuity.generate_mapper_for(Comment) do
-  attribute :body, String
-end
-
 class User
   attr_accessor :name
   def initialize name="Foo"
@@ -37,6 +7,40 @@ end
 
 Perpetuity.generate_mapper_for User do
   attribute :name, String
+end
+
+class Article
+  attr_accessor :title, :body, :author, :comments, :published_at, :views
+  def initialize title="Title", body="Body", author=nil, published_at=Time.now, views=0
+    @title = title
+    @body = body
+    @author = author
+    @comments = []
+    @published_at = published_at
+    @views = views
+  end
+end
+
+Perpetuity.generate_mapper_for(Article) do
+  attribute :title, String
+  attribute :body, String
+  attribute :author, User
+  attribute :comments, Array, embedded: true
+  attribute :published_at, Time
+  attribute :views, Integer
+end
+
+class Comment
+  attr_accessor :body, :author
+  def initialize body='Body', author=nil
+    @body = body
+    @author = author
+  end
+end
+
+Perpetuity.generate_mapper_for(Comment) do
+  attribute :body, String
+  attribute :author, User
 end
 
 class Book

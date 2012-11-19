@@ -7,6 +7,11 @@ module Perpetuity
 
     before { klass.extend DataInjectable }
 
+    it 'injects an attribute into an object' do
+      klass.inject_attribute object, :a, 1
+      object.instance_variable_get(:@a).should eq 1
+    end
+
     it 'injects data into an object' do
       klass.inject_data object, { a: 1, b: 2 }
       object.instance_variable_get(:@a).should eq 1

@@ -1,4 +1,5 @@
 require 'perpetuity/mongodb'
+require 'date'
 
 module Perpetuity
   describe MongoDB do
@@ -83,9 +84,20 @@ module Perpetuity
 
     it 'retrieves by id if the id is a string' do
       time = Time.now.utc
-      id = mongo.insert Article, {inserted: time}
-      objects = mongo.retrieve(Article, id: id.to_s).to_a
+      id = mongo.insert Object, {inserted: time}
+      objects = mongo.retrieve(Object, id: id.to_s).to_a
       objects.map{|i| i["inserted"].to_f}.first.should be_within(0.001).of time.to_f
+    end
+
+    describe 'serializable objects' do
+      let(:serializable_values) { [nil, true, false, 1, 1.2, '', [], {}, Time.now] }
+
+      it 'can insert serializable values' do
+        serializable_values.each do |value|
+          mongo.insert(Object, {value: value}).should be_a BSON::ObjectId
+          mongo.can_serialize?(value).should be_true
+        end
+      end
     end
   end
 end

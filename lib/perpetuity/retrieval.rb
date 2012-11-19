@@ -1,5 +1,5 @@
 require 'perpetuity/data_injectable'
-require 'perpetuity/mapper'
+require 'perpetuity/reference'
 
 module Perpetuity
   class Retrieval
@@ -53,15 +53,39 @@ module Perpetuity
         page: result_page
       }
       results = @data_source.retrieve(@class, @criteria, options)
-      objects = []
-      results.each do |result|
-        object = @class.new
-        inject_data object, Mapper.new.unserialize(result)
+      unserialize results
+    end
 
-        objects << object
+    def unserialize(data)
+      if data.is_a?(String) && data.start_with?("\u0004") # if it's marshaled
+        Marshal.load(data)
+      elsif data.is_a? Array
+        data.map { |i| unserialize i }
+      elsif data.is_a? Hash
+        metadata = data.delete('__metadata__')
+        if metadata
+          klass = Object.const_get metadata['class']
+          id = metadata['id']
+          if id
+            object = Reference.new(klass, id)
+          else
+            object = klass.new
+            data.each do |attr, value|
+              inject_attribute object, attr, unserialize(value)
+            end
+          end
+        else
+          object = @class.new
+          data.each do |attr, value|
+            inject_attribute object, attr, unserialize(value)
+          end
+        end
+
+        give_id_to object
+        object
+      else
+        data
       end
-
-      objects
     end
 
     def [] index
