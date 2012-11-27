@@ -10,7 +10,7 @@ module Perpetuity
   end
   
   def self.configuration
-    @@configuration ||= Configuration.new
+    @configuration ||= Configuration.new
   end
 
   def self.generate_mapper_for klass, &block
