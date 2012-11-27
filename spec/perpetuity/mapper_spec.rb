@@ -3,10 +3,8 @@ require 'perpetuity/mapper'
 module Perpetuity
   describe Mapper do
     let(:mapper) do
-      Mapper.new do
-      end
+      Mapper.new
     end
-
     subject { mapper }
 
     it { should be_a Mapper }
