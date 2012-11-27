@@ -7,7 +7,6 @@ require 'perpetuity/mongodb/query'
 module Perpetuity
   class Mapper
     include DataInjectable
-    attr_accessor :object, :original_object
 
     def initialize(klass=Object, &block)
       @mapped_class = klass
