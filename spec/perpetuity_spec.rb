@@ -12,7 +12,6 @@ describe Perpetuity do
     it 'generates mappers' do
       mapper = Perpetuity.generate_mapper_for Object
       Perpetuity[Object].should be_a Perpetuity::Mapper
-      Perpetuity[Object].should be == mapper
     end
   end
 

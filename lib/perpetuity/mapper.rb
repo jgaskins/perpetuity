@@ -8,29 +8,33 @@ module Perpetuity
   class Mapper
     include DataInjectable
 
-    def initialize(klass=Object, &block)
-      @mapped_class = klass
-      instance_exec &block if block_given?
-    end
-
-    def self.generate_for(klass=Object, &block)
-      mapper = new(klass, &block)
-      mappers[klass] = mapper
+    def self.generate_for(klass, &block)
+      mapper = Class.new(base_class, &block)
+      mapper.map klass
     end
 
     def self.mappers
       @mappers ||= {}
     end
 
-    def attribute_set
+    def self.map klass
+      add_mapper klass, self
+      @mapped_class = klass
+    end
+
+    def self.add_mapper klass, mapper
+      base_class.mappers[klass] = self
+    end
+
+    def self.attribute_set
       @attribute_set ||= AttributeSet.new
     end
 
-    def attribute name, type, options = {}
+    def self.attribute name, type, options = {}
       attribute_set << Attribute.new(name, type, options)
     end
 
-    def attributes
+    def self.attributes
       attribute_set.map(&:name)
     end
 
@@ -39,9 +43,9 @@ module Perpetuity
     end
 
     def insert object
-      raise "#{object} is invalid and cannot be persisted." unless validations.valid?(object)
+      raise "#{object} is invalid and cannot be persisted." unless self.class.validations.valid?(object)
       serializable_attributes = serialize(object)
-      if o_id = object.instance_exec(&id)
+      if o_id = object.instance_exec(&self.class.id)
         serializable_attributes[:id] = o_id
       end
 
@@ -52,7 +56,7 @@ module Perpetuity
 
     def serialize object
       attrs = {}
-      attribute_set.each do |attrib|
+      self.class.attribute_set.each do |attrib|
         value = object.send(attrib.name)
         attrib_name = attrib.name.to_s
 
@@ -87,7 +91,7 @@ module Perpetuity
           serialize_enumerable(value)
         elsif data_source.can_serialize? value
           value
-        elsif Mapper[value.class]
+        elsif Mapper.has_mapper?(value.class)
           {
             '__metadata__' => {
               'class' => value.class.to_s
@@ -99,8 +103,12 @@ module Perpetuity
       end
     end
 
+    def self.has_mapper? klass
+      mappers.has_key? klass
+    end
+
     def self.[] klass
-      mappers[klass]
+      mappers[klass].new
     end
 
     def data_source
@@ -111,8 +119,12 @@ module Perpetuity
       data_source.count mapped_class
     end
 
-    def mapped_class
+    def self.mapped_class
       @mapped_class
+    end
+
+    def mapped_class
+      self.class.mapped_class
     end
 
     def first
@@ -161,7 +173,7 @@ module Perpetuity
       inject_attribute object, attribute, Mapper[klass].find(id)
     end
 
-    def id &block
+    def self.id &block
       if block_given?
         @id = block
       else
@@ -175,14 +187,19 @@ module Perpetuity
       data_source.update mapped_class, id, new_data
     end
 
-    def validate &block
+    def self.validate &block
       @validations ||= ValidationSet.new
 
       validations.instance_exec(&block)
     end
 
-    def validations
+    def self.validations
       @validations ||= ValidationSet.new
+    end
+
+    private
+    def self.base_class
+      Mapper
     end
   end
 end

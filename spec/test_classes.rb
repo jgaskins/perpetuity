@@ -21,7 +21,8 @@ class Article
   end
 end
 
-Perpetuity.generate_mapper_for(Article) do
+class ArticleMapper < Perpetuity::Mapper
+  map Article
   attribute :title, String
   attribute :body, String
   attribute :author, User
