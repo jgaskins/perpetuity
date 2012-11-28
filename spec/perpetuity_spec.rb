@@ -269,13 +269,20 @@ describe Perpetuity do
 
   describe 'updating' do
     let(:article) { Article.new }
+    let(:mapper) { Perpetuity[Article] }
+    let(:new_title) { 'I has a new title!' }
+
     before do
-      Perpetuity[Article].insert article
+      mapper.insert article
+      mapper.update article, title: new_title
     end
 
     it 'updates an object in the database' do
-      Perpetuity[Article].update article, title: 'I has a new title!'
-      Perpetuity[Article].find(article.id).title.should eq 'I has a new title!'
+      mapper.find(article.id).title.should eq new_title
+    end
+
+    it 'updates the object in memory' do
+      article.title.should eq new_title
     end
   end
 

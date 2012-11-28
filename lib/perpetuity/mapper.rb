@@ -188,6 +188,7 @@ module Perpetuity
     def update object, new_data
       id = object.is_a?(mapped_class) ? object.id : object
 
+      inject_data object, new_data
       data_source.update mapped_class, id, new_data
     end
 
