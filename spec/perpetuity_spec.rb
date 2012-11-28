@@ -13,6 +13,14 @@ describe Perpetuity do
       mapper = Perpetuity.generate_mapper_for Object
       Perpetuity[Object].should be_a Perpetuity::Mapper
     end
+
+    it 'provides a DSL within the generated mapper' do
+      Perpetuity.generate_mapper_for Object do
+        attribute :object_id, Integer
+      end
+
+      Perpetuity[Object].attributes.should include :object_id
+    end
   end
 
   describe 'persistence' do

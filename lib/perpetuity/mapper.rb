@@ -38,6 +38,10 @@ module Perpetuity
       attribute_set.map(&:name)
     end
 
+    def attributes
+      self.class.attributes
+    end
+
     def delete_all
       data_source.delete_all mapped_class
     end
