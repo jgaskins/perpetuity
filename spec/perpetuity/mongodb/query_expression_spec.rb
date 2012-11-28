@@ -45,5 +45,23 @@ module Perpetuity
         expression.to_db.should == { attribute: :value }
       end
     end
+
+    describe 'unions' do
+      let(:lhs) { MongoDB::QueryExpression.new :first, :equals, :one }
+      let(:rhs) { MongoDB::QueryExpression.new :second, :equals, :two }
+
+      it 'converts | to an $or query' do
+        (lhs | rhs).to_db.should == { '$or' => [{first: :one}, {second: :two}] }
+      end
+    end
+
+    describe 'intersections' do
+      let(:lhs) { MongoDB::QueryExpression.new :first, :equals, :one }
+      let(:rhs) { MongoDB::QueryExpression.new :second, :equals, :two }
+
+      it 'converts & to an $and query' do
+        (lhs & rhs).to_db.should == { '$and' => [{first: :one}, {second: :two}] }
+      end
+    end
   end
 end

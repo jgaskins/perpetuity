@@ -1,3 +1,6 @@
+require 'perpetuity/mongodb/query_union'
+require 'perpetuity/mongodb/query_intersection'
+
 module Perpetuity
   class MongoDB
     class QueryExpression
@@ -49,6 +52,14 @@ module Perpetuity
 
       def matches
         { @attribute => @value }
+      end
+
+      def | other
+        QueryUnion.new(self, other)
+      end
+
+      def & other
+        QueryIntersection.new(self, other)
       end
     end
   end

@@ -29,6 +29,14 @@ class ArticleMapper < Perpetuity::Mapper
   attribute :comments, Array, embedded: true
   attribute :published_at, Time
   attribute :views, Integer
+
+  def published
+    select { (published_at.not_equal? nil) & (published_at < Time.now) }
+  end
+
+  def unpublished
+    select { (published_at == nil) | (published_at > Time.now) }
+  end
 end
 
 class Comment
