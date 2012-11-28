@@ -16,10 +16,15 @@ describe Perpetuity do
 
     it 'provides a DSL within the generated mapper' do
       Perpetuity.generate_mapper_for Object do
+        id { object_id + 1 }
         attribute :object_id, Integer
       end
 
-      Perpetuity[Object].attributes.should include :object_id
+      mapper = Perpetuity[Object]
+      object = Object.new
+      mapper.insert object
+      object.id.should eq object.object_id + 1
+      mapper.attributes.should eq [:object_id]
     end
   end
 
