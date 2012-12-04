@@ -64,11 +64,11 @@ module Perpetuity
         value = object.send(attrib.name)
         attrib_name = attrib.name.to_s
 
-        if value.respond_to? :each
-          attrs[attrib_name] = serialize_enumerable(value)
+        if value.is_a? Array
+          attrs[attrib_name] = serialize_array(value)
         elsif data_source.can_serialize? value
           attrs[attrib_name] = value
-        elsif Mapper[value.class]
+        elsif Mapper.has_mapper?(value.class)
           if attrib.embedded?
             attrs[attrib_name] = Mapper[value.class].serialize(value).merge '__metadata__' =>  { 'class' => value.class }
           else
@@ -89,10 +89,10 @@ module Perpetuity
       attrs
     end
 
-    def serialize_enumerable enum
+    def serialize_array enum
       enum.map do |value|
-        if value.respond_to? :each
-          serialize_enumerable(value)
+        if value.is_a? Array
+          serialize_array(value)
         elsif data_source.can_serialize? value
           value
         elsif Mapper.has_mapper?(value.class)
