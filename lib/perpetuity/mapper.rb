@@ -14,7 +14,7 @@ module Perpetuity
     end
 
     def self.mappers
-      @mappers ||= {}
+      @mappers ||= Hash.new { |h,k| raise KeyError, "No Mapper for #{k}" }
     end
 
     def self.map klass
