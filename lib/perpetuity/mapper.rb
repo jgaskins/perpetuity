@@ -2,6 +2,7 @@ require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
+require 'perpetuity/index'
 require 'perpetuity/mongodb/query'
 require 'perpetuity/mapper_registry'
 require 'perpetuity/serializer'
@@ -33,6 +34,14 @@ module Perpetuity
       attribute_set.map(&:name)
     end
 
+    def self.index attribute
+      indexes << Index.new(attribute_set[attribute])
+    end
+
+    def self.indexes
+      @indexes ||= Set.new
+    end
+
     def attributes
       self.class.attributes
     end
@@ -57,8 +66,12 @@ module Perpetuity
       Serializer.new(self).serialize(object)
     end
 
-    def data_source
+    def self.data_source
       Perpetuity.configuration.data_source
+    end
+
+    def data_source
+      self.class.data_source
     end
 
     def count

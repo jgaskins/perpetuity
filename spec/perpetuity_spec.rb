@@ -228,7 +228,9 @@ describe Perpetuity do
     end
 
     it 'returns an empty set when there is no data for that page' do
-      data = Perpetuity[Article].retrieve.page(2)
+      mapper = Perpetuity[Article]
+      mapper.delete_all
+      data = mapper.retrieve.page(2)
       data.should be_empty
     end
 
@@ -391,6 +393,17 @@ describe Perpetuity do
       unpublished_ids = mapper.unpublished.to_a.map(&:id)
       unpublished_ids.should_not include published.id
       unpublished_ids.should include draft.id, not_yet_published.id
+    end
+  end
+
+  describe 'indexing' do
+    it 'adds indexes to database collections/tables' do
+      mapper_class = Class.new(Perpetuity::Mapper) do
+        attribute :name, String
+        index :name
+      end
+
+      mapper_class.indexes.map{|index| index.attribute.name}.should be == [:name]
     end
   end
 end
