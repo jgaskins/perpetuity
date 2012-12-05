@@ -32,6 +32,7 @@ module Perpetuity
         object = Object.new
         object.stub(sub_objects: [unserializable_object])
         mapper_class.attribute :sub_objects, Array, embedded: true
+        mapper_class.map Object
         data_source = double(:data_source)
         mapper.stub(data_source: data_source)
         data_source.should_receive(:can_serialize?).with(unserializable_object).and_return false

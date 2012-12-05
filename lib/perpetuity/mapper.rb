@@ -4,6 +4,7 @@ require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
 require 'perpetuity/mongodb/query'
 require 'perpetuity/mapper_registry'
+require 'perpetuity/serializer'
 
 module Perpetuity
   class Mapper
@@ -52,52 +53,7 @@ module Perpetuity
     end
 
     def serialize object
-      attrs = {}
-      self.class.attribute_set.each do |attrib|
-        value = object.send(attrib.name)
-        attrib_name = attrib.name.to_s
-
-        if value.is_a? Array
-          attrs[attrib_name] = serialize_array(value)
-        elsif data_source.can_serialize? value
-          attrs[attrib_name] = value
-        elsif MapperRegistry.has_mapper?(value.class)
-          if attrib.embedded?
-            attrs[attrib_name] = MapperRegistry[value.class].serialize(value).merge '__metadata__' =>  { 'class' => value.class }
-          else
-            attrs[attrib_name] = {
-              '__metadata__' =>  {
-                'class' => value.class.to_s,
-                'id' => value.id
-              }
-            }
-          end
-        else
-          if attrib.embedded?
-            attrs[attrib_name] = Marshal.dump(value)
-          end
-        end
-      end
-
-      attrs
-    end
-
-    def serialize_array enum
-      enum.map do |value|
-        if value.is_a? Array
-          serialize_array(value)
-        elsif data_source.can_serialize? value
-          value
-        elsif MapperRegistry.has_mapper?(value.class)
-          {
-            '__metadata__' => {
-              'class' => value.class.to_s
-            }
-          }.merge MapperRegistry[value.class].serialize(value)
-        else
-          Marshal.dump(value)
-        end
-      end
+      Serializer.new(self).serialize(object)
     end
 
     def data_source
