@@ -18,6 +18,6 @@ module Perpetuity
   end
 
   def self.[] klass
-    Mapper[klass]
+    MapperRegistry[klass]
   end
 end

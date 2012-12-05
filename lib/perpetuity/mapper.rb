@@ -3,6 +3,7 @@ require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
 require 'perpetuity/mongodb/query'
+require 'perpetuity/mapper_registry'
 
 module Perpetuity
   class Mapper
@@ -13,17 +14,9 @@ module Perpetuity
       mapper.map klass
     end
 
-    def self.mappers
-      @mappers ||= Hash.new { |h,k| raise KeyError, "No Mapper for #{k}" }
-    end
-
     def self.map klass
-      add_mapper klass, self
+      MapperRegistry[klass] = self
       @mapped_class = klass
-    end
-
-    def self.add_mapper klass, mapper
-      base_class.mappers[klass] = self
     end
 
     def self.attribute_set
@@ -68,9 +61,9 @@ module Perpetuity
           attrs[attrib_name] = serialize_array(value)
         elsif data_source.can_serialize? value
           attrs[attrib_name] = value
-        elsif Mapper.has_mapper?(value.class)
+        elsif MapperRegistry.has_mapper?(value.class)
           if attrib.embedded?
-            attrs[attrib_name] = Mapper[value.class].serialize(value).merge '__metadata__' =>  { 'class' => value.class }
+            attrs[attrib_name] = MapperRegistry[value.class].serialize(value).merge '__metadata__' =>  { 'class' => value.class }
           else
             attrs[attrib_name] = {
               '__metadata__' =>  {
@@ -95,24 +88,16 @@ module Perpetuity
           serialize_array(value)
         elsif data_source.can_serialize? value
           value
-        elsif Mapper.has_mapper?(value.class)
+        elsif MapperRegistry.has_mapper?(value.class)
           {
             '__metadata__' => {
               'class' => value.class.to_s
             }
-          }.merge Mapper[value.class].serialize(value)
+          }.merge MapperRegistry[value.class].serialize(value)
         else
           Marshal.dump(value)
         end
       end
-    end
-
-    def self.has_mapper? klass
-      mappers.has_key? klass
-    end
-
-    def self.[] klass
-      mappers[klass].new
     end
 
     def data_source
@@ -174,7 +159,7 @@ module Perpetuity
       klass = reference.klass
       id = reference.id
 
-      inject_attribute object, attribute, Mapper[klass].find(id)
+      inject_attribute object, attribute, MapperRegistry[klass].find(id)
     end
 
     def self.id &block
