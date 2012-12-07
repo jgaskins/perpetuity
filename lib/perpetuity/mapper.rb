@@ -24,7 +24,8 @@ module Perpetuity
       @attribute_set ||= AttributeSet.new
     end
 
-    def self.attribute name, type, options = {}
+    def self.attribute name, options = {}
+      type = options.fetch(:type) { nil }
       attribute_set << Attribute.new(name, type, options)
     end
 

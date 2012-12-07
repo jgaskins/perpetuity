@@ -9,7 +9,7 @@ module Perpetuity
     it { should be_a Mapper }
 
     it 'has correct attributes' do
-      Class.new(Mapper) { attribute :name, String }.attributes.should eq [:name]
+      Class.new(Mapper) { attribute :name }.attributes.should eq [:name]
     end
 
     it 'returns an empty attribute list when no attributes have been assigned' do
@@ -18,7 +18,7 @@ module Perpetuity
 
     it 'can have embedded attributes' do
       mapper_with_embedded_attrs = Class.new(Mapper)
-      mapper_with_embedded_attrs.attribute :comments, Array, embedded: true
+      mapper_with_embedded_attrs.attribute :comments, embedded: true
       mapper_with_embedded_attrs.attribute_set[:comments].should be_embedded
     end
 
@@ -31,7 +31,7 @@ module Perpetuity
       it 'serializes attributes' do
         object = Object.new
         object.stub(sub_objects: [unserializable_object])
-        mapper_class.attribute :sub_objects, Array, embedded: true
+        mapper_class.attribute :sub_objects, embedded: true
         mapper_class.map Object
         data_source = double(:data_source)
         mapper.stub(data_source: data_source)

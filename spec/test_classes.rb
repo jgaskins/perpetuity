@@ -6,7 +6,7 @@ class User
 end
 
 Perpetuity.generate_mapper_for User do
-  attribute :name, String
+  attribute :name
 end
 
 class Article
@@ -23,12 +23,12 @@ end
 
 class ArticleMapper < Perpetuity::Mapper
   map Article
-  attribute :title, String
-  attribute :body, String
-  attribute :author, User
-  attribute :comments, Array, embedded: true
-  attribute :published_at, Time
-  attribute :views, Integer
+  attribute :title
+  attribute :body
+  attribute :author
+  attribute :comments
+  attribute :published_at
+  attribute :views
 
   def published
     select { (published_at.not_equal? nil) & (published_at < Time.now) }
@@ -48,8 +48,8 @@ class Comment
 end
 
 Perpetuity.generate_mapper_for(Comment) do
-  attribute :body, String
-  attribute :author, User
+  attribute :body
+  attribute :author
 end
 
 class Book
@@ -61,7 +61,7 @@ end
 
 Perpetuity.generate_mapper_for Book do
   id { title.gsub(/\W+/, '-').downcase }
-  attribute :title, String
+  attribute :title
 end
 
 class Message
@@ -79,7 +79,7 @@ class Message
 end
 
 Perpetuity.generate_mapper_for Message do
-  attribute :text, String
+  attribute :text
 end
 
 class Topic
@@ -87,8 +87,8 @@ class Topic
 end
 
 Perpetuity.generate_mapper_for(Topic) do
-  attribute :title, String
-  attribute :creator, User
+  attribute :title
+  attribute :creator
 end
 
 class Car
@@ -96,9 +96,9 @@ class Car
 end
 
 Perpetuity.generate_mapper_for(Car) do
-  attribute :make, String
-  attribute :model, String
-  attribute :seats, Integer
+  attribute :make
+  attribute :model
+  attribute :seats
 
   validate do
     present :make
