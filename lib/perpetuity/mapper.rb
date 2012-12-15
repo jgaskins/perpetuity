@@ -2,7 +2,6 @@ require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
-require 'perpetuity/index'
 require 'perpetuity/mapper_registry'
 require 'perpetuity/serializer'
 
@@ -34,7 +33,7 @@ module Perpetuity
     end
 
     def self.index attribute
-      indexes << Index.new(attribute_set[attribute])
+      indexes << data_source.class::Index.new(attribute_set[attribute])
     end
 
     def self.indexes

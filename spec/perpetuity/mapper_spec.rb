@@ -49,19 +49,5 @@ module Perpetuity
         MapperRegistry[String].should be_instance_of mapper_subclass
       end
     end
-
-    describe 'indexing' do
-      let(:mapper_subclass) { Class.new(Mapper) }
-
-      before do
-        mapper_subclass.attribute :name
-        mapper_subclass.index :name
-      end
-
-      it 'adds indexes' do
-        index_names = mapper_subclass.indexes.map{|index| index.attribute.name}
-        index_names.should include :name
-      end
-    end
   end
 end
