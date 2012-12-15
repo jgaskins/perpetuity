@@ -3,7 +3,6 @@ require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
 require 'perpetuity/index'
-require 'perpetuity/mongodb/query'
 require 'perpetuity/mapper_registry'
 require 'perpetuity/serializer'
 
