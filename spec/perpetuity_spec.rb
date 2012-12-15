@@ -10,7 +10,7 @@ describe Perpetuity do
 
   describe 'mapper generation' do
     it 'generates mappers' do
-      mapper = Perpetuity.generate_mapper_for Object
+      Perpetuity.generate_mapper_for Object
       Perpetuity[Object].should be_a Perpetuity::Mapper
     end
 

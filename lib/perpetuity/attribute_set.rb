@@ -17,7 +17,7 @@ module Perpetuity
     end
 
     def each &block
-      @attributes.each &block
+      @attributes.each(&block)
     end
   end
 end

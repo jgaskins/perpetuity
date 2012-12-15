@@ -11,7 +11,7 @@ module Perpetuity
     end
 
     def embedded?
-      @embedded
+      @embedded ||= false
     end
   end
 end
