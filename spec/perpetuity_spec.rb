@@ -399,7 +399,7 @@ describe Perpetuity do
   describe 'indexing' do
     it 'adds indexes to database collections/tables' do
       mapper_class = Class.new(Perpetuity::Mapper) do
-        attribute :name, String
+        attribute :name
         index :name
       end
 

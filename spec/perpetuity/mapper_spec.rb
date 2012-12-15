@@ -54,7 +54,7 @@ module Perpetuity
       let(:mapper_subclass) { Class.new(Mapper) }
 
       before do
-        mapper_subclass.attribute :name, String
+        mapper_subclass.attribute :name
         mapper_subclass.index :name
       end
 
