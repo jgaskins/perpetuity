@@ -1,4 +1,6 @@
 require 'mongo'
+require 'perpetuity/mongodb/query'
+require 'perpetuity/mongodb/index'
 
 module Perpetuity
   class MongoDB
