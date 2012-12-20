@@ -105,6 +105,26 @@ module Perpetuity
       serializable_types.include? value.class
     end
 
+    def index klass, attribute, options={}
+      @indexes ||= Hash.new
+      @indexes[klass] ||= Set.new
+
+      @indexes[klass] << Index.new(klass, attribute, options)
+    end
+
+    def indexes klass
+      @indexes[klass]
+    end
+
+    def active_indexes klass
+      indexes = collection(klass).index_information
+      indexes.map do |name, index|
+        key = index['key'].keys.first
+        direction = index['key'][key]
+        Index.new(key, order: Index::KEY_ORDERS[direction])
+      end
+    end
+
     private
     def serializable_types
       @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Float, String, Array, Hash, Time]

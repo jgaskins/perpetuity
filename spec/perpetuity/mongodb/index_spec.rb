@@ -4,7 +4,7 @@ module Perpetuity
   class MongoDB
     describe Index do
       let(:attribute) { double(name: 'name') }
-      let(:index) { Index.new(attribute) }
+      let(:index) { Index.new(Object, attribute) }
 
       it 'is not active by default' do
         index.should_not be_active
@@ -16,7 +16,7 @@ module Perpetuity
       end
 
       it 'can be unique' do
-        index = Index.new(attribute, unique: true)
+        index = Index.new(Object, attribute, unique: true)
         index.should be_unique
       end
 
@@ -26,7 +26,7 @@ module Perpetuity
 
       describe 'index ordering' do
         it 'can be ordered in ascending order' do
-          index = Index.new(attribute, order: :ascending)
+          index = Index.new(Object, attribute, order: :ascending)
           index.order.should be :ascending
         end
 
@@ -35,7 +35,7 @@ module Perpetuity
         end
 
         it 'can be ordered in descending order' do
-          index = Index.new(attribute, order: :descending)
+          index = Index.new(Object, attribute, order: :descending)
           index.order.should be :descending
         end
       end

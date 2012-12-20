@@ -33,11 +33,15 @@ module Perpetuity
     end
 
     def self.index attribute
-      indexes << data_source.class::Index.new(attribute_set[attribute])
+      data_source.index mapped_class, attribute_set[attribute]
     end
 
-    def self.indexes
-      @indexes ||= Set.new
+    def indexes
+      data_source.indexes(mapped_class)
+    end
+
+    def reindex!
+      indexes.each(&:activate!)
     end
 
     def attributes

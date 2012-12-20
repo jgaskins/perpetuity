@@ -397,13 +397,31 @@ describe Perpetuity do
   end
 
   describe 'indexing' do
-    it 'adds indexes to database collections/tables' do
-      mapper_class = Class.new(Perpetuity::Mapper) do
+    let(:mapper_class) do
+      Class.new(Perpetuity::Mapper) do
+        map Object
         attribute :name
         index :name
       end
+    end
+    let(:mapper) { mapper_class.new }
+    let(:name_index) do
+      mapper.indexes.find do |index|
+        index.attribute.name == :name
+      end
+    end
 
-      mapper_class.indexes.map{|index| index.attribute.name}.should be == [:name]
+    it 'adds indexes to database collections/tables' do
+      name_index.attribute.name.should be == :name
+    end
+
+    it 'verifies that indexes are inactive' do
+      name_index.should be_inactive
+    end
+
+    it 'creates indexes' do
+      mapper.reindex!
+      name_index.should be_active
     end
   end
 end

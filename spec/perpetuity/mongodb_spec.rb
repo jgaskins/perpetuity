@@ -99,5 +99,26 @@ module Perpetuity
         end
       end
     end
+
+    describe 'indexing' do
+      let(:collection) { Object }
+      let(:key) { 'object_id' }
+
+      before do
+        mongo.index collection, key
+      end
+
+      it 'adds indexes for the specified key on the specified collection' do
+        indexes = mongo.indexes(collection).select{ |index| index.attribute == 'object_id' }
+        indexes.should_not be_empty
+        indexes.first.order.should be :ascending
+      end
+
+      it 'adds descending-order indexes' do
+        mongo.index collection, 'hash', order: :descending
+        indexes = mongo.indexes(collection).select{|index| index.attribute == 'hash'}
+        indexes.first.order.should be :descending
+      end
+    end
   end
 end
