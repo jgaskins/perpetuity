@@ -2,9 +2,10 @@ module Perpetuity
   class MongoDB
     class Index
       KEY_ORDERS = { 1 => :ascending, -1 => :descending }
-      attr_reader :attribute
+      attr_reader :collection, :attribute
 
       def initialize klass, attribute, options={}
+        @collection = klass
         @attribute = attribute
         @unique = options.fetch(:unique) { false }
         @order = options.fetch(:order) { :ascending }
@@ -29,6 +30,18 @@ module Perpetuity
 
       def order
         @order
+      end
+
+      def == other
+        hash == other.hash
+      end
+
+      def eql? other
+        self == other
+      end
+
+      def hash
+        "#{collection}/#{attribute}:#{unique?}:#{order}".hash
       end
     end
   end

@@ -105,11 +105,17 @@ module Perpetuity
       serializable_types.include? value.class
     end
 
+    def drop_collection to_be_dropped
+      collection(to_be_dropped).drop
+    end
+
     def index klass, attribute, options={}
       @indexes ||= Hash.new
       @indexes[klass] ||= Set.new
 
-      @indexes[klass] << Index.new(klass, attribute, options)
+      index = Index.new(klass, attribute, options)
+      @indexes[klass] << index 
+      index
     end
 
     def indexes klass
@@ -121,8 +127,18 @@ module Perpetuity
       indexes.map do |name, index|
         key = index['key'].keys.first
         direction = index['key'][key]
-        Index.new(key, order: Index::KEY_ORDERS[direction])
+        unique = index['unique']
+        Index.new(klass, key, order: Index::KEY_ORDERS[direction], unique: unique)
       end
+    end
+
+    def activate_index! index
+      attribute = index.attribute.to_s
+      order = index.order == :ascending ? 1 : -1
+      unique = index.unique?
+
+      collection(index.collection).create_index [[attribute, order]], unique: unique
+      index.activate!
     end
 
     private

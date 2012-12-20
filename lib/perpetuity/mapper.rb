@@ -41,7 +41,7 @@ module Perpetuity
     end
 
     def reindex!
-      indexes.each(&:activate!)
+      indexes.each { |index| data_source.activate_index! index }
     end
 
     def attributes

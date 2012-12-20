@@ -13,5 +13,9 @@ module Perpetuity
     def embedded?
       @embedded ||= false
     end
+
+    def to_s
+      name
+    end
   end
 end

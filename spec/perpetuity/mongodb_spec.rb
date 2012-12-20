@@ -104,9 +104,8 @@ module Perpetuity
       let(:collection) { Object }
       let(:key) { 'object_id' }
 
-      before do
-        mongo.index collection, key
-      end
+      before { mongo.index collection, key }
+      after { mongo.drop_collection collection }
 
       it 'adds indexes for the specified key on the specified collection' do
         indexes = mongo.indexes(collection).select{ |index| index.attribute == 'object_id' }
@@ -115,9 +114,16 @@ module Perpetuity
       end
 
       it 'adds descending-order indexes' do
-        mongo.index collection, 'hash', order: :descending
-        indexes = mongo.indexes(collection).select{|index| index.attribute == 'hash'}
-        indexes.first.order.should be :descending
+        index = mongo.index collection, 'hash', order: :descending
+        index.order.should be :descending
+      end
+
+      it 'creates indexes on the database collection' do
+        mongo.delete_all collection
+        index = mongo.index collection, 'real_index', order: :descending, unique: true
+        mongo.activate_index! index
+
+        mongo.active_indexes(collection).should include index
       end
     end
   end
