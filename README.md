@@ -135,6 +135,36 @@ Perpetuity.generate_mapper_for Article do
 end
 ```
 
+## Indexing
+
+Indexes are declared with the `index` method. The simplest way to create an index is just to pass the attribute to be indexed as a parameter:
+
+```ruby
+Perpetuity.generate_mapper_for Article do
+  index :title
+end
+```
+
+The following will generate a unique index on an `Article` class so that two articles cannot be added to the database with the same title. This eliminates the need for uniqueness validations (like ActiveRecord has) that check for existence of that value. Uniqueness validations have race conditions and don't protect you at the database level. Using unique indexes is a superior way to do this.
+
+```ruby
+Perpetuity.generate_mapper_for Article do
+  index :title, unique: true
+end
+```
+
+Also, MongoDB, as well as some other databases, provide the ability to specify an order for the index. For example, if you want to query your blog with articles in descending order, you can specify a descending-order index on the timestamp for increased query performance.
+
+```ruby
+Perpetuity.generate_mapper_for Article do
+  index :timestamp, order: :descending
+end
+```
+
+### Applying indexes
+
+It's very important to keep in mind that specifying an index does not create it on the database immediately. If you did this, you could potentially introduce downtime every time you specify a new index and deploy your application.
+
 ## Contributing
 
 Right now, this code is pretty bare and there are possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests or issues or tweets or e-mails and I'll do what I can for them.
