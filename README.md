@@ -165,6 +165,18 @@ end
 
 It's very important to keep in mind that specifying an index does not create it on the database immediately. If you did this, you could potentially introduce downtime every time you specify a new index and deploy your application.
 
+In order to apply indexes to the database, you must send `reindex!` to the mapper. For example:
+
+```ruby
+class ArticleMapper < Perpetuity::Mapper
+  map Article
+  attribute :title
+  index :title, unique: true
+end
+
+Perpetuity[Article].reindex!
+```
+
 ## Contributing
 
 Right now, this code is pretty bare and there are possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests or issues or tweets or e-mails and I'll do what I can for them.
