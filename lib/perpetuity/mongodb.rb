@@ -14,6 +14,7 @@ module Perpetuity
       @username   = options[:username]
       @password   = options[:password]
       @connection = nil
+      @indexes    = Hash.new { |hash, key| hash[key] = active_indexes(key) }
     end
 
     def connect
@@ -110,7 +111,6 @@ module Perpetuity
     end
 
     def index klass, attribute, options={}
-      @indexes ||= Hash.new
       @indexes[klass] ||= Set.new
 
       index = Index.new(klass, attribute, options)
