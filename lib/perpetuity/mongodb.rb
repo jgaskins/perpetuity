@@ -129,7 +129,7 @@ module Perpetuity
         direction = index['key'][key]
         unique = index['unique']
         Index.new(klass, key, order: Index::KEY_ORDERS[direction], unique: unique)
-      end
+      end.to_set
     end
 
     def activate_index! index
