@@ -408,7 +408,7 @@ describe Perpetuity do
     let(:mapper) { mapper_class.new }
     let(:name_index) do
       mapper.indexes.find do |index|
-        index.attribute.name == :name
+        index.attribute.to_s == :name
       end
     end
 
