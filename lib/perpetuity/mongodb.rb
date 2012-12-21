@@ -18,7 +18,7 @@ module Perpetuity
 
     def connect
       database.authenticate(@username, @password) if @username and @password
-      @connection ||= Mongo::Connection.new @host, @port, pool_size: @pool_size
+      @connection ||= Mongo::MongoClient.new @host, @port, pool_size: @pool_size
     end
 
     def connected?

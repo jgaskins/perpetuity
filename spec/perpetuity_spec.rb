@@ -90,10 +90,11 @@ describe Perpetuity do
     end
 
     it "allows mappers to set the id field" do
-      book = Book.new('My Title')
+      noise = Time.now.to_f.to_s.sub('.', '')
+      book = Book.new("My Title #{noise}")
 
       Perpetuity[Book].insert book
-      book.id.should eq 'my-title'
+      book.id.should eq "my-title-#{noise}"
     end
   end
 

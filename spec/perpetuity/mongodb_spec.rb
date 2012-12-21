@@ -13,7 +13,7 @@ module Perpetuity
 
     it 'connects to its host' do
       connection = double('connection')
-      Mongo::Connection.stub(new: connection)
+      Mongo::MongoClient.should_receive(:new).and_return connection
       mongo.connect
       mongo.should be_connected
       mongo.connection.should == connection
