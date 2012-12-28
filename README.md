@@ -49,8 +49,8 @@ class Article
 end
 
 Perpetuity.generate_mapper_for Article do
-  attribute :title, String
-  attribute :body, String
+  attribute :title
+  attribute :body
 end
 
 article = Article.new
@@ -112,7 +112,7 @@ Perpetuity.generate_mapper_for User do
 end
 
 Perpetuity.generate_mapper_for Article do
-  attribute :author, User # Notice the author's class
+  attribute :author
 end
 ```
 
