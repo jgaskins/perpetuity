@@ -142,15 +142,15 @@ module Perpetuity
       end
     end
 
-    def update object, new_data
+    def update object, new_data, update_in_memory = true
       id = object.is_a?(mapped_class) ? object.id : object
 
-      inject_data object, new_data
+      inject_data object, new_data if update_in_memory
       data_source.update mapped_class, id, new_data
     end
 
     def save object
-      update object, serialize(object)
+      update object, serialize(object), false
     end
 
     def self.validate &block
