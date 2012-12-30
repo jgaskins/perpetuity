@@ -94,7 +94,9 @@ end
 
 ## Associations with Other Objects
 
-If an object references another object (such as an article referencing its author), it must have a relationship identifier in its mapper class. For example:
+The database can natively serialize some objects. For example, MongoDB can serialize `String`, `Numeric`, `Array`, `Hash`, `Time`, `nil`, `true`, `false`, and a few others. If an object references another type of object (such as an article referencing its author, a `User` object), the association is declared just as any other attribute. No special treatment is required.
+
+If the associated object's class has a mapper defined, it will be used by the parent object's mapper for serialization. Otherwise, the object will be `Marshal.dump`ed. If the object cannot be marshaled, the object cannot be serialized and an exception will be raised.
 
 ```ruby
 class User
@@ -102,10 +104,6 @@ end
 
 class Article
   attr_accessor :author
-
-  def initialize(author)
-    self.author = author
-  end
 end
 
 Perpetuity.generate_mapper_for User do
@@ -124,6 +122,8 @@ article = article_mapper.first
 article_mapper.load_association! article, :author
 user = article.author
 ```
+
+All loading of associated objects is explicit so that we don't load an entire object graph unnecessarily.
 
 ## Customizing persistence
 
