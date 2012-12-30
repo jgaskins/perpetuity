@@ -149,6 +149,10 @@ module Perpetuity
       data_source.update mapped_class, id, new_data
     end
 
+    def save object
+      update object, serialize(object)
+    end
+
     def self.validate &block
       @validations ||= ValidationSet.new
 
