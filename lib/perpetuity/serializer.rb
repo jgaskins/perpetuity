@@ -9,11 +9,7 @@ module Perpetuity
     end
 
     def attribute_for object, attribute_name
-      if object.respond_to? attribute_name
-        object.send(attribute_name)
-      else
-        object.instance_variable_get("@#{attribute_name}")
-      end
+      object.instance_variable_get("@#{attribute_name}")
     end
 
     def serialize object

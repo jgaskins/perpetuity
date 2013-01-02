@@ -30,7 +30,7 @@ module Perpetuity
 
       it 'serializes attributes' do
         object = Object.new
-        object.stub(sub_objects: [unserializable_object])
+        object.instance_variable_set '@sub_objects', [unserializable_object]
         mapper_class.attribute :sub_objects, embedded: true
         mapper_class.map Object
         data_source = double(:data_source)

@@ -1,12 +1,8 @@
 module Perpetuity
   module DataInjectable
     def inject_attribute object, attribute, value
-      if object.respond_to?("#{attribute}=")
-        object.send("#{attribute}=", value)
-      else
-        attribute = "@#{attribute}" unless attribute[0] == '@'
-        object.instance_variable_set(attribute, value)
-      end
+      attribute = "@#{attribute}" unless attribute[0] == '@'
+      object.instance_variable_set(attribute, value)
     end
 
     def inject_data object, data

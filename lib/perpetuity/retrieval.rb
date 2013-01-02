@@ -69,13 +69,13 @@ module Perpetuity
           if id
             object = Reference.new(klass, id)
           else
-            object = klass.new
+            object = klass.allocate
             data.each do |attr, value|
               inject_attribute object, attr, unserialize(value)
             end
           end
         else
-          object = @class.new
+          object = @class.allocate
           data.each do |attr, value|
             inject_attribute object, attr, unserialize(value)
           end
