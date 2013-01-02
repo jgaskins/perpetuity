@@ -1,3 +1,8 @@
+## Version 0.3.1
+
+- Access object state via instance methods to store actual object state, rather than treating all objects as value objects
+- Use `Object.allocate` rather than `Object.new` when restoring state to an object from the database
+
 ## Version 0.3
 
 - Use `Perpetuity[]` instead of `Perpetuity::Mapper[]` to get mapper instances
