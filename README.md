@@ -72,18 +72,16 @@ You can load specific objects by calling the `find` method with an ID param on t
 
 ```ruby
 article  = Perpetuity[Article].find params[:id]
-users    = Perpetuity[User].select { email == 'me@example.com' }
-articles = Perpetuity[Article].select { published_at < Time.now }
-comments = Perpetuity[Comment].select { article_id.in articles.map(&:id) }
+users    = Perpetuity[User].select { |user| user.email == 'me@example.com' }
+articles = Perpetuity[Article].select { |article| article.published_at < Time.now }
+comments = Perpetuity[Comment].select { |comment| comment.article_id.in articles.map(&:id) }
 ```
-
-Unfortunately, due to limitations in the Ruby language itself, this is as close as I could get to a true `Enumerable`-style select method. Once I can override `&&` and `||`, we can put more Rubyesque code in here.
 
 These methods will return a Perpetuity::Retrieval object, which will lazily retrieve the objects from the database. They will wait to hit the DB when you begin iterating over the objects so you can continue chaining methods.
 
 ```ruby
 article_mapper = Perpetuity[Article]
-articles = article_mapper.select { published_at < Time.now }
+articles = article_mapper.select { |article| article.published_at < Time.now }
 articles = articles.sort(:published_at).reverse
 articles = articles.page(2).per_page(10) # built-in pagination
 
@@ -91,6 +89,14 @@ articles.each do |article| # This is when the DB gets hit
   # Display the pretty articles
 end
 ```
+
+Unfortunately, due to limitations in the Ruby language itself, we cannot get a true `Enumerable`-style select method. The limitation shows itself when needing to have multiple criteria for a query, as in this super-secure example:
+
+```ruby
+user = Perpetuity[User].select { |user| (user.email == params[:email]) & (user.password == params[:password]) }
+```
+
+Notice that we have to use a single `&` and surround each criterion with parentheses. If we could override `&&` and `||`, we could put more Rubyesque code in here, but until then, we have to operate within the boundaries of the operators that can be overridden.
 
 ## Associations with Other Objects
 
