@@ -33,8 +33,8 @@ module Perpetuity
       attribute_set.map(&:name)
     end
 
-    def self.index attribute
-      data_source.index mapped_class, attribute_set[attribute]
+    def self.index attribute, options={}
+      data_source.index mapped_class, attribute_set[attribute], options
     end
 
     def indexes

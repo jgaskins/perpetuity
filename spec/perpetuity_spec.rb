@@ -409,7 +409,7 @@ describe Perpetuity do
       Class.new(Perpetuity::Mapper) do
         map Object
         attribute :name
-        index :name
+        index :name, unique: true
       end
     end
     let(:mapper) { mapper_class.new }
@@ -430,6 +430,10 @@ describe Perpetuity do
     it 'creates indexes' do
       mapper.reindex!
       name_index.should be_active
+    end
+
+    it 'specifies uniqueness of the index' do
+      name_index.should be_unique
     end
   end
 end
