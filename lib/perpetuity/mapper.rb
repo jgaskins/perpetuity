@@ -10,8 +10,9 @@ module Perpetuity
     include DataInjectable
 
     def self.generate_for(klass, &block)
-      mapper = Class.new(base_class, &block)
+      mapper = Class.new(base_class)
       mapper.map klass
+      mapper.instance_exec &block if block_given?
     end
 
     def self.map klass
