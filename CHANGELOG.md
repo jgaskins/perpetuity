@@ -1,3 +1,10 @@
+## Version 0.4
+
+- Mapper select DSL now more closely resembles `Enumerable` syntax
+  - Instead of `mapper.select { published_at < Time.now }` you would write `mapper.select { |article| article.published_at < Time.now }`
+  - It's a little more typing, but it eliminates a lot of problems that came from calling instance_exec on the block. It meant we couldn't call methods on the current object (they would be invoked on the `Query` object) or use instance variables from the current object.
+  - Explained more in [issue #19](https://github.com/jgaskins/perpetuity/issues/19)
+
 ## Version 0.3.1
 
 - Access object state via instance methods to store actual object state, rather than treating all objects as value objects
