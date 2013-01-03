@@ -163,55 +163,55 @@ describe Perpetuity do
       end
 
       it 'selects objects using equality' do
-        selected = Perpetuity[Article].select { title == 'Published' }
+        selected = Perpetuity[Article].select { |article| article.title == 'Published' }
         selected.map(&:id).should include published.id
         selected.map(&:id).should_not include draft.id
       end
 
       it 'selects objects using greater-than' do
-        selected = Perpetuity[Article].select { published_at < Time.now }
+        selected = Perpetuity[Article].select { |article| article.published_at < Time.now }
         ids = selected.map(&:id)
         ids.should include published.id
         ids.should_not include draft.id
       end
 
       it 'selects objects using greater-than-or-equal' do
-        selected = Perpetuity[Article].select { views >= 3 }
+        selected = Perpetuity[Article].select { |article| article.views >= 3 }
         ids = selected.map(&:id)
         ids.should include published.id
         ids.should_not include draft.id
       end
 
       it 'selects objects using less-than' do
-        selected = Perpetuity[Article].select { views < 3 }
+        selected = Perpetuity[Article].select { |article| article.views < 3 }
         ids = selected.map(&:id)
         ids.should include draft.id
         ids.should_not include published.id
       end
 
       it 'selects objects using less-than-or-equal' do
-        selected = Perpetuity[Article].select { views <= 0 }
+        selected = Perpetuity[Article].select { |article| article.views <= 0 }
         ids = selected.map(&:id)
         ids.should include draft.id
         ids.should_not include published.id
       end
 
       it 'selects objects using inequality' do
-        selected = Perpetuity[Article].select { title.not_equal? 'Draft' }
+        selected = Perpetuity[Article].select { |article| article.title.not_equal? 'Draft' }
         ids = selected.map(&:id)
         ids.should_not include draft.id
         ids.should include published.id
       end
 
       it 'selects objects using regular expressions' do
-        selected = Perpetuity[Article].select { title =~ /Pub/ }
+        selected = Perpetuity[Article].select { |article| article.title =~ /Pub/ }
         ids = selected.map(&:id)
         ids.should include published.id
         ids.should_not include draft.id
       end
 
       it 'selects objects using inclusion' do
-        selected = Perpetuity[Article].select { title.in %w( Published ) }
+        selected = Perpetuity[Article].select { |article| article.title.in %w( Published ) }
         ids = selected.map(&:id)
         ids.should include published.id
         ids.should_not include draft.id

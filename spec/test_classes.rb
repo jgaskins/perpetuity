@@ -31,11 +31,13 @@ class ArticleMapper < Perpetuity::Mapper
   attribute :views
 
   def published
-    select { (published_at.not_equal? nil) & (published_at < Time.now) }
+    select { |article| (article.published_at.not_equal? nil) &
+                       (article.published_at < Time.now) }
   end
 
   def unpublished
-    select { (published_at == nil) | (published_at > Time.now) }
+    select { |article| (article.published_at == nil) |
+                       (article.published_at > Time.now) }
   end
 end
 
