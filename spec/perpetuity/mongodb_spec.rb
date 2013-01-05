@@ -119,11 +119,17 @@ module Perpetuity
       end
 
       it 'creates indexes on the database collection' do
-        mongo.delete_all collection
         index = mongo.index collection, 'real_index', order: :descending, unique: true
         mongo.activate_index! index
 
         mongo.active_indexes(collection).should include index
+      end
+
+      it 'removes indexes' do
+        index = mongo.index collection, 'real_index', order: :descending, unique: true
+        mongo.activate_index! index
+        mongo.remove_index index
+        mongo.active_indexes(collection).should_not include index
       end
     end
   end

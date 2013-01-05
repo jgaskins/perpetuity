@@ -140,6 +140,16 @@ module Perpetuity
       index.activate!
     end
 
+    def remove_index index
+      coll = collection(index.collection)
+      db_indexes = coll.index_information.select do |name, info|
+        name =~ /#{index.attribute}/
+      end
+      if db_indexes.any?
+        collection(index.collection).drop_index db_indexes.first.first
+      end
+    end
+
     private
     def serializable_types
       @serializable_types ||= [NilClass, TrueClass, FalseClass, Fixnum, Float, String, Array, Hash, Time]

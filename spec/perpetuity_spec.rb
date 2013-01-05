@@ -1,13 +1,11 @@
 require 'perpetuity'
+
+mongodb = Perpetuity::MongoDB.new db: 'perpetuity_gem_test'
+Perpetuity.configure { data_source mongodb }
+
 require 'test_classes'
 
 describe Perpetuity do
-  before(:all) do
-    # Use MongoDB for now as its the only one supported.
-    mongodb = Perpetuity::MongoDB.new db: 'perpetuity_gem_test'
-    Perpetuity.configure { data_source mongodb }
-  end
-
   describe 'mapper generation' do
     it 'generates mappers' do
       Perpetuity.generate_mapper_for Object
@@ -419,6 +417,8 @@ describe Perpetuity do
       end
     end
 
+    after { mapper.data_source.database.drop_collection 'Object' }
+
     it 'adds indexes to database collections/tables' do
       name_index.attribute.name.should be == :name
     end
@@ -430,6 +430,7 @@ describe Perpetuity do
     it 'creates indexes' do
       mapper.reindex!
       name_index.should be_active
+      mapper.remove_index! name_index
     end
 
     it 'specifies uniqueness of the index' do

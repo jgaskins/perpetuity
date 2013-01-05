@@ -37,6 +37,10 @@ module Perpetuity
       data_source.index mapped_class, attribute_set[attribute], options
     end
 
+    def remove_index! index
+      data_source.remove_index index
+    end
+
     def indexes
       data_source.indexes(mapped_class)
     end
