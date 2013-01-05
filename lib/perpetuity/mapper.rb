@@ -98,16 +98,7 @@ module Perpetuity
     end
 
     def all
-      results = data_source.all mapped_class
-      objects = []
-      results.each do |result|
-        object = mapped_class.new
-        inject_data object, result
-
-        objects << object
-      end
-
-      objects
+      retrieve
     end
 
     def retrieve criteria={}
