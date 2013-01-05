@@ -94,11 +94,7 @@ module Perpetuity
     end
 
     def first
-      data = data_source.first mapped_class
-      object = mapped_class.new
-      inject_data object, data
-
-      object
+      retrieve.limit(1).first
     end
 
     def all
