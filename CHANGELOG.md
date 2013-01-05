@@ -1,3 +1,9 @@
+## Version 0.4.1
+
+- Add `Mapper#remove_index!` to remove DB indexes
+- Fix index declarations in mappers to take unique/order options
+  - These were intended to be there from the beginning, but the API wasn't made available in the mapper
+
 ## Version 0.4
 
 - Mapper select DSL now more closely resembles `Enumerable` syntax
