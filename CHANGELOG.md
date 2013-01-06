@@ -1,3 +1,7 @@
+## Version 0.4.2
+
+- Improved speed and stability of `Mapper#first` and `Mapper#all`
+
 ## Version 0.4.1
 
 - Add `Mapper#remove_index!` to remove DB indexes
