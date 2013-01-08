@@ -1,5 +1,6 @@
 require 'perpetuity/validations/length'
 require 'perpetuity/validations/presence'
+require 'set'
 
 module Perpetuity
   class ValidationSet < Set
