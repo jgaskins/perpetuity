@@ -3,7 +3,7 @@ require 'perpetuity'
 mongodb = Perpetuity::MongoDB.new db: 'perpetuity_gem_test'
 Perpetuity.configure { data_source mongodb }
 
-require 'test_classes'
+require 'support/test_classes'
 
 describe Perpetuity do
   describe 'mapper generation' do
