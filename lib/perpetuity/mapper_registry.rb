@@ -1,16 +1,18 @@
 module Perpetuity
   class MapperRegistry
-    @mappers = Hash.new { |_, klass| raise KeyError, "No mapper for #{klass}" }
+    def initialize
+      @mappers = Hash.new { |_, klass| raise KeyError, "No mapper for #{klass}" }
+    end
 
-    def self.has_mapper? klass
+    def has_mapper? klass
       @mappers.has_key? klass
     end
 
-    def self.[] klass
-      @mappers[klass].new
+    def [] klass
+      @mappers[klass].new(self)
     end
 
-    def self.[]= klass, mapper
+    def []= klass, mapper
       @mappers[klass] = mapper
     end
   end

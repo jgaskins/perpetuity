@@ -2,21 +2,19 @@ require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
-require 'perpetuity/mapper_registry'
 require 'perpetuity/serializer'
 
 module Perpetuity
   class Mapper
     include DataInjectable
+    attr_reader :mapper_registry
 
-    def self.generate_for(klass, &block)
-      mapper = Class.new(base_class)
-      mapper.map klass
-      mapper.instance_exec &block if block_given?
+    def initialize registry=Perpetuity.mapper_registry
+      @mapper_registry = registry
     end
 
-    def self.map klass
-      MapperRegistry[klass] = self
+    def self.map klass, registry=Perpetuity.mapper_registry
+      registry[klass] = self
       @mapped_class = klass
     end
 
@@ -70,7 +68,7 @@ module Perpetuity
     end
 
     def serialize object
-      Serializer.new(self).serialize(object)
+      Serializer.new(self, mapper_registry).serialize(object)
     end
 
     def self.data_source
@@ -123,7 +121,7 @@ module Perpetuity
       klass = reference.klass
       id = reference.id
 
-      inject_attribute object, attribute, MapperRegistry[klass].find(id)
+      inject_attribute object, attribute, mapper_registry[klass].find(id)
     end
 
     def self.id &block

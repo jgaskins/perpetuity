@@ -1,11 +1,10 @@
-require 'perpetuity/mapper_registry'
-
 module Perpetuity
   class Serializer
-    attr_reader :mapper
+    attr_reader :mapper, :mapper_registry
 
-    def initialize(mapper)
+    def initialize(mapper, mapper_registry)
       @mapper = mapper
+      @mapper_registry = mapper_registry
     end
 
     def attribute_for object, attribute_name
@@ -20,7 +19,7 @@ module Perpetuity
           serialize_array(value)
         elsif mapper.data_source.can_serialize? value
           value
-        elsif MapperRegistry.has_mapper?(value.class)
+        elsif mapper_registry.has_mapper?(value.class)
           serialize_with_foreign_mapper(value, attrib.embedded?)
         else
           if attrib.embedded?
@@ -36,7 +35,7 @@ module Perpetuity
 
     def serialize_with_foreign_mapper value, embedded = false
       if embedded
-        value_mapper = MapperRegistry[value.class]
+        value_mapper = mapper_registry[value.class]
         value_serializer = Serializer.new(value_mapper)
         attr = value_serializer.serialize(value)
         attr.merge '__metadata__' =>  { 'class' => value.class }
@@ -56,12 +55,12 @@ module Perpetuity
           serialize_array(value)
         elsif mapper.data_source.can_serialize? value
           value
-        elsif MapperRegistry.has_mapper?(value.class)
+        elsif mapper_registry.has_mapper?(value.class)
           {
             '__metadata__' => {
               'class' => value.class.to_s
             }
-          }.merge MapperRegistry[value.class].serialize(value)
+          }.merge mapper_registry[value.class].serialize(value)
         else
           Marshal.dump(value)
         end

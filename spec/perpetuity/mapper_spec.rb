@@ -1,9 +1,11 @@
+require 'perpetuity/mapper_registry'
 require 'perpetuity/mapper'
 
 module Perpetuity
   describe Mapper do
+    let(:registry) { MapperRegistry.new}
     let(:mapper_class) { Class.new(Mapper) }
-    let(:mapper) { mapper_class.new }
+    let(:mapper) { mapper_class.new(registry) }
     subject { mapper }
 
     it { should be_a Mapper }
@@ -32,7 +34,7 @@ module Perpetuity
         object = Object.new
         object.instance_variable_set '@sub_objects', [unserializable_object]
         mapper_class.attribute :sub_objects, embedded: true
-        mapper_class.map Object
+        mapper_class.map Object, registry
         data_source = double(:data_source)
         mapper.stub(data_source: data_source)
         data_source.should_receive(:can_serialize?).with(unserializable_object).and_return false
@@ -42,11 +44,12 @@ module Perpetuity
     end
 
     describe 'subclassing Mapper' do
-      let!(:mapper_subclass) { Class.new(Mapper) { map String } }
+      let(:mapper_subclass) { Class.new(Mapper) }
       let(:mapper) { mapper_subclass.new }
 
       it 'can explicitly map a class' do
-        MapperRegistry[String].should be_instance_of mapper_subclass
+        mapper_subclass.map String, registry
+        registry[String].should be_instance_of mapper_subclass
       end
     end
   end
