@@ -65,7 +65,7 @@ module Perpetuity
       # MongoDB uses '_id' as its ID field.
       if criteria.has_key?(:id)
         if criteria[:id].is_a? String
-          criteria = { _id: BSON::ObjectId.from_string(criteria[:id].to_s) }
+          criteria = { _id: (BSON::ObjectId.from_string(criteria[:id].to_s) rescue criteria[:id]) }
         else
           criteria[:_id] = criteria.delete(:id)
         end
