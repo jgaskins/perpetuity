@@ -11,7 +11,7 @@ class ArticleMapper < Perpetuity::Mapper
   attribute :title
   attribute :body
   attribute :author
-  attribute :comments
+  attribute :comments, embedded: true
   attribute :published_at
   attribute :views
 

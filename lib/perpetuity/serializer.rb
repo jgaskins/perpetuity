@@ -16,7 +16,7 @@ module Perpetuity
         value = attribute_for object, attrib.name
 
         serialized_value = if value.is_a? Array
-          serialize_array(value)
+          serialize_array(value, attrib.embedded?)
         elsif mapper.data_source.can_serialize? value
           value
         elsif mapper_registry.has_mapper?(value.class)
@@ -49,18 +49,27 @@ module Perpetuity
       end
     end
 
-    def serialize_array enum
+    def serialize_array enum, embedded
       enum.map do |value|
         if value.is_a? Array
           serialize_array(value)
         elsif mapper.data_source.can_serialize? value
           value
         elsif mapper_registry.has_mapper?(value.class)
-          {
-            '__metadata__' => {
-              'class' => value.class.to_s
+          if embedded
+            {
+              '__metadata__' => {
+                'class' => value.class.to_s
+              }
+            }.merge mapper_registry[value.class].serialize(value)
+          else
+            {
+              '__metadata__' => {
+                'class' => value.class.to_s,
+                'id' => value.id
+              }
             }
-          }.merge mapper_registry[value.class].serialize(value)
+          end
         else
           Marshal.dump(value)
         end

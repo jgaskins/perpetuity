@@ -3,6 +3,7 @@ require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
 require 'perpetuity/serializer'
+require 'perpetuity/identity_map'
 
 module Perpetuity
   class Mapper
@@ -117,11 +118,21 @@ module Perpetuity
     end
 
     def load_association! object, attribute
-      reference = object.send(attribute)
-      klass = reference.klass
-      id = reference.id
+      objects = Array(object)
+      identity_map = IdentityMap.new(objects, attribute, mapper_registry)
 
-      inject_attribute object, attribute, mapper_registry[klass].find(id)
+      objects.each do |object|
+        reference = object.send(attribute)
+        if reference.is_a? Array
+          refs = reference
+          real_objects = refs.map { |ref| identity_map[ref.klass][ref.id] }
+          inject_attribute object, attribute, real_objects
+        else
+          klass = reference.klass
+          id = reference.id
+          inject_attribute object, attribute, identity_map[klass][id]
+        end
+      end
     end
 
     def self.id &block
