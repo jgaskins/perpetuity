@@ -71,8 +71,8 @@ module Perpetuity
       Serializer.new(self, mapper_registry).serialize(object)
     end
 
-    def self.data_source
-      Perpetuity.configuration.data_source
+    def self.data_source(configuration=Perpetuity.configuration)
+      configuration.data_source
     end
 
     def data_source
