@@ -60,8 +60,6 @@ module Perpetuity
     end
 
     def retrieve klass, criteria, options = {}
-      objects = []
-
       # MongoDB uses '_id' as its ID field.
       if criteria.has_key?(:id)
         if criteria[:id].is_a? String
@@ -71,20 +69,26 @@ module Perpetuity
         end
       end
 
-      sort_field = options[:attribute]
-      sort_direction = options[:direction]
-      sort_criteria = [[sort_field, sort_direction]]
       other_options = { limit: options[:limit] }
       if options[:page]
         other_options = other_options.merge skip: (options[:page] - 1) * options[:limit]
       end
+      cursor = database.collection(klass.to_s).find(criteria, other_options)
 
-      database.collection(klass.to_s).find(criteria, other_options).sort(sort_criteria).each do |document|
+      sort_cursor(cursor, options).map do |document|
         document[:id] = document.delete("_id")
-        objects << document
+        document
       end
+    end
 
-      objects
+    def sort_cursor cursor, options
+      return cursor unless options.has_key?(:attribute) &&
+                           options.has_key?(:direction)
+
+      sort_field = options[:attribute]
+      sort_direction = options[:direction]
+      sort_criteria = [[sort_field, sort_direction]]
+      cursor.sort(sort_criteria)
     end
 
     def all klass
