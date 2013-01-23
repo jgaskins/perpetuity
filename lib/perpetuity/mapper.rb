@@ -164,11 +164,6 @@ module Perpetuity
     def self.validations
       @validations ||= ValidationSet.new
     end
-
-    private
-    def self.base_class
-      Mapper
-    end
   end
 end
 
