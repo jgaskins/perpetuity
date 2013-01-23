@@ -156,8 +156,6 @@ module Perpetuity
     end
 
     def self.validate &block
-      @validations ||= ValidationSet.new
-
       validations.instance_exec(&block)
     end
 
