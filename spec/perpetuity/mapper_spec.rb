@@ -24,6 +24,11 @@ module Perpetuity
       mapper_class.attribute_set[:comments].should be_embedded
     end
 
+    it 'registers itself with the mapper registry' do
+      mapper_class.map Object, registry
+      registry[Object].should be_instance_of mapper_class
+    end
+
     context 'with unserializable embedded attributes' do
       let(:unserializable_object) { 1.to_c }
       let(:serialized_attrs) do
@@ -40,16 +45,6 @@ module Perpetuity
         data_source.should_receive(:can_serialize?).with(unserializable_object).and_return false
 
         mapper.serialize(object)['sub_objects'].should eq serialized_attrs
-      end
-    end
-
-    describe 'subclassing Mapper' do
-      let(:mapper_subclass) { Class.new(Mapper) }
-      let(:mapper) { mapper_subclass.new }
-
-      it 'can explicitly map a class' do
-        mapper_subclass.map String, registry
-        registry[String].should be_instance_of mapper_subclass
       end
     end
   end
