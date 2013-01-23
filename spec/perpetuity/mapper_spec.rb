@@ -11,17 +11,17 @@ module Perpetuity
     it { should be_a Mapper }
 
     it 'has correct attributes' do
-      Class.new(Mapper) { attribute :name }.attributes.should eq [:name]
+      mapper_class.attribute :name
+      mapper_class.attributes.should eq [:name]
     end
 
     it 'returns an empty attribute list when no attributes have been assigned' do
-      Mapper.attributes.should be_empty
+      mapper_class.attributes.should be_empty
     end
 
     it 'can have embedded attributes' do
-      mapper_with_embedded_attrs = Class.new(Mapper)
-      mapper_with_embedded_attrs.attribute :comments, embedded: true
-      mapper_with_embedded_attrs.attribute_set[:comments].should be_embedded
+      mapper_class.attribute :comments, embedded: true
+      mapper_class.attribute_set[:comments].should be_embedded
     end
 
     context 'with unserializable embedded attributes' do
