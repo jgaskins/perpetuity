@@ -4,6 +4,7 @@ require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
 require 'perpetuity/serializer'
 require 'perpetuity/identity_map'
+require 'perpetuity/retrieval'
 
 module Perpetuity
   class Mapper
@@ -101,7 +102,7 @@ module Perpetuity
     end
 
     def retrieve criteria={}
-      Perpetuity::Retrieval.new mapped_class, criteria
+      Perpetuity::Retrieval.new mapped_class, criteria, data_source
     end
 
     def select &block
