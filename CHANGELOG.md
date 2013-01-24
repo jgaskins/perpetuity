@@ -1,3 +1,20 @@
+## Version 0.4.3
+
+- Made `Mapper#load_association!` more friendly. It now loads the associated objects for all objects passed in and works with arrays of referenced objects.
+- `Mapper#load_association!` is also now more efficient — the N+1 queries have been optimized. The number of queries it fires off is now equal to the quantity of different classes of associated objects.
+  - For example, if a user can have either a `UserProfile` or an `AdminProfile` as its `profile` attribute, Perpetuity will use two queries in `#load_association!` if and only if both types of profiles are used.
+  - In that example, if you only query users with a `UserProfile`, only one DB query will be triggered.
+
+New query example:
+
+```ruby
+user_mapper = Perpetuity[User]
+users = user_mapper.all.to_a
+user_mapper.load_association! users, :profile
+```
+
+Each of the users in the DB will have their profiles loaded with a single DB query per profile type and stored in their `profile` attributes.
+
 ## Version 0.4.2
 
 - Improved speed and stability of `Mapper#first` and `Mapper#all`
