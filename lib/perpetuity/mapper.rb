@@ -69,28 +69,12 @@ module Perpetuity
       new_id
     end
 
-    def serialize object
-      Serializer.new(self, mapper_registry).serialize(object)
-    end
-
     def self.data_source(configuration=Perpetuity.configuration)
       configuration.data_source
     end
 
-    def data_source
-      self.class.data_source
-    end
-
     def count
       data_source.count mapped_class
-    end
-
-    def self.mapped_class
-      @mapped_class
-    end
-
-    def mapped_class
-      self.class.mapped_class
     end
 
     def first
@@ -99,10 +83,6 @@ module Perpetuity
 
     def all
       retrieve
-    end
-
-    def retrieve criteria={}
-      Perpetuity::Retrieval.new mapped_class, criteria, data_source
     end
 
     def select &block
@@ -161,6 +141,28 @@ module Perpetuity
 
     def self.validations
       @validations ||= ValidationSet.new
+    end
+
+    def data_source
+      self.class.data_source
+    end
+
+    def serialize object
+      Serializer.new(self, mapper_registry).serialize(object)
+    end
+
+    private
+
+    def retrieve criteria={}
+      Perpetuity::Retrieval.new mapped_class, criteria, data_source
+    end
+
+    def self.mapped_class
+      @mapped_class
+    end
+
+    def mapped_class
+      self.class.mapped_class
     end
   end
 end
