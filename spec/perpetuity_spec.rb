@@ -58,10 +58,6 @@ describe Perpetuity do
         Perpetuity[Article].first.should respond_to :id
       end
 
-      it 'assigns an id using Mapper.retrieve.first' do
-        Perpetuity[Article].retrieve.first.should respond_to :id
-      end
-
       it 'assigns an id using Mapper.all.first' do
         Perpetuity[Article].all.first.should respond_to :id
       end
@@ -128,10 +124,6 @@ describe Perpetuity do
       Perpetuity[Article].insert Article.new
       Perpetuity[Article].first.should respond_to :id
     end
-    
-    it "returns a Perpetuity::Retrieval object" do
-      Perpetuity[Article].retrieve(id: 1).should be_an_instance_of Perpetuity::Retrieval
-    end
 
     it "gets an item with a specific ID" do
       article = Article.new
@@ -141,15 +133,6 @@ describe Perpetuity do
       retrieved.id.should eq article.id
       retrieved.title.should eq article.title
       retrieved.body.should eq article.body
-    end
-
-    it "gets an item by its attributes" do
-      article = Article.new
-      Perpetuity[Article].insert article
-      retrieved = Perpetuity[Article].retrieve(title: article.title)
-
-      retrieved.to_a.should_not be_empty
-      retrieved.first.title.should eq article.title
     end
 
     describe "Array-like syntax" do
@@ -219,24 +202,24 @@ describe Perpetuity do
 
   describe 'pagination' do
     it 'specifies the page we want' do
-      Perpetuity[Article].retrieve.should respond_to :page
+      Perpetuity[Article].all.should respond_to :page
     end
 
     it 'specify the quantity per page' do
-      Perpetuity[Article].retrieve.should respond_to :per_page
+      Perpetuity[Article].all.should respond_to :per_page
     end
 
     it 'returns an empty set when there is no data for that page' do
       mapper = Perpetuity[Article]
       mapper.delete_all
-      data = mapper.retrieve.page(2)
+      data = mapper.all.page(2)
       data.should be_empty
     end
 
     it 'specifies per-page quantity' do
       Perpetuity[Article].delete_all
       5.times { |i| Perpetuity[Article].insert Article.new i }
-      data = Perpetuity[Article].retrieve.page(3).per_page(2)
+      data = Perpetuity[Article].all.page(3).per_page(2)
       data.should have(1).item
     end
   end
