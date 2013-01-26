@@ -40,12 +40,7 @@ module Perpetuity
         attr = value_serializer.serialize(value)
         attr.merge '__metadata__' =>  { 'class' => value.class }
       else
-        {
-          '__metadata__' =>  {
-            'class' => value.class.to_s,
-            'id' => value.id
-          }
-        }
+        serialize_reference(value)
       end
     end
 
@@ -63,17 +58,24 @@ module Perpetuity
               }
             }.merge mapper_registry[value.class].serialize(value)
           else
-            {
-              '__metadata__' => {
-                'class' => value.class.to_s,
-                'id' => value.id
-              }
-            }
+            serialize_reference value
           end
         else
           Marshal.dump(value)
         end
       end
+    end
+
+    def serialize_reference value
+      unless value.respond_to? :id
+        mapper_registry[value.class].insert value
+      end
+      {
+        '__metadata__' =>  {
+          'class' => value.class.to_s,
+          'id' => value.id
+        }
+      }
     end
   end
 end

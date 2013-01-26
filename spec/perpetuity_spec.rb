@@ -46,6 +46,23 @@ describe Perpetuity do
       article.id.should eq 1
     end
 
+    it 'persists referenced objects if they are not persisted' do
+      article = Article.new
+      article.author = User.new
+      Perpetuity[Article].insert article
+
+      Perpetuity[Article].find(article.id).author.id.should be == article.author.id
+    end
+
+    it 'persists arrays of referenced objects if they are not persisted' do
+      authors = [User.new('Dave'), User.new('Andy')]
+      book = Book.new
+      book.authors = authors
+      Perpetuity[Book].insert book
+
+      Perpetuity[Book].find(book.id).authors.first.id.should be == authors.first.id
+    end
+
     describe 'id injection' do
       let(:article) { Article.new }
 
