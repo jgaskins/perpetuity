@@ -1,3 +1,7 @@
+## Version 0.4.4
+
+- Automatically persist all referenced objects if they are not already persisted. Previously, referenced objects were required to be persisted before persisting the referencing object.
+
 ## Version 0.4.3
 
 - Made `Mapper#load_association!` more friendly. It now loads the associated objects for all objects passed in and works with arrays of referenced objects.
