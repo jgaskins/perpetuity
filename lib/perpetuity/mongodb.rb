@@ -95,8 +95,8 @@ module Perpetuity
       retrieve klass, {}, {}
     end
     
-    def delete object, klass=nil
-      id = object.respond_to?(:id) ? object.id : object
+    def delete object_or_id, klass=nil
+      id = object_or_id.is_a?(PersistedObject) ? object_or_id.id : object_or_id
       klass ||= object.class
       collection(klass.to_s).remove "_id" => id
     end

@@ -67,7 +67,7 @@ module Perpetuity
     end
 
     def serialize_reference value
-      unless value.respond_to? :id
+      unless value.is_a? PersistedObject
         mapper_registry[value.class].insert value
       end
       {

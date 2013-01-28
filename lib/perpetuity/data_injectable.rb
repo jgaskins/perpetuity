@@ -1,3 +1,5 @@
+require 'perpetuity/persisted_object'
+
 module Perpetuity
   module DataInjectable
     def inject_attribute object, attribute, value
@@ -13,9 +15,10 @@ module Perpetuity
     end
 
     def give_id_to object, *args
-      object.define_singleton_method :id do
-        args.first || object.instance_variable_get(:@id)
+      if args.any?
+        inject_attribute object, :id, args.first
       end
+      object.extend PersistedObject
     end
   end
 end

@@ -30,8 +30,8 @@ module Perpetuity
     let(:serializer) { Serializer.new(mapper_registry[Book], mapper_registry) }
 
     before do
-      dave.stub(id: 1)
-      andy.stub(id: 2)
+      dave.extend PersistedObject
+      andy.extend PersistedObject
       user_mapper.stub(data_source: data_source)
       book_mapper.stub(data_source: data_source)
     end
