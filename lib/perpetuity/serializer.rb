@@ -22,9 +22,7 @@ module Perpetuity
         elsif mapper_registry.has_mapper?(value.class)
           serialize_with_foreign_mapper(value, attrib.embedded?)
         else
-          if attrib.embedded?
-            Marshal.dump(value)
-          end
+          Marshal.dump(value)
         end
 
         [attrib.name.to_s, serialized_value]
