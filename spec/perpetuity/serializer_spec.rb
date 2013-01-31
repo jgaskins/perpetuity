@@ -27,7 +27,7 @@ module Perpetuity
       end
     end
     let(:data_source) { double('Data Source') }
-    let(:serializer) { Serializer.new(mapper_registry[Book], mapper_registry) }
+    let(:serializer) { Serializer.new(mapper_registry[Book]) }
 
     before do
       dave.extend PersistedObject

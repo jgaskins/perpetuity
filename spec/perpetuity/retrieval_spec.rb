@@ -3,7 +3,9 @@ require 'perpetuity/retrieval'
 module Perpetuity
   describe Retrieval do
     let(:data_source) { double('data_source') }
-    let(:retrieval) { Perpetuity::Retrieval.new Object, {}, data_source }
+    let(:registry) { double('mapper_registry') }
+    let(:mapper) { double(mapped_class: Object, data_source: data_source, mapper_registry: registry) }
+    let(:retrieval) { Perpetuity::Retrieval.new mapper, {} }
     subject { retrieval }
 
     it "sorts the results" do

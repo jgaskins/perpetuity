@@ -1,10 +1,13 @@
 module Perpetuity
   class Serializer
+    include DataInjectable
+
     attr_reader :mapper, :mapper_registry
 
-    def initialize(mapper, mapper_registry)
+    def initialize(mapper)
       @mapper = mapper
-      @mapper_registry = mapper_registry
+      @class = mapper.mapped_class
+      @mapper_registry = mapper.mapper_registry
     end
 
     def attribute_for object, attribute_name
@@ -29,6 +32,38 @@ module Perpetuity
       end
 
       Hash[attrs]
+    end
+
+    def unserialize data
+      if data.is_a?(String) && data.start_with?("\u0004") # if it's marshaled
+        Marshal.load(data)
+      elsif data.is_a? Array
+        data.map { |i| unserialize i }
+      elsif data.is_a? Hash
+        metadata = data.delete('__metadata__')
+        if metadata
+          klass = Object.const_get metadata['class']
+          id = metadata['id']
+          if id
+            object = Reference.new(klass, id)
+          else
+            object = klass.allocate
+            data.each do |attr, value|
+              inject_attribute object, attr, unserialize(value)
+            end
+          end
+        else
+          object = @class.allocate
+          data.each do |attr, value|
+            inject_attribute object, attr, unserialize(value)
+          end
+        end
+
+        give_id_to object
+        object
+      else
+        data
+      end
     end
 
     def serialize_with_foreign_mapper value, embedded = false

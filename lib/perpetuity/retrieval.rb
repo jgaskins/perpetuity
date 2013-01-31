@@ -7,10 +7,11 @@ module Perpetuity
     include Enumerable
     attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :quantity_per_page
 
-    def initialize klass, criteria, data_source = Perpetuity.configuration.data_source
-      @class = klass
+    def initialize mapper, criteria
+      @mapper = mapper
+      @class = mapper.mapped_class
       @criteria = criteria
-      @data_source = data_source
+      @data_source = mapper.data_source
     end
     
     def sort attribute=:name
@@ -57,35 +58,7 @@ module Perpetuity
     end
 
     def unserialize(data)
-      if data.is_a?(String) && data.start_with?("\u0004") # if it's marshaled
-        Marshal.load(data)
-      elsif data.is_a? Array
-        data.map { |i| unserialize i }
-      elsif data.is_a? Hash
-        metadata = data.delete('__metadata__')
-        if metadata
-          klass = Object.const_get metadata['class']
-          id = metadata['id']
-          if id
-            object = Reference.new(klass, id)
-          else
-            object = klass.allocate
-            data.each do |attr, value|
-              inject_attribute object, attr, unserialize(value)
-            end
-          end
-        else
-          object = @class.allocate
-          data.each do |attr, value|
-            inject_attribute object, attr, unserialize(value)
-          end
-        end
-
-        give_id_to object
-        object
-      else
-        data
-      end
+      Serializer.new(@mapper).unserialize(data)
     end
 
     def [] index

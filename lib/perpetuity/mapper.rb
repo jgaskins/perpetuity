@@ -148,13 +148,7 @@ module Perpetuity
     end
 
     def serialize object
-      Serializer.new(self, mapper_registry).serialize(object)
-    end
-
-    private
-
-    def retrieve criteria={}
-      Perpetuity::Retrieval.new mapped_class, criteria, data_source
+      Serializer.new(self).serialize(object)
     end
 
     def self.mapped_class
@@ -163,6 +157,12 @@ module Perpetuity
 
     def mapped_class
       self.class.mapped_class
+    end
+
+    private
+
+    def retrieve criteria={}
+      Perpetuity::Retrieval.new self, criteria
     end
   end
 end
