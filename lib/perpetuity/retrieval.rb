@@ -1,5 +1,6 @@
 require 'perpetuity/data_injectable'
 require 'perpetuity/reference'
+require 'perpetuity/serializer'
 
 module Perpetuity
   class Retrieval

@@ -1,3 +1,5 @@
+require 'perpetuity/data_injectable'
+
 module Perpetuity
   class Serializer
     include DataInjectable
