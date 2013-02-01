@@ -11,7 +11,7 @@ module Perpetuity
     let(:authors) { [dave, andy] }
     let(:book) { Book.new('The Pragmatic Programmer', authors) }
     let(:mapper_registry) { MapperRegistry.new }
-    let!(:book_mapper) do
+    let!(:book_mapper_class) do
       registry = mapper_registry
       Class.new(Perpetuity::Mapper) do
         map Book, registry
@@ -19,7 +19,7 @@ module Perpetuity
         attribute :authors
       end
     end
-    let!(:user_mapper) do
+    let!(:user_mapper_class) do
       registry = mapper_registry
       Class.new(Perpetuity::Mapper) do
         map User, registry
@@ -32,8 +32,8 @@ module Perpetuity
     before do
       dave.extend PersistedObject
       andy.extend PersistedObject
-      user_mapper.stub(data_source: data_source)
-      book_mapper.stub(data_source: data_source)
+      user_mapper_class.stub(data_source: data_source)
+      book_mapper_class.stub(data_source: data_source)
     end
 
     it 'serializes an array of non-embedded attributes as references' do
@@ -57,6 +57,30 @@ module Perpetuity
           }
         ]
       }
+    end
+
+    context 'with objects that have hashes as attributes' do
+      let(:name_data) { {first_name: 'Jamie', last_name: 'Gaskins'} }
+      let(:serialized_data) do
+        {
+          'name' => name_data
+        }
+      end
+      let(:user) { User.new(name_data) }
+      let(:user_mapper) { mapper_registry[User] }
+      let(:user_serializer) { Serializer.new(user_mapper) }
+
+      before do
+        data_source.stub(:can_serialize?).with(name_data) { true }
+      end
+
+      it 'serializes' do
+        user_serializer.serialize(user).should be == serialized_data
+      end
+
+      it 'unserializes' do
+        user_serializer.unserialize(serialized_data).name.should be == user.name
+      end
     end
   end
 end

@@ -37,10 +37,40 @@ module Perpetuity
     end
 
     def unserialize data
+      if data.is_a? Array
+        unserialize_object_array data
+      else
+        object = unserialize_object(data)
+        give_id_to object
+        object
+      end
+    end
+
+    def unserialize_object data, klass=@class
+      if data.is_a? Hash
+        object = klass.allocate
+        data.each do |attr, value|
+          inject_attribute object, attr, unserialize_attribute(value)
+        end
+        object
+      else
+        unserialize_attribute data
+      end
+    end
+
+    def unserialize_object_array objects
+      objects.map do |data|
+        object = unserialize_object data
+        give_id_to object
+        object
+      end
+    end
+
+    def unserialize_attribute data
       if data.is_a?(String) && data.start_with?("\u0004") # if it's marshaled
         Marshal.load(data)
       elsif data.is_a? Array
-        data.map { |i| unserialize i }
+        data.map { |i| unserialize_attribute i }
       elsif data.is_a? Hash
         metadata = data.delete('__metadata__')
         if metadata
@@ -49,20 +79,11 @@ module Perpetuity
           if id
             object = Reference.new(klass, id)
           else
-            object = klass.allocate
-            data.each do |attr, value|
-              inject_attribute object, attr, unserialize(value)
-            end
+            object = unserialize_object(data, klass)
           end
         else
-          object = @class.allocate
-          data.each do |attr, value|
-            inject_attribute object, attr, unserialize(value)
-          end
+          data
         end
-
-        give_id_to object
-        object
       else
         data
       end

@@ -78,7 +78,7 @@ module Perpetuity
       end
 
       it 'finds an object by ID' do
-        returned_object = double
+        returned_object = double('Retrieved Object')
         criteria = { id: 1 }
         options = {:attribute=>nil, :direction=>nil, :limit=>nil, :page=>nil}
         data_source.should_receive(:retrieve)

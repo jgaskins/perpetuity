@@ -100,6 +100,17 @@ describe Perpetuity do
       end
     end
 
+    describe 'persisting hashes' do
+      let(:name_hash) { { 'first_name' => 'Jamie', 'last_name' => 'Gaskins' } }
+      let(:user) { User.new(name_hash) }
+      let(:user_mapper) { Perpetuity[User] }
+
+      it 'saves and retrieves hashes' do
+        user_mapper.insert user
+        user_mapper.find(user.id).name.should be == name_hash
+      end
+    end
+
     it "allows mappers to set the id field" do
       noise = Time.now.to_f.to_s.sub('.', '')
       book = Book.new("My Title #{noise}")
