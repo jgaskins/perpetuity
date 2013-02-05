@@ -1,10 +1,8 @@
-require 'perpetuity/data_injectable'
 require 'perpetuity/reference'
 require 'perpetuity/serializer'
 
 module Perpetuity
   class Retrieval
-    include DataInjectable
     include Enumerable
     attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :quantity_per_page
 
