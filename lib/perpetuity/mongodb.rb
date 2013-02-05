@@ -113,6 +113,10 @@ module Perpetuity
       collection(to_be_dropped).drop
     end
 
+    def query &block
+      Query.new(&block)
+    end
+
     def index klass, attribute, options={}
       @indexes[klass] ||= Set.new
 

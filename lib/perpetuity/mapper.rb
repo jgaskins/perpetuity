@@ -86,7 +86,7 @@ module Perpetuity
     end
 
     def select &block
-      query = data_source.class::Query.new(&block).to_db
+      query = data_source.query(&block).to_db
       retrieve query
     end
 

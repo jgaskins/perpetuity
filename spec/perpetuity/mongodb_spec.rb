@@ -100,6 +100,10 @@ module Perpetuity
       end
     end
 
+    it 'generates a new query DSL object' do
+      mongo.query { |object| object.whatever == 1 }.should respond_to :to_db
+    end
+
     describe 'indexing' do
       let(:collection) { Object }
       let(:key) { 'object_id' }
