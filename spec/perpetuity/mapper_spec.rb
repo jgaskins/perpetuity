@@ -1,5 +1,6 @@
 require 'perpetuity/mapper_registry'
 require 'perpetuity/mapper'
+require 'perpetuity/mongodb'
 
 module Perpetuity
   describe Mapper do
@@ -49,7 +50,7 @@ module Perpetuity
     end
 
     describe 'talking to the data source' do
-      let(:data_source) { double }
+      let(:data_source) { MongoDB.new(db: nil) }
       before do
         mapper_class.stub(data_source: data_source)
         mapper_class.map Object, registry

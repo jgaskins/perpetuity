@@ -91,7 +91,7 @@ module Perpetuity
     end
 
     def find id
-      retrieve(id: id).first
+      select { |object| object.id == id }.first
     end
 
     def delete object
