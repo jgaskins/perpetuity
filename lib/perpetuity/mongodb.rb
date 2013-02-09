@@ -110,7 +110,7 @@ module Perpetuity
     end
 
     def drop_collection to_be_dropped
-      collection(to_be_dropped).drop
+      collection(to_be_dropped.to_s).drop
     end
 
     def query &block

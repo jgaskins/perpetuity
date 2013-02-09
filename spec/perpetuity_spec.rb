@@ -459,7 +459,7 @@ describe Perpetuity do
       end
     end
 
-    after { mapper.data_source.database.drop_collection 'Object' }
+    after { mapper.data_source.drop_collection Object }
 
     it 'adds indexes to database collections/tables' do
       name_index.attribute.name.should be == :name
