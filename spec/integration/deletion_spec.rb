@@ -22,5 +22,3 @@ describe "deletion" do
     end
   end
 end
-
-
