@@ -22,15 +22,6 @@ describe Perpetuity do
     end
   end
 
-  # The Message class stores its data members differently internally than it receives them
-  it 'uses accessor methods to read/write data' do
-    message = Message.new 'My Message!'
-    Perpetuity[Message].insert message
-    saved_message = Perpetuity[Message].find(message.id)
-    saved_message.instance_variable_get(:@text).should eq 'My Message!'.reverse
-    saved_message.text.should eq 'My Message!'
-  end
-
   describe 'serialization' do
     let(:author) { User.new 'username' }
     let(:comment) { Comment.new }
