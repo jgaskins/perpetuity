@@ -22,21 +22,6 @@ describe Perpetuity do
     end
   end
 
-  describe 'validations' do
-    let(:car_mapper) { Perpetuity[Car] }
-
-    it 'raises an exception when inserting an invalid object' do
-      car = Car.new
-      expect { car_mapper.insert car }.to raise_error
-    end
-
-    it 'does not raise an exception when validations are met' do
-      car = Car.new
-      car.make = "Volkswagen"
-      expect { car_mapper.insert car }.not_to raise_error
-    end
-  end
-
   # The Message class stores its data members differently internally than it receives them
   it 'uses accessor methods to read/write data' do
     message = Message.new 'My Message!'
