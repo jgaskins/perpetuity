@@ -71,7 +71,7 @@ module Perpetuity
 
       other_options = {}
       if options[:page]
-        other_options = other_options.merge skip: (options[:page] - 1) * options[:limit]
+        other_options.merge! skip: (options[:page] - 1) * options[:limit]
       end
       cursor = database.collection(klass.to_s).find(criteria, other_options)
 
