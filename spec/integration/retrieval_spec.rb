@@ -22,6 +22,11 @@ describe "retrieval" do
     retrieved.body.should eq article.body
   end
 
+  it 'limits result set' do
+    5.times { Perpetuity[Article].insert Article.new }
+    Perpetuity[Article].all.limit(4).should have(4).items
+  end
+
   describe "Array-like syntax" do
     let(:draft) { Article.new 'Draft', 'draft content', nil, Time.now + 30 }
     let(:published) { Article.new 'Published', 'content', nil, Time.now - 30, 3 }

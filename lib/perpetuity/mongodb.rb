@@ -69,11 +69,15 @@ module Perpetuity
         end
       end
 
-      other_options = { limit: options[:limit] }
+      other_options = {}
       if options[:page]
         other_options = other_options.merge skip: (options[:page] - 1) * options[:limit]
       end
       cursor = database.collection(klass.to_s).find(criteria, other_options)
+
+      if options[:limit]
+        cursor = cursor.limit(options[:limit])
+      end
 
       sort_cursor(cursor, options).map do |document|
         document[:id] = document.delete("_id")
