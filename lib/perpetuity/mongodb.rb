@@ -154,7 +154,7 @@ module Perpetuity
 
     def remove_index index
       coll = collection(index.collection)
-      db_indexes = coll.index_information.select do |name, info|
+      db_indexes = coll.index_information.select do |name, _|
         name =~ /#{index.attribute}/
       end
       if db_indexes.any?
