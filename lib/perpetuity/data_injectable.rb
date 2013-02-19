@@ -3,8 +3,7 @@ require 'perpetuity/persisted_object'
 module Perpetuity
   module DataInjectable
     def inject_attribute object, attribute, value
-      attribute = "@#{attribute}" unless attribute[0] == '@'
-      object.instance_variable_set(attribute, value)
+      object.instance_variable_set("@#{attribute}", value)
     end
 
     def inject_data object, data
