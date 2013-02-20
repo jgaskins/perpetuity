@@ -1,10 +1,11 @@
-require 'mongo'
+require 'moped'
 require 'perpetuity/mongodb/query'
 require 'perpetuity/mongodb/index'
+require 'set'
 
 module Perpetuity
   class MongoDB
-    attr_accessor :connection, :host, :port, :db, :pool_size, :username, :password
+    attr_accessor :host, :port, :db, :pool_size, :username, :password
 
     def initialize options
       @host       = options.fetch(:host, 'localhost')
@@ -13,47 +14,54 @@ module Perpetuity
       @pool_size  = options.fetch(:pool_size, 5)
       @username   = options[:username]
       @password   = options[:password]
-      @connection = nil
+      @session    = nil
       @indexes    = Hash.new { |hash, key| hash[key] = active_indexes(key) }
     end
 
+    def session
+      @session ||= Moped::Session.new(["#{host}:#{port}"])
+    end
+
     def connect
-      database.authenticate(@username, @password) if @username and @password
-      @connection ||= Mongo::MongoClient.new @host, @port, pool_size: @pool_size
+      session.login(@username, @password) if @username and @password
+      session
     end
 
     def connected?
-      !!@connection
+      !!@session
     end
 
     def database
       connect unless connected?
-      @connection.db(@db)
+      session.use db
     end
 
     def collection klass
-      database.collection(klass.to_s)
+      database[klass.to_s]
     end
 
     def insert klass, attributes
       if attributes.has_key? :id
         attributes[:_id] = attributes[:id]
         attributes.delete :id
+      else
+        attributes[:_id] = Moped::BSON::ObjectId.new
       end
 
       collection(klass).insert attributes
+      attributes[:_id]
     end
 
     def count klass
-      collection(klass).count
+      collection(klass).find.count
     end
 
     def delete_all klass
-      database.collection(klass.to_s).remove
+      collection(klass.to_s).find.remove_all
     end
 
     def first klass
-      document = database.collection(klass.to_s).find_one
+      document = collection(klass.to_s).find.limit(1).first
       document[:id] = document.delete("_id")
 
       document
@@ -63,29 +71,26 @@ module Perpetuity
       # MongoDB uses '_id' as its ID field.
       if criteria.has_key?(:id)
         if criteria[:id].is_a? String
-          criteria = { _id: (BSON::ObjectId.from_string(criteria[:id].to_s) rescue criteria[:id]) }
+          criteria = { _id: (Moped::BSON::ObjectId(criteria[:id].to_s) rescue criteria[:id]) }
         else
           criteria[:_id] = criteria.delete(:id)
         end
       end
 
-      other_options = {}
-      if options[:page]
-        other_options.merge! skip: (options[:page] - 1) * options[:limit]
-      end
-      cursor = database.collection(klass.to_s).find(criteria, other_options)
+      query = collection(klass.to_s).find(criteria)
 
-      if options[:limit]
-        cursor = cursor.limit(options[:limit])
-      end
+      skipped = options[:page] ? (options[:page] - 1) * options[:limit] : 0
+      query = query.skip skipped
+      query = query.limit(options[:limit])
+      query = sort(query, options)
 
-      sort_cursor(cursor, options).map do |document|
+      query.map do |document|
         document[:id] = document.delete("_id")
         document
       end
     end
 
-    def sort_cursor cursor, options
+    def sort cursor, options
       return cursor unless options.has_key?(:attribute) &&
                            options.has_key?(:direction)
 
@@ -102,11 +107,11 @@ module Perpetuity
     def delete object_or_id, klass=nil
       id = object_or_id.is_a?(PersistedObject) ? object_or_id.id : object_or_id
       klass ||= object.class
-      collection(klass.to_s).remove "_id" => id
+      collection(klass.to_s).find("_id" => id).remove
     end
 
     def update klass, id, new_data
-      collection(klass).update({ _id: id }, new_data)
+      collection(klass).find({ _id: id }).update(new_data)
     end
 
     def can_serialize? value
@@ -134,8 +139,8 @@ module Perpetuity
     end
 
     def active_indexes klass
-      indexes = collection(klass).index_information
-      indexes.map do |name, index|
+      indexes = collection(klass).indexes.to_a
+      indexes.map do |index|
         key = index['key'].keys.first
         direction = index['key'][key]
         unique = index['unique']
@@ -148,17 +153,18 @@ module Perpetuity
       order = index.order == :ascending ? 1 : -1
       unique = index.unique?
 
-      collection(index.collection).create_index [[attribute, order]], unique: unique
+      collection(index.collection).indexes.create({attribute => order}, unique: unique)
       index.activate!
     end
 
     def remove_index index
       coll = collection(index.collection)
-      db_indexes = coll.index_information.select do |name, _|
-        name =~ /#{index.attribute}/
-      end
+      db_indexes = coll.indexes.select do |db_index|
+        db_index['name'] =~ /\A#{index.attribute}/
+      end.map { |index| index['key'] }
+
       if db_indexes.any?
-        collection(index.collection).drop_index db_indexes.first.first
+        collection(index.collection).indexes.drop db_indexes.first
       end
     end
 
