@@ -1,3 +1,12 @@
+## Version 0.4.5
+
+- Move from the `mongo` gem from 10gen to the `moped` gem for talking to MongoDB. This resulted in performance gains of 30-80%, depending on query size.
+- Make persisted objects marshalable.
+  - Previously, the `id` method was defined on individual objects that were either persisted to or retrieved from the DB. This made them unable to be marshaled with `Marshal.dump`.
+  - Now we extend the objects with `Perpetuity::PersistedObject` to keep them marshalable while still providing `id`. This keeps them marshalable (unmarshalled objects will still be extended with `Perpetuity::PersistedObject`).
+- Provided a partial fix for a [bug](https://github.com/jgaskins/perpetuity/issues/23) that kept us from being able to persist hash attributes properly. See the first comments in the linked GitHub issue for an explanation of why it is only a partial fix.
+- Stopped testing on MRI 1.9.2 with Travis CI. Moped requires 1.9.3 or higher.
+
 ## Version 0.4.4
 
 - Automatically persist all referenced objects if they are not already persisted. Previously, referenced objects were required to be persisted before persisting the referencing object.
