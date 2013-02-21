@@ -22,6 +22,27 @@ describe "retrieval" do
     retrieved.body.should eq article.body
   end
 
+  describe 'sorting' do
+    let(:first) { Article.new('First', '', nil, Time.now - 20) }
+    let(:second) { Article.new('Second', '', nil, Time.now - 10) }
+    let(:third) { Article.new('Third', '', nil, Time.now) }
+
+    before do
+      Perpetuity[Article].delete_all
+      [second, third, first].each { |article| Perpetuity[Article].insert article }
+    end
+
+    it 'sorts results' do
+      titles = Perpetuity[Article].all.sort(:published_at).map(&:title)
+      titles.should be == %w(First Second Third)
+    end
+
+    it 'reverse-sorts results' do
+      titles = Perpetuity[Article].all.sort(:published_at).reverse.map(&:title)
+      titles.should be == %w(Third Second First)
+    end
+  end
+
   it 'limits result set' do
     5.times { Perpetuity[Article].insert Article.new }
     Perpetuity[Article].all.limit(4).should have(4).items

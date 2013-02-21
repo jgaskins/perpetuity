@@ -90,14 +90,15 @@ module Perpetuity
       end
     end
 
-    def sort cursor, options
-      return cursor unless options.has_key?(:attribute) &&
-                           options.has_key?(:direction)
+    def sort query, options
+      return query unless options[:attribute] &&
+                          options[:direction]
 
+      sort_orders = { ascending: 1, descending: -1 }
       sort_field = options[:attribute]
       sort_direction = options[:direction]
-      sort_criteria = [[sort_field, sort_direction]]
-      cursor.sort(sort_criteria)
+      sort_criteria = { sort_field => sort_orders[sort_direction] }
+      query.sort(sort_criteria)
     end
 
     def all klass
