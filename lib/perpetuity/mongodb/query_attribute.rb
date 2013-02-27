@@ -29,9 +29,10 @@ module Perpetuity
         QueryExpression.new self, :lte, value
       end
 
-      def not_equal? value
+      def != value
         QueryExpression.new self, :not_equal, value
       end
+      alias :not_equal? :'!='
 
       def =~ regexp
         QueryExpression.new self, :matches, regexp

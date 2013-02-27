@@ -28,7 +28,7 @@ module Perpetuity
     end
 
     it 'checks for inequality' do
-      attribute.not_equal?(1).should be_a MongoDB::QueryExpression
+      (attribute != 1).should be_a MongoDB::QueryExpression
     end
 
     it 'checks for regexp matches' do

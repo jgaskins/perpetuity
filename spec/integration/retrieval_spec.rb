@@ -91,7 +91,7 @@ describe "retrieval" do
     end
 
     it 'selects objects using inequality' do
-      selected = Perpetuity[Article].select { |article| article.title.not_equal? 'Draft' }
+      selected = Perpetuity[Article].select { |article| article.title != 'Draft' }
       ids = selected.map(&:id)
       ids.should_not include draft.id
       ids.should include published.id
