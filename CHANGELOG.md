@@ -1,3 +1,8 @@
+## Version 0.4.6
+
+- Fix an inconsistency between `mongo` and `moped` gems. Previously, the MongoDB adapter relied on the fail-fast behavior of the `mongo` gem so we had no need to check for errors. Moped does not do that by default, which resulted in incorrect behavior of the gem when an object was not persisted.
+- The `Mapper#select` DSL now allows the use of `!=` as criteria. Not all supported Ruby implementations allowed that operator to be overridden when the DSL was created, but they do now.
+
 ## Version 0.4.5
 
 - Move from the `mongo` gem from 10gen to the `moped` gem for talking to MongoDB. This resulted in performance gains of 30-80%, depending on query size.
