@@ -2,6 +2,7 @@ require 'moped'
 require 'perpetuity/mongodb/query'
 require 'perpetuity/mongodb/index'
 require 'set'
+require 'perpetuity/exceptions/duplicate_key_error'
 
 module Perpetuity
   class MongoDB
@@ -20,6 +21,7 @@ module Perpetuity
 
     def session
       @session ||= Moped::Session.new(["#{host}:#{port}"])
+      @session.with(safe: true)
     end
 
     def connect
@@ -50,6 +52,13 @@ module Perpetuity
 
       collection(klass).insert attributes
       attributes[:_id]
+    rescue Moped::Errors::OperationFailure => e
+      if e.message =~ /duplicate key/
+        e.message =~ /\$(\w+)_\d.*dup key: { : (.*) }/
+        key = $1
+        value = $2.gsub("\\\"", "\"")
+        raise DuplicateKeyError, "Tried to insert #{klass} with duplicate unique index: #{key} => #{value}"
+      end
     end
 
     def count klass

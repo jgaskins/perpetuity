@@ -135,5 +135,20 @@ module Perpetuity
         mongo.active_indexes(collection).should_not include index
       end
     end
+
+    describe 'operation errors' do
+      let(:data) { { foo: 'bar' } }
+      let(:index) { mongo.index Object, :foo, unique: true }
+
+      before { mongo.activate_index! index }
+      after { mongo.drop_collection Object }
+
+      it 'raises an exception when insertion fails' do
+        mongo.insert Object, data
+
+        expect { mongo.insert Object, data }.to raise_error DuplicateKeyError,
+          'Tried to insert Object with duplicate unique index: foo => "bar"'
+      end
+    end
   end
 end
