@@ -1,4 +1,4 @@
-# Perpetuity [![Build Status](https://secure.travis-ci.org/jgaskins/perpetuity.png)](http://travis-ci.org/jgaskins/perpetuity)
+# Perpetuity [![Build Status](https://secure.travis-ci.org/jgaskins/perpetuity.png)](http://travis-ci.org/jgaskins/perpetuity) [![Code Climate](https://codeclimate.com/github/jgaskins/perpetuity.png)](https://codeclimate.com/github/jgaskins/perpetuity)
 
 Perpetuity is a simple Ruby object persistence layer that attempts to follow Martin Fowler's Data Mapper pattern, allowing you to use plain-old Ruby objects in your Ruby apps in order to decouple your domain logic from the database as well as speed up your tests. There is no need for your model classes to inherit from another class or even include a mix-in.
 
