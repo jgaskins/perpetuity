@@ -6,12 +6,13 @@ module Perpetuity
           .flatten
           .group_by(&:klass)
           .map { |klass, ref|
-            [klass,
-             Hash[
-              mapper_registry[klass].select { |object|
-                object.id.in ref.map(&:id).uniq
-              }.map { |obj| [obj.id, obj] }
-             ]
+            [
+              klass,
+              Hash[
+                mapper_registry[klass].select { |object|
+                  object.id.in ref.map(&:id).uniq
+                }.map { |obj| [obj.id, obj] }
+              ]
             ]
           }
       ]
