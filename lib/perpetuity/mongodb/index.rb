@@ -40,8 +40,12 @@ module Perpetuity
         self == other
       end
 
+      def attribute_name
+        attribute.respond_to?(:name) ? attribute.name : attribute
+      end
+
       def hash
-        "#{collection}/#{attribute.name}:#{unique?}:#{order}".hash
+        "#{collection}/#{attribute_name}:#{unique?}:#{order}".hash
       end
     end
   end
