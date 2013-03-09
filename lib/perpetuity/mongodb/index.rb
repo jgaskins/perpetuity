@@ -41,7 +41,7 @@ module Perpetuity
       end
 
       def hash
-        "#{collection}/#{attribute}:#{unique?}:#{order}".hash
+        "#{collection}/#{attribute.name}:#{unique?}:#{order}".hash
       end
     end
   end
