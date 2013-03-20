@@ -20,7 +20,9 @@ module Perpetuity
       attrs = mapper.class.attribute_set.map do |attrib|
         value = attribute_for object, attrib.name
 
-        serialized_value = if value.is_a? Array
+        serialized_value = if value.is_a? Reference
+          serialize_reference value
+        elsif value.is_a? Array
           serialize_array(value, attrib.embedded?)
         elsif mapper.data_source.can_serialize? value
           value
@@ -126,10 +128,15 @@ module Perpetuity
       unless value.is_a? PersistedObject
         mapper_registry[value.class].insert value
       end
+      if value.is_a? Reference
+        reference = value
+      else
+        reference = Reference.new(value.class.to_s, value.id)
+      end
       {
-        '__metadata__' =>  {
-          'class' => value.class.to_s,
-          'id' => value.id
+        '__metadata__' => {
+          'class' => reference.klass,
+          'id'    => reference.id
         }
       }
     end
