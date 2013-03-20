@@ -35,8 +35,9 @@ module Perpetuity
     end
 
     def database
-      connect unless connected?
       session.use db
+      connect unless connected?
+      session
     end
 
     def collection klass
