@@ -103,7 +103,7 @@ module Perpetuity
       identity_map = IdentityMap.new(objects, attribute, mapper_registry)
 
       objects.each do |object|
-        reference = object.send(attribute)
+        reference = object.instance_variable_get("@#{attribute}")
         if reference.is_a? Array
           refs = reference
           real_objects = refs.map { |ref| identity_map[ref.klass][ref.id] }
