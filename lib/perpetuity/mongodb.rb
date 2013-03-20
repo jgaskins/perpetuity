@@ -21,12 +21,10 @@ module Perpetuity
 
     def session
       @session ||= Moped::Session.new(["#{host}:#{port}"])
-      @session.with(safe: true)
     end
 
     def connect
-      session
-      @session.login(@username, @password) if @username and @password
+      session.login(@username, @password) if @username and @password
       session
     end
 
@@ -37,7 +35,7 @@ module Perpetuity
     def database
       session.use db
       connect unless connected?
-      session
+      session.with(safe: true).use(db)
     end
 
     def collection klass
