@@ -48,10 +48,6 @@ module Perpetuity
       its(:password)  { should == password }
     end
 
-    it 'uses the selected database' do
-      mongo.database.name.should == 'perpetuity_gem_test'
-    end
-
     it 'removes all documents from a collection' do
       mongo.insert klass, {}
       mongo.delete_all klass

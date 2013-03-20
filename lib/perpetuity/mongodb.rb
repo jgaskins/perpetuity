@@ -17,25 +17,27 @@ module Perpetuity
       @password   = options[:password]
       @session    = nil
       @indexes    = Hash.new { |hash, key| hash[key] = active_indexes(key) }
+      @connected  = false
     end
 
     def session
-      @session ||= Moped::Session.new(["#{host}:#{port}"])
+      @session ||= Moped::Session.new(["#{host}:#{port}"]).with(safe: true)
     end
 
     def connect
       session.login(@username, @password) if @username and @password
+      @connected = true
       session
     end
 
     def connected?
-      !!@session
+      !!@connected
     end
 
     def database
       session.use db
       connect unless connected?
-      session.with(safe: true).use(db)
+      session
     end
 
     def collection klass
