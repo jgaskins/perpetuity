@@ -25,7 +25,8 @@ module Perpetuity
     end
 
     def connect
-      session.login(@username, @password) if @username and @password
+      session
+      @session.login(@username, @password) if @username and @password
       session
     end
 
