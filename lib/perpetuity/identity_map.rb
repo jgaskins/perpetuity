@@ -2,7 +2,7 @@ module Perpetuity
   class IdentityMap
     def initialize objects, attribute, mapper_registry
       @map = Hash[
-        objects.map(&attribute)
+        objects.map { |object| object.instance_variable_get("@#{attribute}") }
           .flatten
           .group_by(&:klass)
           .map { |klass, ref|
