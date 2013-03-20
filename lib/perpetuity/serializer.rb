@@ -125,17 +125,17 @@ module Perpetuity
     end
 
     def serialize_reference value
-      unless value.is_a? PersistedObject
-        mapper_registry[value.class].insert value
-      end
       if value.is_a? Reference
         reference = value
       else
+        unless value.is_a? PersistedObject
+          mapper_registry[value.class].insert value
+        end
         reference = Reference.new(value.class.to_s, value.id)
       end
       {
         '__metadata__' => {
-          'class' => reference.klass,
+          'class' => reference.klass.to_s,
           'id'    => reference.id
         }
       }
