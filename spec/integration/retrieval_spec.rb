@@ -111,4 +111,19 @@ describe "retrieval" do
       ids.should_not include draft.id
     end
   end
+
+  context 'with namespaced classes' do
+    let(:article) { Article.new }
+    let(:person) { CRM::Person.new }
+    let(:mapper) { Perpetuity[Article] }
+
+    before { article.author = person }
+
+    it 'gets a CRM::Person object back' do
+      mapper.insert article
+      retrieved_article = mapper.find(article.id)
+      mapper.load_association! retrieved_article, :author
+      retrieved_article.author.should be_a CRM::Person
+    end
+  end
 end

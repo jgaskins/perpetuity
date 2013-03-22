@@ -76,8 +76,11 @@ module Perpetuity
       elsif data.is_a? Hash
         metadata = data.delete('__metadata__')
         if metadata
-          klass = Object.const_get metadata['class']
+          klass = metadata['class'].split('::').inject(Kernel) do |scope, const_name|
+            scope.const_get(const_name)
+          end
           id = metadata['id']
+
           if id
             object = Reference.new(klass, id)
           else

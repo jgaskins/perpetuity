@@ -93,5 +93,17 @@ describe 'Persistence' do
     Perpetuity[Book].insert book
     book.id.should eq "my-title-#{noise}"
   end
+
+  context 'with namespaced classes' do
+    let(:person) { CRM::Person.new }
+    let(:mapper) { Perpetuity[CRM::Person] }
+
+    before { person.name = 'Foo Bar' }
+
+    it 'persists even with colons in the names' do
+      mapper.insert person
+      person.should be_a Perpetuity::PersistedObject
+    end
+  end
 end
 

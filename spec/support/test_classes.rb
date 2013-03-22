@@ -1,4 +1,4 @@
-%w( user article comment book message topic car ).each do |file|
+%w( user article comment book message topic car crm_person).each do |file|
   require "support/test_classes/#{file}"
 end
 
@@ -54,4 +54,8 @@ Perpetuity.generate_mapper_for(Car) do
   validate do
     present :make
   end
+end
+
+Perpetuity.generate_mapper_for CRM::Person do
+  attribute :name
 end
