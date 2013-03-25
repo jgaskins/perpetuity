@@ -1,3 +1,11 @@
+## Version 0.4.7
+
+- Use instance variables rather than attr_readers in IdentityMap (avoids calling methods during `load_association!`).
+- Fixed a bug with MongoDB authentication.
+- Use attribute names rather than a stringified attribute for MongoDB indexes.
+- Fixed a bug with deserializing attributes of namespaced classes. — [Jaap Groeneveld](https://github.com/jgroeneveld)
+- Fixed serialization of `Perpetuity::Reference` attributes caused by resaving an object that did not have all of its referenced associations loaded.
+
 ## Version 0.4.6
 
 - Fix an inconsistency between `mongo` and `moped` gems. Previously, the MongoDB adapter relied on the fail-fast behavior of the `mongo` gem so we had no need to check for errors. Moped does not do that by default, which resulted in incorrect behavior of the gem when an object was not persisted.
