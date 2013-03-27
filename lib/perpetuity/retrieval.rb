@@ -1,5 +1,4 @@
 require 'perpetuity/reference'
-require 'perpetuity/serializer'
 
 module Perpetuity
   class Retrieval
@@ -53,11 +52,7 @@ module Perpetuity
         page: result_page
       }
       results = @data_source.retrieve(@class, @criteria, options)
-      unserialize results
-    end
-
-    def unserialize(data)
-      Serializer.new(@mapper).unserialize(data)
+      @data_source.unserialize results, @mapper
     end
 
     def [] index

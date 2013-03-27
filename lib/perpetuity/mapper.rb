@@ -2,7 +2,6 @@ require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
-require 'perpetuity/serializer'
 require 'perpetuity/identity_map'
 require 'perpetuity/retrieval'
 
@@ -148,7 +147,7 @@ module Perpetuity
     end
 
     def serialize object
-      Serializer.new(self).serialize(object)
+      data_source.serialize(object, self)
     end
 
     def self.mapped_class

@@ -30,25 +30,6 @@ module Perpetuity
       registry[Object].should be_instance_of mapper_class
     end
 
-    context 'with unserializable embedded attributes' do
-      let(:unserializable_object) { 1.to_c }
-      let(:serialized_attrs) do
-        [ Marshal.dump(unserializable_object) ]
-      end
-
-      it 'serializes attributes' do
-        object = Object.new
-        object.instance_variable_set '@sub_objects', [unserializable_object]
-        mapper_class.attribute :sub_objects, embedded: true
-        mapper_class.map Object, registry
-        data_source = double(:data_source)
-        mapper.stub(data_source: data_source)
-        data_source.should_receive(:can_serialize?).with(unserializable_object).and_return false
-
-        mapper.serialize(object)['sub_objects'].should eq serialized_attrs
-      end
-    end
-
     describe 'talking to the data source' do
       let(:data_source) { MongoDB.new(db: nil) }
       before do

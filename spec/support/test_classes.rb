@@ -1,4 +1,4 @@
-%w( user article comment book message topic car crm_person).each do |file|
+%w( user article comment book message topic car crm_person generic_object).each do |file|
   require "support/test_classes/#{file}"
 end
 
@@ -58,4 +58,9 @@ end
 
 Perpetuity.generate_mapper_for CRM::Person do
   attribute :name
+end
+
+Perpetuity.generate_mapper_for GenericObject do
+  attribute :referenced_attribute
+  attribute :embedded_attribute, embedded: true
 end

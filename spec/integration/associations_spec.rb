@@ -62,4 +62,23 @@ describe 'associations with other objects' do
       books.map(&:authors).flatten.map(&:name).should include *%w(Dave Andy Matt Aslak)
     end
   end
+
+  describe 'embedded relationships' do
+    let(:mapper) { Perpetuity[GenericObject] }
+    let(:object) { GenericObject.new }
+
+    context 'with unserializable embedded attributes' do
+      let(:unserializable_object) { 1.to_c }
+      let(:serialized_attrs) do
+        [ Marshal.dump(unserializable_object) ]
+      end
+
+      before { object.embedded_attribute = [unserializable_object] }
+
+      it 'serializes attributes' do
+        mapper.insert object
+        mapper.find(object.id).embedded_attribute.should be == [unserializable_object]
+      end
+    end
+  end
 end

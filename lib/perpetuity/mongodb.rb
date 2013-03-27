@@ -1,6 +1,7 @@
 require 'moped'
 require 'perpetuity/mongodb/query'
 require 'perpetuity/mongodb/index'
+require 'perpetuity/mongodb/serializer'
 require 'set'
 require 'perpetuity/exceptions/duplicate_key_error'
 
@@ -178,6 +179,14 @@ module Perpetuity
       if db_indexes.any?
         collection(index.collection).indexes.drop db_indexes.first
       end
+    end
+
+    def serialize object, mapper
+      Serializer.new(mapper).serialize object
+    end
+
+    def unserialize data, mapper
+      Serializer.new(mapper).unserialize data
     end
 
     private

@@ -49,22 +49,16 @@ module Perpetuity
 
     it 'retrieves data from the data source' do
       return_data = { id: 0, a: 1, b: 2 }
+      return_object = Object.new
+      return_object.stub(id: return_data[:id])
       options = { attribute: nil, direction: nil, limit: nil, page: nil }
+
       data_source.should_receive(:retrieve).with(Object, {}, options).
                   and_return([return_data])
+      data_source.should_receive(:unserialize).with([return_data], mapper) { [return_object] }
       results = retrieval.to_a
 
       results.map(&:id).should == [0]
-    end
-
-    describe 'unserializes attributes' do
-      let(:unserializable_object) { 1.to_c }
-      let(:serialized_attrs) { [ Marshal.dump(unserializable_object) ] }
-      let(:comments) { retrieval.unserialize(serialized_attrs)  }
-      subject { comments.first }
-
-      it { should be_a Complex }
-      it { should eq unserializable_object}
     end
   end
 end
