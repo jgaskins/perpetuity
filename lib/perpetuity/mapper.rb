@@ -94,7 +94,8 @@ module Perpetuity
     end
 
     def delete object
-      data_source.delete object, mapped_class
+      id = object.is_a?(PersistedObject) ? object.id : object
+      data_source.delete id, mapped_class
     end
 
     def load_association! object, attribute
