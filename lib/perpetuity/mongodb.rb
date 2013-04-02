@@ -149,8 +149,7 @@ module Perpetuity
     end
 
     def active_indexes klass
-      indexes = collection(klass).indexes.to_a
-      indexes.map do |index|
+      collection(klass).indexes.map do |index|
         key = index['key'].keys.first
         direction = index['key'][key]
         unique = index['unique']
