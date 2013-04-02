@@ -81,13 +81,7 @@ module Perpetuity
 
     def retrieve klass, criteria, options = {}
       # MongoDB uses '_id' as its ID field.
-      if criteria.has_key?(:id)
-        if criteria[:id].is_a? String
-          criteria = { _id: (Moped::BSON::ObjectId(criteria[:id].to_s) rescue criteria[:id]) }
-        else
-          criteria[:_id] = criteria.delete(:id)
-        end
-      end
+      criteria = to_bson_id(criteria)
 
       query = collection(klass.to_s).find(criteria)
 
@@ -100,6 +94,19 @@ module Perpetuity
         document[:id] = document.delete("_id")
         document
       end
+    end
+
+    def convert_to_bson_id criteria
+      criteria = criteria.dup
+      if criteria.has_key?(:id)
+        if criteria[:id].is_a? String
+          criteria = { _id: (Moped::BSON::ObjectId(criteria[:id].to_s) rescue criteria[:id]) }
+        else
+          criteria[:_id] = criteria.delete(:id)
+        end
+      end
+
+      criteria
     end
 
     def sort query, options
