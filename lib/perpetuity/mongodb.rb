@@ -94,11 +94,8 @@ module Perpetuity
     def to_bson_id criteria
       criteria = criteria.dup
       if criteria.has_key?(:id)
-        if criteria[:id].is_a? String
-          criteria = { _id: (Moped::BSON::ObjectId(criteria[:id].to_s) rescue criteria[:id]) }
-        else
-          criteria[:_id] = criteria.delete(:id)
-        end
+        criteria[:_id] = Moped::BSON::ObjectId(criteria[:id]) rescue criteria[:id]
+        criteria.delete :id
       end
 
       criteria
