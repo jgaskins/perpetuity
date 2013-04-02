@@ -78,14 +78,14 @@ module Perpetuity
       # MongoDB uses '_id' as its ID field.
       criteria = to_bson_id(criteria)
 
-      query = collection(klass.to_s).find(criteria)
-
       skipped = options[:page] ? (options[:page] - 1) * options[:limit] : 0
-      query = query.skip skipped
-      query = query.limit(options[:limit])
-      query = sort(query, options)
 
-      query.map do |document|
+      query = collection(klass.to_s)
+                .find(criteria)
+                .skip(skipped)
+                .limit(options[:limit])
+
+      sort(query, options).map do |document|
         document[:id] = document.delete("_id")
         document
       end
