@@ -96,7 +96,7 @@ module Perpetuity
       end
     end
 
-    def convert_to_bson_id criteria
+    def to_bson_id criteria
       criteria = criteria.dup
       if criteria.has_key?(:id)
         if criteria[:id].is_a? String
