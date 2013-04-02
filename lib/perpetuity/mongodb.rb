@@ -46,12 +46,7 @@ module Perpetuity
     end
 
     def insert klass, attributes
-      if attributes.has_key? :id
-        attributes[:_id] = attributes[:id]
-        attributes.delete :id
-      else
-        attributes[:_id] = Moped::BSON::ObjectId.new
-      end
+      attributes[:_id] = attributes.delete(:id) || Moped::BSON::ObjectId.new
 
       collection(klass).insert attributes
       attributes[:_id]
