@@ -17,7 +17,7 @@ module Perpetuity
   def self.generate_mapper_for klass, &block
     mapper = Class.new(Mapper)
     mapper.map klass, mapper_registry
-    mapper.instance_exec &block if block_given?
+    mapper.instance_exec(&block) if block_given?
   end
 
   def self.[] klass

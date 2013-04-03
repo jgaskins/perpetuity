@@ -170,7 +170,7 @@ module Perpetuity
       coll = collection(index.collection)
       db_indexes = coll.indexes.select do |db_index|
         db_index['name'] =~ /\A#{index.attribute}/
-      end.map { |index| index['key'] }
+      end.map { |idx| idx['key'] }
 
       if db_indexes.any?
         collection(index.collection).indexes.drop db_indexes.first

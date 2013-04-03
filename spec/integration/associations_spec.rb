@@ -59,7 +59,7 @@ describe 'associations with other objects' do
 
       books = book_mapper.select { |book| book.id.in book_ids }.to_a
       book_mapper.load_association! books, :authors
-      books.map(&:authors).flatten.map(&:name).should include *%w(Dave Andy Matt Aslak)
+      books.map(&:authors).flatten.map(&:name).should include(*%w(Dave Andy Matt Aslak))
     end
   end
 
