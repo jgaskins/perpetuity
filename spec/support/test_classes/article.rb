@@ -8,4 +8,9 @@ class Article
     @published_at = published_at
     @views = views
   end
+
+  def == other
+    title == other.title &&
+    body == other.body
+  end
 end

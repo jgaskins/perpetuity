@@ -89,8 +89,13 @@ module Perpetuity
       retrieve query
     end
 
-    def find id
-      select { |object| object.id == id }.first
+    def find *args, &block
+      if block_given?
+        select(&block).first
+      else
+        id = args.first
+        select { |object| object.id == id }.first
+      end
     end
 
     def delete object
