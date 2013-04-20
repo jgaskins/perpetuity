@@ -65,6 +65,11 @@ module Perpetuity
         q.negate.to_db.should == { balance: { '$not' => { '$gte' => 10 } } }
       end
 
+      it 'negates a regex query' do
+        q = query.new { |account| account.name =~ /Jamie/ }
+        q.negate.to_db.should == { name: { '$not' => /Jamie/ } }
+      end
+
       it 'negates a inclusion query' do
         q = query.new { |article| article.tags.in ['tag1', 'tag2'] }
         q.negate.to_db.should == { tags: { '$not' => { '$in' => ['tag1', 'tag2'] } } }

@@ -62,7 +62,11 @@ module Perpetuity
       end
 
       def matches
-        { @attribute => @value }
+        if @negated
+          { @attribute => { '$not' => @value } }
+        else
+          { @attribute => @value }
+        end
       end
 
       def | other

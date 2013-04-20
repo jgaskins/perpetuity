@@ -39,8 +39,10 @@ describe 'enumerable syntax' do
       articles.should_not include bar
     end
 
-    articles = mapper.reject { |a| a.title == 'bar' }.to_a
-    articles.should include foo
-    articles.should_not include bar
+    it 'excludes on regex match' do
+      articles = mapper.reject { |a| a.title =~ /Foo/ }.to_a
+      articles.should include bar
+      articles.should_not include foo
+    end
   end
 end
