@@ -16,7 +16,7 @@ module Perpetuity
       end
 
       def to_db
-        send @comparator
+        public_send @comparator
       end
 
       def equals
