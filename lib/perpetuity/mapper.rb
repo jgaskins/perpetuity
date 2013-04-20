@@ -88,6 +88,8 @@ module Perpetuity
       retrieve data_source.query(&block).to_db
     end
 
+    alias :find_all :select
+
     def find *args, &block
       if block_given?
         select(&block).first

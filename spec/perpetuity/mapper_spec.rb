@@ -71,6 +71,15 @@ module Perpetuity
           mapper.find(1).should be == returned_object
         end
 
+        it 'finds multiple objects with a block' do
+          criteria = { name: 'foo' }
+          data_source.should_receive(:retrieve)
+                     .with(Object, criteria, options) { [returned_object] }.twice
+
+          mapper.select   { |e| e.name == 'foo' }.to_a.should == [returned_object]
+          mapper.find_all { |e| e.name == 'foo' }.to_a.should == [returned_object]
+        end
+
         it 'finds an object with a block' do
           criteria = { name: 'foo' }
           data_source.should_receive(:retrieve)
