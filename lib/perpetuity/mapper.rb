@@ -85,8 +85,7 @@ module Perpetuity
     end
 
     def select &block
-      query = data_source.query(&block).to_db
-      retrieve query
+      retrieve data_source.query(&block).to_db
     end
 
     def find *args, &block
