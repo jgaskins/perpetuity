@@ -97,6 +97,8 @@ module Perpetuity
       end
     end
 
+    alias :detect :find
+
     def reject &block
       retrieve data_source.negate_query(&block).to_db
     end

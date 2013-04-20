@@ -59,14 +59,25 @@ module Perpetuity
         mapper.count.should be == 4
       end
 
-      it 'finds an object by ID' do
-        returned_object = double('Retrieved Object')
-        criteria = { id: 1 }
-        options = {:attribute=>nil, :direction=>nil, :limit=>nil, :page=>nil}
-        data_source.should_receive(:retrieve)
-                   .with(Object, criteria, options) { [returned_object] }
+      describe 'finding a single object' do
+        let(:options) { {:attribute=>nil, :direction=>nil, :limit=>nil, :page=>nil} }
+        let(:returned_object) { double('Retrieved Object') }
 
-        mapper.find(1).should be == returned_object
+        it 'finds an object by ID' do
+          criteria = { id: 1 }
+          data_source.should_receive(:retrieve)
+                     .with(Object, criteria, options) { [returned_object] }
+
+          mapper.find(1).should be == returned_object
+        end
+
+        it 'finds an object with a block' do
+          criteria = { name: 'foo' }
+          data_source.should_receive(:retrieve)
+                     .with(Object, criteria, options) { [returned_object] }.twice
+          mapper.find   { |o| o.name == 'foo' }.should == returned_object
+          mapper.detect { |o| o.name == 'foo' }.should == returned_object
+        end
       end
 
       it 'saves an object' do
