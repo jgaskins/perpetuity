@@ -28,7 +28,13 @@ module Perpetuity
       end
 
       def function func
-        { @attribute => { func => @value } }
+        f = { func => @value }
+
+        if @negated
+          { @attribute => { '$not' => f } }
+        else
+          { @attribute => f }
+        end
       end
 
       def less_than

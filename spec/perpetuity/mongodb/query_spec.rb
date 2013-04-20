@@ -35,9 +35,39 @@ module Perpetuity
     end
 
     describe 'negated queries' do
-      it 'negates a Mongo query' do
+      it 'negates an equality query' do
         q = query.new { |user| user.name == 'Jamie' }
         q.negate.to_db.should == { name: { '$ne' => 'Jamie' } }
+      end
+
+      it 'negates a not-equal query' do
+        q = query.new { |account| account.balance != 10 }
+        q.negate.to_db.should == { balance: { '$not' => { '$ne' => 10 } } }
+      end
+
+      it 'negates a less-than query' do
+        q = query.new { |account| account.balance < 10 }
+        q.negate.to_db.should == { balance: { '$not' => { '$lt' => 10 } } }
+      end
+
+      it 'negates a less-than-or-equal query' do
+        q = query.new { |account| account.balance <= 10 }
+        q.negate.to_db.should == { balance: { '$not' => { '$lte' => 10 } } }
+      end
+
+      it 'negates a greater-than query' do
+        q = query.new { |account| account.balance > 10 }
+        q.negate.to_db.should == { balance: { '$not' => { '$gt' => 10 } } }
+      end
+
+      it 'negates a greater-than-or-equal query' do
+        q = query.new { |account| account.balance >= 10 }
+        q.negate.to_db.should == { balance: { '$not' => { '$gte' => 10 } } }
+      end
+
+      it 'negates a inclusion query' do
+        q = query.new { |article| article.tags.in ['tag1', 'tag2'] }
+        q.negate.to_db.should == { tags: { '$not' => { '$in' => ['tag1', 'tag2'] } } }
       end
     end
   end
