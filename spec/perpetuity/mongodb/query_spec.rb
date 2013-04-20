@@ -33,5 +33,12 @@ module Perpetuity
     it 'generates Mongo regexp expressions' do
       query.new{ |user| user.name =~ /Jamie/ }.to_db.should == {name: /Jamie/}
     end
+
+    describe 'negated queries' do
+      it 'negates a Mongo query' do
+        q = query.new { |user| user.name == 'Jamie' }
+        q.negate.to_db.should == { name: { '$ne' => 'Jamie' } }
+      end
+    end
   end
 end

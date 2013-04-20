@@ -149,6 +149,10 @@ module Perpetuity
       Query.new(&block)
     end
 
+    def negate_query &block
+      Query.new(&block).negate
+    end
+
     def index klass, attribute, options={}
       @indexes[klass] ||= Set.new
 

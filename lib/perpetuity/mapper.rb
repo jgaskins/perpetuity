@@ -98,6 +98,10 @@ module Perpetuity
       end
     end
 
+    def reject &block
+      retrieve data_source.negate_query(&block).to_db
+    end
+
     def delete object
       id = object.is_a?(PersistedObject) ? object.id : object
       data_source.delete id, mapped_class

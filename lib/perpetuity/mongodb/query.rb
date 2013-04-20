@@ -11,6 +11,10 @@ module Perpetuity
         @query.to_db
       end
 
+      def negate
+        @query.negate
+      end
+
       def method_missing missing_method
         QueryAttribute.new missing_method
       end
