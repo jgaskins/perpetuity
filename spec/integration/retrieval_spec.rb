@@ -51,6 +51,13 @@ describe "retrieval" do
     mapper.all.limit(4).to_a.should have(4).items
   end
 
+  it 'counts result set' do
+    title = "Foo #{Time.now.to_f}"
+    mapper = Perpetuity[Article]
+    5.times { mapper.insert Article.new(title) }
+    mapper.count { |article| article.title == title }.should == 5
+  end
+
   describe "Array-like syntax" do
     let(:draft) { Article.new 'Draft', 'draft content', nil, Time.now + 30 }
     let(:published) { Article.new 'Published', 'content', nil, Time.now - 30, 3 }

@@ -62,11 +62,11 @@ module Perpetuity
       mongo.count(klass).should == 3
     end
 
-    it 'counts documents matching criteria' do
+    it 'counts the documents matching a query' do
       mongo.delete_all klass
+      1.times { mongo.insert klass, { name: 'bar' } }
       3.times { mongo.insert klass, { name: 'foo' } }
-      3.times { mongo.insert klass, { name: 'bar' } }
-      mongo.count(klass, name: 'foo').should == 3
+      mongo.count(klass) { |o| o.name == 'foo' }.should == 3
     end
 
     it 'gets the first document in a collection' do

@@ -72,8 +72,8 @@ module Perpetuity
       configuration.data_source
     end
 
-    def count
-      data_source.count mapped_class
+    def count &block
+      data_source.count mapped_class, &block
     end
 
     def first
