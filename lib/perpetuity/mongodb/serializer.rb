@@ -108,7 +108,9 @@ module Perpetuity
 
       def serialize_array enum, embedded
         enum.map do |value|
-          if value.is_a? Array
+          if value.is_a? Reference
+            serialize_reference value
+          elsif value.is_a? Array
             serialize_array(value)
           elsif mapper.data_source.can_serialize? value
             value

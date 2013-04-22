@@ -38,6 +38,24 @@ describe 'updating' do
     retrieved_article = mapper.find(retrieved_article.id)
     retrieved_article.author.should be_a Perpetuity::Reference
   end
+
+  it 'updates an object with an array of referenced attributes' do
+    dave = User.new('Dave')
+    andy = User.new('Andy')
+    authors = [dave]
+    book = Book.new("Title #{Time.now.to_f}", authors)
+    mapper = Perpetuity[Book]
+
+    mapper.insert book
+
+    retrieved_book = mapper.find(book.id)
+    retrieved_book.authors << andy
+    mapper.save retrieved_book
+
+    retrieved_authors = mapper.find(retrieved_book.id).authors
+    retrieved_authors.map(&:klass).should == [User, User]
+    retrieved_authors.map(&:id).should == [dave.id, andy.id]
+  end
 end
 
 

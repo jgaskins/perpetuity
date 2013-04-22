@@ -93,6 +93,25 @@ module Perpetuity
         it { should be_a Complex }
         it { should eq unserializable_object}
       end
+
+      describe 'with an array of references' do
+        let(:author) { Reference.new(User, 1) }
+        let(:title) { 'title' }
+        let(:book) { Book.new(title, [author]) }
+
+        it 'passes the reference unserialized' do
+          data_source.should_receive(:can_serialize?).with('title') { true }
+          serializer.serialize(book).should == {
+            'title' => title,
+            'authors' => [{
+              '__metadata__' => {
+                'class' => author.klass.to_s,
+                'id' => author.id
+              }
+            }]
+          }
+        end
+      end
     end
   end
 end
