@@ -17,29 +17,36 @@ describe Perpetuity do
       mapper = Perpetuity[Object]
       object = Object.new
       mapper.insert object
-      object.id.should eq object.object_id + 1
+      mapper.id_for(object).should be == object.object_id + 1
       mapper.attributes.should eq [:object_id]
     end
   end
 
   describe 'methods on mappers' do
-    it 'allows methods to act as scopes' do
-      published = Article.new('Published', 'I love cats', nil, Time.now - 30)
-      draft = Article.new('Draft', 'I do not like moose', nil, nil)
-      not_yet_published = Article.new('Tomorrow', 'Dogs', nil, Time.now + 30)
+    let(:published)            { Article.new('Published', 'I love cats', nil, Time.now - 30) }
+    let(:draft)                { Article.new('Draft', 'I do not like moose', nil, nil) }
+    let(:not_yet_published)    { Article.new('Tomorrow', 'Dogs', nil, Time.now + 30) }
+    let(:mapper)               { Perpetuity[Article] }
 
-      mapper = Perpetuity[Article]
+    # Counting on late-bound memoization for this.
+    let(:published_id)         { mapper.id_for(published) }
+    let(:draft_id)             { mapper.id_for(draft) }
+    let(:not_yet_published_id) { mapper.id_for(not_yet_published) }
+
+    before do
       mapper.insert published
       mapper.insert draft
       mapper.insert not_yet_published
+    end
 
-      published_ids = mapper.published.to_a.map(&:id)
-      published_ids.should include published.id
-      published_ids.should_not include draft.id, not_yet_published.id
+    it 'allows methods to act as scopes' do
+      published_ids = mapper.published.to_a.map { |article| mapper.id_for(article) }
+      published_ids.should include published_id
+      published_ids.should_not include draft_id, not_yet_published_id
 
-      unpublished_ids = mapper.unpublished.to_a.map(&:id)
-      unpublished_ids.should_not include published.id
-      unpublished_ids.should include draft.id, not_yet_published.id
+      unpublished_ids = mapper.unpublished.to_a.map { |article| mapper.id_for(article) }
+      unpublished_ids.should_not include published_id
+      unpublished_ids.should include draft_id, not_yet_published_id
     end
   end
 end

@@ -1,9 +1,10 @@
 module Perpetuity
   class IdentityMap
-    attr_reader :map
+    attr_reader :map, :mapper_registry
 
-    def initialize
+    def initialize mapper_registry=Perpetuity.mapper_registry
       @map = Hash.new { |hash, key| hash[key] = {} }
+      @mapper_registry = mapper_registry
     end
 
     def [] klass, id
@@ -11,7 +12,9 @@ module Perpetuity
     end
 
     def << object
-      map[object.class][object.id.to_s] = object
+      klass = object.class
+      id = mapper_registry[klass].id_for(object)
+      map[klass][id.to_s] = object
     end
   end
 end

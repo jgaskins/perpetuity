@@ -4,23 +4,17 @@ require 'securerandom'
 
 describe "retrieval" do
   let(:mapper) { Perpetuity[Article] }
-
   it "gets all the objects of a class" do
     expect { mapper.insert Article.new }.
       to change { mapper.all.to_a.count }.by 1
   end
 
-  it "has an ID when retrieved" do
-    mapper.insert Article.new
-    mapper.first.should respond_to :id
-  end
-
   it "gets an item with a specific ID" do
     article = Article.new
     mapper.insert article
-    retrieved = mapper.find(article.id)
+    retrieved = mapper.find(mapper.id_for article)
 
-    retrieved.id.should eq article.id
+    mapper.id_for(retrieved).should be == mapper.id_for(article)
     retrieved.title.should eq article.title
     retrieved.body.should eq article.body
   end
@@ -61,6 +55,10 @@ describe "retrieval" do
   describe "Array-like syntax" do
     let(:draft) { Article.new 'Draft', 'draft content', nil, Time.now + 30 }
     let(:published) { Article.new 'Published', 'content', nil, Time.now - 30, 3 }
+
+    let(:published_id) { mapper.id_for published }
+    let(:draft_id) { mapper.id_for draft }
+
     before do
       mapper.insert draft
       mapper.insert published
@@ -68,57 +66,58 @@ describe "retrieval" do
 
     it 'selects objects using equality' do
       selected = mapper.select { |article| article.title == 'Published' }
-      selected.map(&:id).should include published.id
-      selected.map(&:id).should_not include draft.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should include published_id
+      ids.should_not include draft_id
     end
 
     it 'selects objects using greater-than' do
       selected = mapper.select { |article| article.published_at < Time.now }
-      ids = selected.map(&:id)
-      ids.should include published.id
-      ids.should_not include draft.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should include published_id
+      ids.should_not include draft_id
     end
 
     it 'selects objects using greater-than-or-equal' do
       selected = mapper.select { |article| article.views >= 3 }
-      ids = selected.map(&:id)
-      ids.should include published.id
-      ids.should_not include draft.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should include published_id
+      ids.should_not include draft_id
     end
 
     it 'selects objects using less-than' do
       selected = mapper.select { |article| article.views < 3 }
-      ids = selected.map(&:id)
-      ids.should include draft.id
-      ids.should_not include published.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should include draft_id
+      ids.should_not include published_id
     end
 
     it 'selects objects using less-than-or-equal' do
       selected = mapper.select { |article| article.views <= 0 }
-      ids = selected.map(&:id)
-      ids.should include draft.id
-      ids.should_not include published.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should include draft_id
+      ids.should_not include published_id
     end
 
     it 'selects objects using inequality' do
       selected = mapper.select { |article| article.title != 'Draft' }
-      ids = selected.map(&:id)
-      ids.should_not include draft.id
-      ids.should include published.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should_not include draft_id
+      ids.should include published_id
     end
 
     it 'selects objects using regular expressions' do
       selected = mapper.select { |article| article.title =~ /Pub/ }
-      ids = selected.map(&:id)
-      ids.should include published.id
-      ids.should_not include draft.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should include published_id
+      ids.should_not include draft_id
     end
 
     it 'selects objects using inclusion' do
       selected = mapper.select { |article| article.title.in %w( Published ) }
-      ids = selected.map(&:id)
-      ids.should include published.id
-      ids.should_not include draft.id
+      ids = selected.map { |article| mapper.id_for article }
+      ids.should include published_id
+      ids.should_not include draft_id
     end
   end
 
@@ -171,7 +170,7 @@ describe "retrieval" do
 
     it 'gets a CRM::Person object back' do
       mapper.insert article
-      retrieved_article = mapper.find(article.id)
+      retrieved_article = mapper.find(mapper.id_for article)
       mapper.load_association! retrieved_article, :author
       retrieved_article.author.should be_a CRM::Person
     end
@@ -181,6 +180,8 @@ describe "retrieval" do
     user = User.new(first_name: 'foo', last_name: 'bar')
     mapper = Perpetuity[User]
     mapper.insert user
-    mapper.select { |user| user.name.first_name == 'foo' }.map(&:id).should include user.id
+    users = mapper.select { |user| user.name.first_name == 'foo' }
+    ids = users.map { |retrieved_user| mapper.id_for(retrieved_user) }
+    ids.should include mapper.id_for(user)
   end
 end

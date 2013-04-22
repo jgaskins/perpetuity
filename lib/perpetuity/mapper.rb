@@ -12,7 +12,7 @@ module Perpetuity
 
     def initialize registry=Perpetuity.mapper_registry
       @mapper_registry = registry
-      @identity_map = IdentityMap.new
+      @identity_map = IdentityMap.new(registry)
     end
 
     def self.map klass, registry=Perpetuity.mapper_registry
@@ -131,7 +131,7 @@ module Perpetuity
     end
 
     def delete object
-      id = object.is_a?(PersistedObject) ? object.id : object
+      id = persisted?(object) ? id_for(object) : object
       data_source.delete id, mapped_class
     end
 
@@ -161,7 +161,7 @@ module Perpetuity
     end
 
     def update object, new_data, update_in_memory = true
-      id = object.is_a?(mapped_class) ? object.id : object
+      id = object.is_a?(mapped_class) ? id_for(object) : object
 
       inject_data object, new_data if update_in_memory
       data_source.update mapped_class, id, new_data
@@ -172,15 +172,23 @@ module Perpetuity
     end
 
     def increment object, attribute, count=1
-      data_source.increment mapped_class, object.id, attribute, count
+      data_source.increment mapped_class, id_for(object), attribute, count
     rescue Moped::Errors::OperationFailure
       raise ArgumentError.new('Attempted to increment a non-numeric value')
     end
 
     def decrement object, attribute, count=1
-      data_source.increment mapped_class, object.id, attribute, -count
+      data_source.increment mapped_class, id_for(object), attribute, -count
     rescue Moped::Errors::OperationFailure
       raise ArgumentError.new('Attempted to decrement a non-numeric value')
+    end
+
+    def persisted? object
+      object.instance_variable_defined?(:@id)
+    end
+
+    def id_for object
+      object.instance_variable_get(:@id)
     end
 
     def self.validate &block

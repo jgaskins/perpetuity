@@ -140,10 +140,10 @@ module Perpetuity
         if value.is_a? Reference
           reference = value
         else
-          unless value.is_a? PersistedObject
+          unless mapper.persisted? value
             mapper_registry[value.class].insert value
           end
-          reference = Reference.new(value.class.to_s, value.id)
+          reference = Reference.new(value.class.to_s, mapper.id_for(value))
         end
         {
           '__metadata__' => {

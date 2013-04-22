@@ -6,7 +6,7 @@ module Perpetuity
     attr_reader :map, :mapper_registry
 
     def initialize mapper_registry
-      @map = IdentityMap.new
+      @map = IdentityMap.new(mapper_registry)
       @mapper_registry = mapper_registry
     end
 

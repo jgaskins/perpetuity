@@ -12,7 +12,7 @@ describe 'updating' do
 
   it 'updates an object in the database' do
     mapper.update article, title: new_title
-    mapper.find(article.id).title.should eq new_title
+    mapper.find(mapper.id_for article).title.should eq new_title
   end
 
   it 'updates the object in memory' do
@@ -23,7 +23,7 @@ describe 'updating' do
   it 'resaves the object in the database' do
     article.title = new_title
     mapper.save article
-    mapper.find(article.id).title.should eq new_title
+    mapper.find(mapper.id_for article).title.should eq new_title
   end
 
   it 'updates an object with referenced attributes' do
@@ -31,11 +31,11 @@ describe 'updating' do
     article.author = user
     mapper.save article
 
-    retrieved_article = mapper.find(article.id)
+    retrieved_article = mapper.find(mapper.id_for article)
     retrieved_article.title = new_title
     mapper.save retrieved_article
 
-    retrieved_article = mapper.find(retrieved_article.id)
+    retrieved_article = mapper.find(mapper.id_for retrieved_article)
     retrieved_article.author.should be_a Perpetuity::Reference
   end
 
@@ -48,13 +48,13 @@ describe 'updating' do
 
     mapper.insert book
 
-    retrieved_book = mapper.find(book.id, false)
+    retrieved_book = mapper.find(mapper.id_for book)
     retrieved_book.authors << andy
     mapper.save retrieved_book
 
-    retrieved_authors = mapper.find(retrieved_book.id).authors
+    retrieved_authors = Perpetuity[Book].find(mapper.id_for retrieved_book).authors
     retrieved_authors.map(&:klass).should == [User, User]
-    retrieved_authors.map(&:id).should == [dave.id, andy.id]
+    retrieved_authors.map(&:id).should == [mapper.id_for(dave), mapper.id_for(andy)]
   end
 
   describe 'atomic increments/decrements' do
@@ -64,13 +64,13 @@ describe 'updating' do
     it 'increments attributes of objects in the database' do
       mapper.increment article, :views
       mapper.increment article, :views, 10
-      mapper.find(article.id).views.should == view_count + 11
+      mapper.find(mapper.id_for(article)).views.should == view_count + 11
     end
 
     it 'decrements attributes of objects in the database' do
       mapper.decrement article, :views
       mapper.decrement article, :views, 10
-      mapper.find(article.id).views.should == view_count - 11
+      mapper.find(mapper.id_for(article)).views.should == view_count - 11
     end
 
     context 'with an object with the specified attribute missing' do

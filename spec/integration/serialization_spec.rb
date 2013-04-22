@@ -13,7 +13,7 @@ describe 'serialization' do
       'author' => {
         '__metadata__' => {
           'class' => author.class.to_s,
-          'id' => author.id
+          'id' => mapper.id_for(author)
         }
       },
       'comments' => [
@@ -25,7 +25,7 @@ describe 'serialization' do
           'author' => {
             '__metadata__' => {
               'class' => author.class.to_s,
-              'id' => author.id
+              'id' => mapper.id_for(author)
             }
           }
         },
@@ -49,7 +49,7 @@ describe 'serialization' do
   end
 
   it 'deserializes hashes into proper objects' do
-    unserialized = mapper.find article.id
+    unserialized = mapper.find mapper.id_for(article)
     unserialized.should be_a Article
     unserialized.title.should be == article.title
     unserialized.body.should be == article.body

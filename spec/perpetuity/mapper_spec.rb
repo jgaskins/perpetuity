@@ -61,7 +61,7 @@ module Perpetuity
 
       describe 'finding a single object' do
         let(:options) { {:attribute=>nil, :direction=>nil, :limit=>nil, :page=>nil} }
-        let(:returned_object) { double('Retrieved Object', id: 1, class: Object) }
+        let(:returned_object) { double('Retrieved Object', class: Object) }
 
         it 'finds an object by ID' do
           criteria = { id: 1 }
@@ -89,6 +89,7 @@ module Perpetuity
         end
 
         it 'caches results' do
+          mapper.give_id_to returned_object, 1
           criteria = { id: 1 }
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }
@@ -112,7 +113,7 @@ module Perpetuity
       it 'saves an object' do
         mapper_class.attribute :foo
         object = Object.new
-        object.define_singleton_method(:id) { 1 }
+        mapper.give_id_to object, 1
         object.instance_variable_set '@foo', 'bar'
         data_source.should_receive(:can_serialize?).with('bar') { true }
         data_source.should_receive(:update).with Object, 1, { 'foo' => 'bar' }
@@ -130,6 +131,32 @@ module Perpetuity
       it 'deletes all objects it manages' do
         data_source.should_receive(:delete_all).with(Object)
         mapper.delete_all
+      end
+    end
+
+    describe 'checking persistence of an object' do
+      let(:object) { Object.new }
+
+      context 'when persisted' do
+        before { mapper.give_id_to object, 1 }
+
+        it 'knows the object is persisted' do
+          mapper.persisted?(object).should be_true
+        end
+
+        it 'knows the id of the object' do
+          mapper.id_for(object).should be == 1
+        end
+      end
+
+      context 'when not persisted' do
+        it 'knows the object is not persisted' do
+          mapper.persisted?(object).should be_false
+        end
+
+        it 'returns a nil id' do
+          mapper.id_for(object).should be_nil
+        end
       end
     end
   end
