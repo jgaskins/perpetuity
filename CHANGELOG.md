@@ -1,3 +1,9 @@
+## Version 0.4.8
+
+- Provide configuration one-liner ability for simple configs
+- Fix bug preventing objects with an array of referenced objects from being updated
+- Move serialization into the MongoDB adapter, allowing future adapters to implement their own serializations
+
 ## Version 0.4.7
 
 - Use instance variables rather than attr_readers in IdentityMap (avoids calling methods during `load_association!`).
