@@ -12,7 +12,7 @@ module Perpetuity
 
     def initialize registry=Perpetuity.mapper_registry
       @mapper_registry = registry
-      @identity_map = IdentityMap.new(registry)
+      @identity_map = IdentityMap.new
     end
 
     def self.map klass, registry=Perpetuity.mapper_registry
