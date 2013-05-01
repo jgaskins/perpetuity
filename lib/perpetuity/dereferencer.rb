@@ -12,13 +12,21 @@ module Perpetuity
     def load references
       references = Array(references).flatten
 
-      references.group_by(&:klass).map { |klass, refs|
+      cache grouped(references).map { |klass, refs|
         objects klass, refs.map(&:id)
-      }.flatten.each { |object| map << object }
+      }.flatten
+    end
+
+    def cache objects
+      objects.each { |object| map << object }
     end
 
     def [] reference
       map[reference.klass, reference.id]
+    end
+
+    def grouped references
+      references.group_by(&:klass)
     end
 
     def objects klass, ids
