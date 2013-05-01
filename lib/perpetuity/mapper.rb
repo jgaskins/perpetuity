@@ -100,18 +100,19 @@ module Perpetuity
 
     def load_association! object, attribute
       objects = Array(object)
-      identity_map = IdentityMap.new(objects, attribute, mapper_registry)
+      dereferencer = Dereferencer.new(mapper_registry)
+      dereferencer.load objects.map { |obj| obj.instance_variable_get("@#{attribute}") }
 
       objects.each do |obj|
         reference = obj.instance_variable_get("@#{attribute}")
         if reference.is_a? Array
           refs = reference
-          real_objects = refs.map { |ref| identity_map[ref.klass][ref.id] }
+          real_objects = refs.map { |ref| dereferencer[ref] }
           inject_attribute obj, attribute, real_objects
         else
           klass = reference.klass
           id = reference.id
-          inject_attribute obj, attribute, identity_map[klass][id]
+          inject_attribute obj, attribute, dereferencer[reference]
         end
       end
     end

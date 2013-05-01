@@ -1,25 +1,17 @@
 module Perpetuity
   class IdentityMap
-    def initialize objects, attribute, mapper_registry
-      @map = Hash[
-        objects.map { |object| object.instance_variable_get("@#{attribute}") }
-          .flatten
-          .group_by(&:klass)
-          .map { |klass, ref|
-            [
-              klass,
-              Hash[
-                mapper_registry[klass].select { |object|
-                  object.id.in ref.map(&:id).uniq
-                }.map { |obj| [obj.id, obj] }
-              ]
-            ]
-          }
-      ]
+    attr_reader :map
+
+    def initialize
+      @map = Hash.new { |hash, key| hash[key] = {} }
     end
 
-    def [] klass
-      @map[klass]
+    def [] klass, id
+      map[klass][id]
+    end
+
+    def << object
+      map[object.class][object.id] = object
     end
   end
 end
