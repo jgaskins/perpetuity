@@ -12,15 +12,19 @@ module Perpetuity
     def load references
       references = Array(references).flatten
 
-      references.group_by(&:klass).map { |klass, ref|
-        mapper_registry[klass].select { |object|
-          object.id.in ref.map(&:id).uniq
-        }.to_a
+      references.group_by(&:klass).map { |klass, refs|
+        objects klass, refs.map(&:id)
       }.flatten.each { |object| map << object }
     end
 
     def [] reference
       map[reference.klass, reference.id]
+    end
+
+    def objects klass, ids
+      mapper_registry[klass].select { |object|
+        object.id.in ids.uniq
+      }.to_a
     end
   end
 end
