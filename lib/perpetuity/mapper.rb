@@ -2,7 +2,7 @@ require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
 require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
-require 'perpetuity/identity_map'
+require 'perpetuity/dereferencer'
 require 'perpetuity/retrieval'
 
 module Perpetuity
