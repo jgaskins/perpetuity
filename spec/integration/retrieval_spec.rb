@@ -7,7 +7,7 @@ describe "retrieval" do
 
   it "gets all the objects of a class" do
     expect { mapper.insert Article.new }.
-      to change { mapper.all.count }.by 1
+      to change { mapper.all.to_a.count }.by 1
   end
 
   it "has an ID when retrieved" do
