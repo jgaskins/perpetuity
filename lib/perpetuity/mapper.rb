@@ -110,8 +110,6 @@ module Perpetuity
           real_objects = refs.map { |ref| dereferencer[ref] }
           inject_attribute obj, attribute, real_objects
         else
-          klass = reference.klass
-          id = reference.id
           inject_attribute obj, attribute, dereferencer[reference]
         end
       end
