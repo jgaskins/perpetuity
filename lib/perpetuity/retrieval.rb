@@ -49,7 +49,7 @@ module Perpetuity
     end
 
     def count
-      @data_source.count(@class, @criteria, options)
+      @data_source.count(@class, @criteria)
     end
 
     def options

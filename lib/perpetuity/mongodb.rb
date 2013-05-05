@@ -59,8 +59,8 @@ module Perpetuity
       end
     end
 
-    def count klass, &block
-      q = block_given? ? query(&block).to_db : {}
+    def count klass, criteria={}, &block
+      q = block_given? ? query(&block).to_db : criteria
       collection(klass).find(q).count
     end
 
