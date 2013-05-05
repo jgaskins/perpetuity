@@ -1,4 +1,5 @@
 require 'perpetuity/identity_map'
+require 'perpetuity/reference'
 
 module Perpetuity
   class Dereferencer
@@ -10,7 +11,7 @@ module Perpetuity
     end
 
     def load references
-      references = Array(references).flatten
+      references = Array(references).flatten.select {|ref| referenceable?(ref) }
 
       cache grouped(references).map { |klass, refs|
         objects klass, refs.map(&:id)
@@ -22,7 +23,11 @@ module Perpetuity
     end
 
     def [] reference
-      map[reference.klass, reference.id]
+      if referenceable?(reference)
+        map[reference.klass, reference.id]
+      else
+        reference
+      end
     end
 
     def grouped references
@@ -33,6 +38,10 @@ module Perpetuity
       mapper_registry[klass].select { |object|
         object.id.in ids.uniq
       }.to_a
+    end
+
+    def referenceable? ref
+      [:klass, :id].all? { |msg| ref.respond_to?(msg) }
     end
   end
 end

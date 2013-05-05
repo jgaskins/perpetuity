@@ -61,6 +61,19 @@ describe 'associations with other objects' do
       book_mapper.load_association! books, :authors
       books.map(&:authors).flatten.map(&:name).should include(*%w(Dave Andy Matt Aslak))
     end
+
+    it 'does not try dereferencing non-reference objects' do
+      article = Article.new
+      foo = User.new('foo')
+      bar = 'bar'
+      article.author = [foo, bar]
+      mapper = Perpetuity[Article]
+
+      mapper.insert article
+      retrieved = mapper.find(article.id)
+      mapper.load_association! retrieved, :author
+      retrieved.author.should == [foo, bar]
+    end
   end
 
   describe 'embedded relationships' do
