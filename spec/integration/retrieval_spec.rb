@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'support/test_classes'
+require 'securerandom'
 
 describe "retrieval" do
   let(:mapper) { Perpetuity[Article] }
@@ -47,7 +48,7 @@ describe "retrieval" do
 
   it 'limits result set' do
     5.times { mapper.insert Article.new }
-    mapper.all.limit(4).should have(4).items
+    mapper.all.limit(4).to_a.should have(4).items
   end
 
   describe "Array-like syntax" do
@@ -111,6 +112,22 @@ describe "retrieval" do
       ids = selected.map(&:id)
       ids.should include published.id
       ids.should_not include draft.id
+    end
+  end
+
+  describe 'counting results' do
+    let(:title) { SecureRandom.hex }
+    let(:articles) do
+      5.times.map { Article.new(title) } + 5.times.map { Article.new }
+    end
+
+    before do
+      articles.each { |article| mapper.insert article }
+    end
+
+    it 'counts the results' do
+      query = mapper.select { |article| article.title == title }
+      query.count.should == 5
     end
   end
 

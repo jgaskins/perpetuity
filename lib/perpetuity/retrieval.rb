@@ -45,14 +45,21 @@ module Perpetuity
     end
 
     def to_a
-      options = {
+      results = @data_source.retrieve(@class, @criteria, options)
+      @data_source.unserialize results, @mapper
+    end
+
+    def count
+      @data_source.count(@class, @criteria, options)
+    end
+
+    def options
+      {
         attribute: sort_attribute,
         direction: sort_direction,
         limit: result_limit || quantity_per_page,
         page: result_page
       }
-      results = @data_source.retrieve(@class, @criteria, options)
-      @data_source.unserialize results, @mapper
     end
 
     def [] index

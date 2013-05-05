@@ -62,6 +62,13 @@ module Perpetuity
       mongo.count(klass).should == 3
     end
 
+    it 'counts documents matching criteria' do
+      mongo.delete_all klass
+      3.times { mongo.insert klass, { name: 'foo' } }
+      3.times { mongo.insert klass, { name: 'bar' } }
+      mongo.count(klass, name: 'foo').should == 3
+    end
+
     it 'gets the first document in a collection' do
       value = {value: 1}
       mongo.insert klass, value

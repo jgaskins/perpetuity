@@ -59,8 +59,9 @@ module Perpetuity
       end
     end
 
-    def count klass
-      collection(klass).find.count
+    def count klass, criteria={}, options={}
+      criteria = to_bson_id(criteria)
+      collection(klass).find(criteria).count
     end
 
     def delete_all klass

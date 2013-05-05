@@ -20,7 +20,7 @@ describe 'pagination' do
   it 'specifies per-page quantity' do
     Perpetuity[Article].delete_all
     5.times { |i| Perpetuity[Article].insert Article.new i }
-    data = Perpetuity[Article].all.page(3).per_page(2)
+    data = Perpetuity[Article].all.page(3).per_page(2).to_a
     data.should have(1).item
   end
 end
