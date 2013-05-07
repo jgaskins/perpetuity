@@ -96,6 +96,10 @@ module Perpetuity
       find(klass, id).update '$inc' => { attribute => 1 }
     end
 
+    def decrement klass, id, attribute
+      find(klass, id).update '$inc' => { attribute => -1 }
+    end
+
     def find klass, id
       collection(klass).find(to_bson_id(_id: id))
     end

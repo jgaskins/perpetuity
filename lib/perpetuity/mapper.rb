@@ -138,6 +138,10 @@ module Perpetuity
       data_source.increment mapped_class, object.id, attribute
     end
 
+    def decrement object, attribute
+      data_source.decrement mapped_class, object.id, attribute
+    end
+
     def self.validate &block
       validations.instance_exec(&block)
     end

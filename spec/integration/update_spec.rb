@@ -65,6 +65,11 @@ describe 'updating' do
       mapper.increment article, :views
       mapper.find(article.id).views.should == view_count + 1
     end
+
+    it 'decrements attributes of objects in the database' do
+      mapper.decrement article, :views
+      mapper.find(article.id).views.should == view_count - 1
+    end
   end
 end
 
