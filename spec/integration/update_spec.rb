@@ -56,6 +56,16 @@ describe 'updating' do
     retrieved_authors.map(&:klass).should == [User, User]
     retrieved_authors.map(&:id).should == [dave.id, andy.id]
   end
+
+  describe 'atomic increments/decrements' do
+    let(:view_count) { 0 }
+    let(:article) { Article.new('title', 'body', nil, nil, view_count) }
+
+    it 'increments attributes of objects in the database' do
+      mapper.increment article, :views
+      mapper.find(article.id).views.should == view_count + 1
+    end
+  end
 end
 
 

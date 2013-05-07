@@ -139,6 +139,16 @@ module Perpetuity
       end
     end
 
+    describe 'atomic operations' do
+      after(:all) { mongo.delete_all klass }
+
+      it 'increments the value of an attribute' do
+        id = mongo.insert klass, count: 1
+        mongo.increment klass, id, :count
+        mongo.retrieve(klass, id: id).first['count'].should == 2
+      end
+    end
+
     describe 'operation errors' do
       let(:data) { { foo: 'bar' } }
       let(:index) { mongo.index Object, :foo, unique: true }

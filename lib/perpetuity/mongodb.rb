@@ -92,6 +92,14 @@ module Perpetuity
       end
     end
 
+    def increment klass, id, attribute
+      find(klass, id).update '$inc' => { attribute => 1 }
+    end
+
+    def find klass, id
+      collection(klass).find(to_bson_id(_id: id))
+    end
+
     def to_bson_id criteria
       criteria = criteria.dup
       if criteria.has_key?(:id)

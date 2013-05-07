@@ -134,6 +134,10 @@ module Perpetuity
       update object, serialize(object), false
     end
 
+    def increment object, attribute
+      data_source.increment mapped_class, object.id, attribute
+    end
+
     def self.validate &block
       validations.instance_exec(&block)
     end
