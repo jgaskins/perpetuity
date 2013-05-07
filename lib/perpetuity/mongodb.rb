@@ -134,7 +134,7 @@ module Perpetuity
     end
 
     def update klass, id, new_data
-      collection(klass).find({ _id: id }).update(new_data)
+      find(klass, id).update(new_data)
     end
 
     def can_serialize? value
