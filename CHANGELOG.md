@@ -1,6 +1,9 @@
 ## Version 0.4.8
 
 - Provide configuration one-liner ability for simple configs
+- Memoize results for Retrieval objects
+- `Retrieval#count` sends a count query rather than retrieving the result set and returning the count of the array
+- Allow updating of objects that contain `Perpetuity::Reference`s to other persisted objects without first loading the association
 - Fix bug preventing objects with an array of referenced objects from being updated
 - Move serialization into the MongoDB adapter, allowing future adapters to implement their own serializations
 
