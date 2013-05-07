@@ -45,8 +45,7 @@ module Perpetuity
     end
 
     def to_a
-      results = @data_source.retrieve(@class, @criteria, options)
-      @data_source.unserialize results, @mapper
+      @results ||= @data_source.unserialize(@data_source.retrieve(@class, @criteria, options), @mapper)
     end
 
     def count
