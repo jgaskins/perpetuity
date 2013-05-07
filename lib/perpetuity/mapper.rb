@@ -136,10 +136,14 @@ module Perpetuity
 
     def increment object, attribute
       data_source.increment mapped_class, object.id, attribute
+    rescue Moped::Errors::OperationFailure
+      raise ArgumentError.new('Attempted to increment a non-numeric value')
     end
 
     def decrement object, attribute
       data_source.decrement mapped_class, object.id, attribute
+    rescue Moped::Errors::OperationFailure
+      raise ArgumentError.new('Attempted to decrement a non-numeric value')
     end
 
     def self.validate &block

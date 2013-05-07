@@ -70,6 +70,20 @@ describe 'updating' do
       mapper.decrement article, :views
       mapper.find(article.id).views.should == view_count - 1
     end
+
+    context 'with an object with the specified attribute missing' do
+      let(:article) { Article.new('title', 'body', nil, nil, nil) }
+
+      it 'raises an exception when incrementing' do
+        expect { mapper.increment article, :views }.to raise_error(
+          ArgumentError, 'Attempted to increment a non-numeric value')
+      end
+
+      it 'raises an exception when decrementing' do
+        expect { mapper.decrement article, :views }.to raise_error(
+          ArgumentError, 'Attempted to decrement a non-numeric value')
+      end
+    end
   end
 end
 
