@@ -4,8 +4,6 @@ Perpetuity is a simple Ruby object persistence layer that attempts to follow Mar
 
 Your objects will hopefully eventually be able to be persisted into whichever database you like. Right now, only MongoDB is supported. Other persistence solutions will come later.
 
-This gem was inspired by [a blog post by Steve Klabnik](http://blog.steveklabnik.com/posts/2011-12-30-active-record-considered-harmful).
-
 ## How it works
 
 In the Data Mapper pattern, the objects you work with don't understand how to persist themselves. They interact with other objects just as in any other object-oriented application, leaving all persistence logic to mapper objects. This decouples them from the database and allows you to write your code without it in mind.
@@ -20,20 +18,16 @@ gem 'perpetuity'
 
 ## Configuration
 
-The only currently supported persistence method is MongoDB. Other schemaless solutions can probably be implemented easily.
+The only currently supported persistence method is MongoDB. Other schemaless solutions can probably be implemented easily. The simplest configuration is with the following line:
 
 ```ruby
-mongodb = Perpetuity::MongoDB.new(
-  db: 'example_db',            # Required
-  host: 'mongodb.example.com', # Default: 'localhost'
-  port: 27017,                 # Default: 27017
-  username: 'mongo',           # If no username/password given, do not authenticate
-  password: 'password'
-)
+Perpetuity.data_source :mongodb, 'my_database'
+```
 
-Perpetuity.configure do 
-  data_source mongodb
-end
+If your database is on another server or you need authentication, you can specify those as options:
+
+```ruby
+Perpetuity.data_source :mongodb, 'my_database', host: 'mongo.example.com', port: 27017, username: 'mongo', password: 'password'
 ```
 
 ## Setting up object mappers
@@ -112,7 +106,7 @@ Notice that we have to use a single `&` and surround each criterion with parenth
 
 ## Associations with Other Objects
 
-The database can natively serialize some objects. For example, MongoDB can serialize `String`, `Numeric`, `Array`, `Hash`, `Time`, `nil`, `true`, `false`, and a few others. For other data types, you must determine whether you want those attributes embedded within the same document in the database or attached as a reference. For example, a `Post` could have `Comment`s, which would likely be embedded within the post object. But these comments could have an `author` attribute that references the `Person` that wrote the comment. Embedding the author in this case is not a good idea since it would be a duplicate of the `Person` that wrote it, which would then be out of sync if the original object is modified.
+The database can natively serialize some objects. For example, MongoDB can serialize `String`, `Numeric`, `Array`, `Hash`, `Time`, `nil`, `true`, `false`, and a few others. For other objects, you must determine whether you want those attributes embedded within the same document in the database or attached as a reference. For example, a `Post` could have `Comment`s, which would likely be embedded within the post object. But these comments could have an `author` attribute that references the `Person` that wrote the comment. Embedding the author in this case is not a good idea since it would be a duplicate of the `Person` that wrote it, which would then be out of sync if the original object is modified.
 
 If an object references another type of object, the association is declared just as any other attribute. No special treatment is required. For embedded relationships, make sure you use the `embedded: true` option in the attribute.
 
@@ -157,6 +151,8 @@ article_mapper.load_association! articles.first, :tags # 1:N
 article_mapper.load_association! articles, :author     # All author objects for these articles load in a single query - N:1
 article_mapper.load_association! articles, :tags       # M:N
 ```
+
+Each of these `load_association!` calls will only execute the number of queries necessary to retrieve all of the objects. For example, if the `author` attribute for the selected articles contains both `User` and `Admin` objects, it will execute two queries (one each for `User` and `Admin`). If the tags for all of the selected articles are all `Tag` objects, only one query will be executed even in the M:N case.
 
 ## Customizing persistence
 
@@ -212,6 +208,8 @@ end
 Perpetuity[Article].reindex!
 ```
 
+You could put this in a rake task to be executed when you deploy your app.
+
 ## Contributing
 
-Right now, this code is pretty bare and there are possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests or issues or [tweets](http://twitter.com/jamie_gaskins) or e-mails and I'll do what I can for them.
+There are plenty of opportunities to improve what's here and possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests, issues or [tweets](http://twitter.com/jamie_gaskins) and I'll do what I can for them.
