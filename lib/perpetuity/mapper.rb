@@ -88,6 +88,10 @@ module Perpetuity
       count(&block) == 1
     end
 
+    def none? &block
+      !any?(&block)
+    end
+
     def first
       retrieve.limit(1).first
     end

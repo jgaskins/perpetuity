@@ -156,6 +156,11 @@ describe "retrieval" do
       mapper.one? { |article| article.title == title }.should be_false
       mapper.one? { |article| article.title == 'Title' }.should be_false
     end
+
+    it 'checks whether no results match' do
+      mapper.none? { |article| article.title == SecureRandom.hex }.should be_true
+      mapper.none? { |article| article.title == title }.should be_false
+    end
   end
 
   context 'with namespaced classes' do
