@@ -2,12 +2,12 @@
   require "support/test_classes/#{file}"
 end
 
-Perpetuity.generate_mapper_for User do
+class UserMapper < Perpetuity::Mapper
+  map User
   attribute :name
 end
 
-class ArticleMapper < Perpetuity::Mapper
-  map Article
+Perpetuity.generate_mapper_for Article do
   attribute :title
   attribute :body
   attribute :author
