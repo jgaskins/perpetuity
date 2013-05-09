@@ -76,6 +76,10 @@ module Perpetuity
       data_source.count mapped_class, &block
     end
 
+    def any? &block
+      count(&block) > 0
+    end
+
     def first
       retrieve.limit(1).first
     end

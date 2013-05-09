@@ -136,6 +136,11 @@ describe "retrieval" do
       query = mapper.select { |article| article.title == title }
       query.count.should == 2
     end
+
+    it 'checks whether any results match' do
+      mapper.any? { |article| article.title == title }.should be_true
+      mapper.any? { |article| article.title == SecureRandom.hex }.should be_false
+    end
   end
 
   context 'with namespaced classes' do
