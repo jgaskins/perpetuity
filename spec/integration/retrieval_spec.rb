@@ -141,6 +141,13 @@ describe "retrieval" do
       mapper.any? { |article| article.title == title }.should be_true
       mapper.any? { |article| article.title == SecureRandom.hex }.should be_false
     end
+
+    it 'checks whether all results match' do
+      mapper.delete_all
+      2.times { |i| mapper.insert Article.new(title, nil, nil, nil, i) }
+      mapper.all? { |article| article.title == title }.should be_true
+      mapper.all? { |article| article.views == 0 }.should be_false
+    end
   end
 
   context 'with namespaced classes' do
