@@ -154,6 +154,7 @@ describe "retrieval" do
       mapper.insert Article.new(unique_title)
       mapper.one? { |article| article.title == unique_title }.should be_true
       mapper.one? { |article| article.title == title }.should be_false
+      mapper.one? { |article| article.title == 'Title' }.should be_false
     end
   end
 
