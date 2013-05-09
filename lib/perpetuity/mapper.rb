@@ -84,6 +84,10 @@ module Perpetuity
       count(&block) == count
     end
 
+    def one? &block
+      count(&block) == 1
+    end
+
     def first
       retrieve.limit(1).first
     end

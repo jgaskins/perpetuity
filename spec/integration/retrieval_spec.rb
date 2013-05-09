@@ -148,6 +148,13 @@ describe "retrieval" do
       mapper.all? { |article| article.title == title }.should be_true
       mapper.all? { |article| article.views == 0 }.should be_false
     end
+
+    it 'checks whether only one result matches' do
+      unique_title = SecureRandom.hex
+      mapper.insert Article.new(unique_title)
+      mapper.one? { |article| article.title == unique_title }.should be_true
+      mapper.one? { |article| article.title == title }.should be_false
+    end
   end
 
   context 'with namespaced classes' do
