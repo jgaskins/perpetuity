@@ -125,7 +125,7 @@ describe "retrieval" do
   describe 'counting results' do
     let(:title) { SecureRandom.hex }
     let(:articles) do
-      5.times.map { Article.new(title) } + 5.times.map { Article.new }
+      2.times.map { Article.new(title) } + 2.times.map { Article.new }
     end
 
     before do
@@ -134,7 +134,7 @@ describe "retrieval" do
 
     it 'counts the results' do
       query = mapper.select { |article| article.title == title }
-      query.count.should == 5
+      query.count.should == 2
     end
   end
 
