@@ -162,14 +162,14 @@ module Perpetuity
       update object, serialize(object), false
     end
 
-    def increment object, attribute
-      data_source.increment mapped_class, object.id, attribute
+    def increment object, attribute, count=1
+      data_source.increment mapped_class, object.id, attribute, count
     rescue Moped::Errors::OperationFailure
       raise ArgumentError.new('Attempted to increment a non-numeric value')
     end
 
-    def decrement object, attribute
-      data_source.decrement mapped_class, object.id, attribute
+    def decrement object, attribute, count=1
+      data_source.increment mapped_class, object.id, attribute, -count
     rescue Moped::Errors::OperationFailure
       raise ArgumentError.new('Attempted to decrement a non-numeric value')
     end

@@ -63,12 +63,14 @@ describe 'updating' do
 
     it 'increments attributes of objects in the database' do
       mapper.increment article, :views
-      mapper.find(article.id).views.should == view_count + 1
+      mapper.increment article, :views, 10
+      mapper.find(article.id).views.should == view_count + 11
     end
 
     it 'decrements attributes of objects in the database' do
       mapper.decrement article, :views
-      mapper.find(article.id).views.should == view_count - 1
+      mapper.decrement article, :views, 10
+      mapper.find(article.id).views.should == view_count - 11
     end
 
     context 'with an object with the specified attribute missing' do

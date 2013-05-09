@@ -92,12 +92,8 @@ module Perpetuity
       end
     end
 
-    def increment klass, id, attribute
-      find(klass, id).update '$inc' => { attribute => 1 }
-    end
-
-    def decrement klass, id, attribute
-      find(klass, id).update '$inc' => { attribute => -1 }
+    def increment klass, id, attribute, count=1
+      find(klass, id).update '$inc' => { attribute => count }
     end
 
     def find klass, id

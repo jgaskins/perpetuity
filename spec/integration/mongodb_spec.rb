@@ -145,13 +145,10 @@ module Perpetuity
       it 'increments the value of an attribute' do
         id = mongo.insert klass, count: 1
         mongo.increment klass, id, :count
-        mongo.retrieve(klass, id: id).first['count'].should == 2
-      end
-
-      it 'decrements the value of an attribute' do
-        id = mongo.insert klass, count: 1
-        mongo.decrement klass, id, :count
-        mongo.retrieve(klass, id: id).first['count'].should == 0
+        mongo.increment klass, id, :count, 10
+        mongo.retrieve(klass, id: id).first['count'].should == 12
+        mongo.increment klass, id, :count, -1
+        mongo.retrieve(klass, id: id).first['count'].should == 11
       end
     end
 
