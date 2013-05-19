@@ -35,6 +35,7 @@ module Perpetuity
     end
 
     def objects klass, ids
+      ids = ids.uniq
       if ids.one?
         mapper_registry[klass].find(ids.first)
       elsif ids.none?
