@@ -35,9 +35,15 @@ module Perpetuity
     end
 
     def objects klass, ids
-      mapper_registry[klass].select { |object|
-        object.id.in ids.uniq
-      }.to_a
+      if ids.one?
+        mapper_registry[klass].find(ids.first)
+      elsif ids.none?
+        []
+      else
+        mapper_registry[klass].select { |object|
+          object.id.in ids.uniq
+        }.to_a
+      end
     end
 
     def referenceable? ref
