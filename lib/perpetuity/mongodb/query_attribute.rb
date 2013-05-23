@@ -45,6 +45,10 @@ module Perpetuity
       def to_sym
         name
       end
+
+      def method_missing name
+        self.class.new(:"#{self.name}.#{name}")
+      end
     end
   end
 end

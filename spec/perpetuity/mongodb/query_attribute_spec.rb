@@ -7,6 +7,10 @@ module Perpetuity
 
     its(:name) { should == :attribute_name }
 
+    it 'allows checking subattributes' do
+      attribute.id.name.should == :'attribute_name.id'
+    end
+
     it 'checks for equality' do
       (attribute == 1).should be_a MongoDB::QueryExpression
     end

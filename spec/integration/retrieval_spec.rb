@@ -176,4 +176,11 @@ describe "retrieval" do
       retrieved_article.author.should be_a CRM::Person
     end
   end
+
+  it 'selects objects with nested data' do
+    user = User.new(first_name: 'foo', last_name: 'bar')
+    mapper = Perpetuity[User]
+    mapper.insert user
+    mapper.select { |user| user.name.first_name == 'foo' }.map(&:id).should include user.id
+  end
 end
