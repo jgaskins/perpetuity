@@ -102,6 +102,13 @@ module Perpetuity
 
     def to_bson_id criteria
       criteria = criteria.dup
+
+      # Check for both string and symbol ID in criteria
+      if criteria.has_key?('id')
+        criteria['_id'] = Moped::BSON::ObjectId(criteria['id']) rescue criteria['id']
+        criteria.delete 'id'
+      end
+
       if criteria.has_key?(:id)
         criteria[:_id] = Moped::BSON::ObjectId(criteria[:id]) rescue criteria[:id]
         criteria.delete :id
