@@ -47,7 +47,15 @@ module Perpetuity
       end
 
       def method_missing name
-        self.class.new(:"#{self.name}.#{name}")
+        if name.to_s == 'id'
+          name = :"#{self.name}.__metadata__.#{name}"
+        elsif name.to_s == 'klass'
+          name = :"#{self.name}.__metadata__.class"
+        else
+          name = :"#{self.name}.#{name}"
+        end
+
+        self.class.new(name)
       end
     end
   end

@@ -8,7 +8,15 @@ module Perpetuity
     its(:name) { should == :attribute_name }
 
     it 'allows checking subattributes' do
-      attribute.id.name.should == :'attribute_name.id'
+      attribute.title.name.should == :'attribute_name.title'
+    end
+
+    it 'wraps .id subattribute in metadata' do
+      attribute.id.name.should == :'attribute_name.__metadata__.id'
+    end
+
+    it 'wraps .klass subattribute in metadata' do
+      attribute.klass.name.should == :'attribute_name.__metadata__.class'
     end
 
     it 'checks for equality' do
