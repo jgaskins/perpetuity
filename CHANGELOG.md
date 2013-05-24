@@ -1,3 +1,17 @@
+## Version 0.5.0
+
+- Allow querying based on referenced class/id or embedded-object data
+- Remove duplicate references when loading associations on referenced objects
+- Optimize loading associations with zero/one/many objects. It is similar to `Array#detect` vs `Array#select`. `detect` is faster if you only need one.
+- Fixed a bug in defining methods on generated mapper classes which would mistakenly define them on the class instead of the mapper objects
+- Add `none?`/`one?`/`all?`/`any?` methods to mappers.
+- Add block functionality to `Mapper#count`, similar to `Enumerable#count`
+- Alias `Mapper#find_all` to `Mapper#select`
+- Alias `Mapper#detect` to `Mapper#find`
+- Add `Mapper#reject` method to negate queries
+- Allow `Mapper#find` to take a block like `Mapper#select`
+- Add atomic incrementation
+
 ## Version 0.4.8
 
 - Provide configuration one-liner ability for simple configs
