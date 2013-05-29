@@ -8,10 +8,11 @@ require 'perpetuity/retrieval'
 module Perpetuity
   class Mapper
     include DataInjectable
-    attr_reader :mapper_registry
+    attr_reader :mapper_registry, :identity_map
 
     def initialize registry=Perpetuity.mapper_registry
       @mapper_registry = registry
+      @identity_map = IdentityMap.new
     end
 
     def self.map klass, registry=Perpetuity.mapper_registry
@@ -106,12 +107,20 @@ module Perpetuity
 
     alias :find_all :select
 
-    def find *args, &block
+    def find id=nil, cache_result=true, &block
       if block_given?
         select(&block).first
       else
-        id = args.first
-        select { |object| object.id == id }.first
+        cached_value = identity_map[mapped_class, id]
+        return cached_value if cached_value
+
+        result = select { |object| object.id == id }.first
+
+        if cache_result
+          identity_map << result
+        end
+
+        result
       end
     end
 

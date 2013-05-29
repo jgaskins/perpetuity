@@ -48,7 +48,7 @@ describe 'updating' do
 
     mapper.insert book
 
-    retrieved_book = mapper.find(book.id)
+    retrieved_book = mapper.find(book.id, false)
     retrieved_book.authors << andy
     mapper.save retrieved_book
 

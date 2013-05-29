@@ -61,7 +61,7 @@ module Perpetuity
 
       describe 'finding a single object' do
         let(:options) { {:attribute=>nil, :direction=>nil, :limit=>nil, :page=>nil} }
-        let(:returned_object) { double('Retrieved Object') }
+        let(:returned_object) { double('Retrieved Object', id: 1, class: Object) }
 
         it 'finds an object by ID' do
           criteria = { id: 1 }
@@ -86,6 +86,16 @@ module Perpetuity
                      .with(Object, criteria, options) { [returned_object] }.twice
           mapper.find   { |o| o.name == 'foo' }.should == returned_object
           mapper.detect { |o| o.name == 'foo' }.should == returned_object
+        end
+
+        it 'caches results' do
+          criteria = { id: 1 }
+          data_source.should_receive(:retrieve)
+                     .with(Object, criteria, options) { [returned_object] }
+                     .once
+
+          mapper.find(1)
+          mapper.find(1)
         end
       end
 
