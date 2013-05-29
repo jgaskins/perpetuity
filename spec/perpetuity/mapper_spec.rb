@@ -97,6 +97,16 @@ module Perpetuity
           mapper.find(1)
           mapper.find(1)
         end
+
+        it 'does not cache nil results' do
+          criteria = { id: 1 }
+          data_source.should_receive(:retrieve)
+                     .with(Object, criteria, options) { [] }
+                     .twice
+
+          mapper.find(1)
+          mapper.find(1)
+        end
       end
 
       it 'saves an object' do

@@ -116,7 +116,7 @@ module Perpetuity
 
         result = select { |object| object.id == id }.first
 
-        if cache_result
+        if cache_result and !result.nil?
           identity_map << result
         end
 
