@@ -7,11 +7,15 @@ module Perpetuity
     end
 
     def == other
-      klass == other.klass && id == other.id
+      if other.is_a? self.class
+        klass == other.klass && id == other.id
+      else
+        other.is_a?(klass) && id == other.id
+      end
     end
 
     def eql? other
-      self == other
+      other.is_a?(self.class) && self == other
     end
   end
 end
