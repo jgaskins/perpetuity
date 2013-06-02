@@ -1,5 +1,4 @@
 require "perpetuity/version"
-require "perpetuity/retrieval"
 require "perpetuity/mongodb"
 require "perpetuity/config"
 require "perpetuity/mapper"
