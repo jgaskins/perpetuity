@@ -17,8 +17,14 @@ module Perpetuity
         object.instance_variable_get("@#{attribute_name}")
       end
 
+      def has_attribute? object, attribute_name
+        object.instance_variable_defined? "@#{attribute_name}"
+      end
+
       def serialize object
         attrs = mapper.class.attribute_set.map do |attrib|
+          next unless has_attribute? object, attrib.name
+
           value = attribute_for object, attrib.name
 
           serialized_value = if value.is_a? Reference
@@ -36,7 +42,7 @@ module Perpetuity
           [attrib.name.to_s, serialized_value]
         end
 
-        Hash[attrs]
+        Hash[attrs.compact]
       end
 
       def unserialize data
