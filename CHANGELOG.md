@@ -1,5 +1,6 @@
-## Version 0.5.1
+## Version 0.6.0
 
+- Stop extending persisted/retrieved objects with `Perpetuity::PersistedObject`. Extending these objects invalidates method caches inside the VM, which degrades performance.
 - Cache all objects returned from `Mapper#find(id)` by default into the mapper object. This can be bypassed with `Mapper#find(id, false)`
 - Do not store uninitialized attributes with the MongoDB serializer. This shrinks the size of documents when possible.
 
