@@ -1,3 +1,7 @@
+## Version 0.6.1
+
+- Fix reference equality bug
+
 ## Version 0.6.0
 
 - Stop extending persisted/retrieved objects with `Perpetuity::PersistedObject`. Extending these objects invalidates method caches inside the VM, which degrades performance.
