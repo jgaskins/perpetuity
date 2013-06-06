@@ -1,3 +1,8 @@
+## Version 0.5.1
+
+- Cache all objects returned from `Mapper#find(id)` by default into the mapper object. This can be bypassed with `Mapper#find(id, false)`
+- Do not store uninitialized attributes with the MongoDB serializer. This shrinks the size of documents when possible.
+
 ## Version 0.5.0
 
 - Allow querying based on referenced class/id or embedded-object data
