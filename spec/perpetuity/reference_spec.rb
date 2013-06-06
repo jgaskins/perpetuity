@@ -3,8 +3,10 @@ require 'perpetuity/reference'
 module Perpetuity
   describe Reference do
     let(:reference) { Reference.new Object, 1 }
-    let(:object) { double('Object', class: Object, id: 1) }
+    let(:object) { double('Object', class: Object) }
     subject { reference }
+
+    before { object.instance_variable_set :@id, 1 }
 
     its(:klass) { should be Object }
     its(:id)    { should be == 1 }

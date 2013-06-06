@@ -10,7 +10,7 @@ module Perpetuity
       if other.is_a? self.class
         klass == other.klass && id == other.id
       else
-        other.is_a?(klass) && id == other.id
+        other.is_a?(klass) && id == other.instance_variable_get(:@id)
       end
     end
 
