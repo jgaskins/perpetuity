@@ -11,7 +11,9 @@ module Perpetuity
     end
 
     def << object
-      map[object.class][object.id.to_s] = object
+      klass = object.class
+      id = object.instance_variable_get(:@id)
+      map[klass][id.to_s] = object
     end
   end
 end

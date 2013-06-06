@@ -20,12 +20,12 @@ module Perpetuity
 
     it 'injects an id' do
       klass.inject_data object, { id: 1 }
-      object.id.should eq 1
+      object.instance_variable_get(:@id).should eq 1
     end
 
     it 'injects a specified id' do
       klass.give_id_to object, 2
-      object.id.should eq 2
+      object.instance_variable_get(:@id).should eq 2
     end
   end
 end

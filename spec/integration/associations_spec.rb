@@ -17,16 +17,16 @@ describe 'associations with other objects' do
   end
 
   describe 'referenced relationships' do
-    let(:creator) { topic_mapper.find(topic.id).creator }
+    let(:creator) { topic_mapper.find(topic_mapper.id_for topic).creator }
     subject { creator }
 
     it { should be_a Perpetuity::Reference }
     its(:klass) { should be User }
-    its(:id) { should be == user.id }
+    its(:id) { should be == user_mapper.id_for(user) }
   end
 
   it 'can retrieve a one-to-one association' do
-    retrieved_topic = topic_mapper.find(topic.id)
+    retrieved_topic = topic_mapper.find(topic_mapper.id_for topic)
 
     topic_mapper.load_association! retrieved_topic, :creator
     retrieved_topic.creator.name.should eq 'Flump'
@@ -45,7 +45,7 @@ describe 'associations with other objects' do
     end
 
     it 'can retrieve a one-to-many association' do
-      persisted_book = book_mapper.find(pragprog_book.id)
+      persisted_book = book_mapper.find(book_mapper.id_for pragprog_book)
       book_mapper.load_association! persisted_book, :authors
 
       persisted_book.authors.first.name.should be == 'Dave'
@@ -55,7 +55,7 @@ describe 'associations with other objects' do
     it 'can retrieve a many-to-many association' do
       cuke_authors.each { |author| Perpetuity[User].insert author }
       book_mapper.insert cuke_book
-      book_ids = [pragprog_book, cuke_book].map(&:id)
+      book_ids = [pragprog_book, cuke_book].map { |book| book_mapper.id_for(book) }
 
       books = book_mapper.select { |book| book.id.in book_ids }.to_a
       book_mapper.load_association! books, :authors
@@ -70,7 +70,7 @@ describe 'associations with other objects' do
       mapper = Perpetuity[Article]
 
       mapper.insert article
-      retrieved = mapper.find(article.id)
+      retrieved = mapper.find(mapper.id_for(article))
       mapper.load_association! retrieved, :author
       retrieved.author.should == [foo, bar]
     end
@@ -90,7 +90,8 @@ describe 'associations with other objects' do
 
       it 'serializes attributes' do
         mapper.insert object
-        mapper.find(object.id).embedded_attribute.should be == [unserializable_object]
+        attr = mapper.find(mapper.id_for object).embedded_attribute
+        attr.should be == [unserializable_object]
       end
     end
   end

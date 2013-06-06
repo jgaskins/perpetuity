@@ -1,5 +1,3 @@
-require 'perpetuity/persisted_object'
-
 module Perpetuity
   module DataInjectable
     def inject_attribute object, attribute, value
@@ -17,7 +15,6 @@ module Perpetuity
       if args.any?
         inject_attribute object, :id, args.first
       end
-      object.extend PersistedObject
     end
   end
 end

@@ -13,32 +13,32 @@ module Perpetuity
       let(:authors) { [dave, andy] }
       let(:book) { Book.new('The Pragmatic Programmer', authors) }
       let(:mapper_registry) { MapperRegistry.new }
-      let(:book_mapper_class) do
+      let(:book_mapper) do
         registry = mapper_registry
         Class.new(Perpetuity::Mapper) do
           map Book, registry
           attribute :title
           attribute :authors
-        end
+        end.new(registry)
       end
-      let(:user_mapper_class) do
+      let(:user_mapper) do
         registry = mapper_registry
         Class.new(Perpetuity::Mapper) do
           map User, registry
           attribute :name
-        end
+        end.new(registry)
       end
       let(:data_source) { double('Data Source') }
-      let(:serializer) { Serializer.new(mapper_registry[Book]) }
+      let(:serializer) { Serializer.new(book_mapper) }
 
       before do
-        dave.extend PersistedObject
-        andy.extend PersistedObject
+        serializer.give_id_to dave, 1
+        serializer.give_id_to andy, 2
       end
 
       it 'serializes an array of non-embedded attributes as references' do
-        user_mapper_class.stub(data_source: data_source)
-        book_mapper_class.stub(data_source: data_source)
+        user_mapper.stub(data_source: data_source)
+        book_mapper.stub(data_source: data_source)
         data_source.should_receive(:can_serialize?).with(book.title).and_return true
         data_source.should_receive(:can_serialize?).with(dave).and_return false
         data_source.should_receive(:can_serialize?).with(andy).and_return false
@@ -48,13 +48,13 @@ module Perpetuity
             {
               '__metadata__' => {
                 'class' => 'User',
-                'id' => dave.id
+                'id' => user_mapper.id_for(dave)
               }
             },
             {
               '__metadata__' => {
                 'class' => 'User',
-                'id' => andy.id
+                'id' => user_mapper.id_for(andy)
               }
             }
           ]
@@ -69,12 +69,11 @@ module Perpetuity
           }
         end
         let(:user) { User.new(name_data) }
-        let(:user_mapper) { mapper_registry[User] }
         let(:user_serializer) { Serializer.new(user_mapper) }
 
         before do
-          user_mapper_class.stub(data_source: data_source)
-          book_mapper_class.stub(data_source: data_source)
+          user_mapper.stub(data_source: data_source)
+          book_mapper.stub(data_source: data_source)
           data_source.stub(:can_serialize?).with(name_data) { true }
         end
 
@@ -94,8 +93,8 @@ module Perpetuity
         subject { objects.first }
 
         before do
-          user_mapper_class.stub(data_source: data_source)
-          book_mapper_class.stub(data_source: data_source)
+          user_mapper.stub(data_source: data_source)
+          book_mapper.stub(data_source: data_source)
         end
 
         it { should be_a Complex }
@@ -108,8 +107,8 @@ module Perpetuity
         let(:book) { Book.new(title, [author]) }
 
         before do
-          user_mapper_class.stub(data_source: data_source)
-          book_mapper_class.stub(data_source: data_source)
+          user_mapper.stub(data_source: data_source)
+          book_mapper.stub(data_source: data_source)
         end
 
         it 'passes the reference unserialized' do
