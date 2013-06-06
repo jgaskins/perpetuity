@@ -14,7 +14,12 @@ describe 'indexing' do
       index.attribute.to_s == :name
     end
   end
+  let(:db_name) { Perpetuity.configuration.data_source.db }
 
+  before do
+    Perpetuity.data_source :mongodb, db_name
+    mapper.data_source.drop_collection Object
+  end
   after { mapper.data_source.drop_collection Object }
 
   it 'adds indexes to database collections/tables' do

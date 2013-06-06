@@ -125,6 +125,7 @@ module Perpetuity
       end
 
       it 'creates indexes on the database collection' do
+        mongo.delete_all collection
         index = mongo.index collection, 'real_index', order: :descending, unique: true
         mongo.activate_index! index
 
@@ -132,6 +133,7 @@ module Perpetuity
       end
 
       it 'removes indexes' do
+        mongo.drop_collection collection
         index = mongo.index collection, 'real_index', order: :descending, unique: true
         mongo.activate_index! index
         mongo.remove_index index
@@ -156,7 +158,11 @@ module Perpetuity
       let(:data) { { foo: 'bar' } }
       let(:index) { mongo.index Object, :foo, unique: true }
 
-      before { mongo.activate_index! index }
+      before do
+        mongo.delete_all Object
+        mongo.activate_index! index
+      end
+
       after { mongo.drop_collection Object }
 
       it 'raises an exception when insertion fails' do
