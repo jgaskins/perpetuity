@@ -54,6 +54,12 @@ module Perpetuity
       @data_source.count(@class, @criteria)
     end
 
+    def sample
+      sample_size = [count, result_limit].compact.max
+      result = drop(rand(sample_size)).first
+      result
+    end
+
     def options
       {
         attribute: sort_attribute,

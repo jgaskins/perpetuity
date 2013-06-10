@@ -184,7 +184,7 @@ module Perpetuity
     end
 
     def sample
-      all.drop(rand(count)).limit(1).first
+      all.sample
     end
 
     def persisted? object
