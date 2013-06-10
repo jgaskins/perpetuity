@@ -60,7 +60,7 @@ module Perpetuity
       end
 
       describe 'finding a single object' do
-        let(:options) { {:attribute=>nil, :direction=>nil, :limit=>nil, :skip=>nil} }
+        let(:options) { {:attribute=>nil, :direction=>nil, :limit=>1, :skip=>nil} }
         let(:returned_object) { double('Retrieved Object', class: Object) }
 
         it 'finds an object by ID' do
@@ -73,6 +73,7 @@ module Perpetuity
 
         it 'finds multiple objects with a block' do
           criteria = { name: 'foo' }
+          options = self.options.merge(limit: nil)
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }.twice
 

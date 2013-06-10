@@ -54,6 +54,10 @@ module Perpetuity
       @data_source.count(@class, @criteria)
     end
 
+    def first
+      limit(1).to_a.first
+    end
+
     def sample
       sample_size = [count, result_limit].compact.max
       result = drop(rand(sample_size)).first
