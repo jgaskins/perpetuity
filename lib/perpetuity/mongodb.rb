@@ -79,7 +79,7 @@ module Perpetuity
       # MongoDB uses '_id' as its ID field.
       criteria = to_bson_id(criteria)
 
-      skipped = options[:page] ? (options[:page] - 1) * options[:limit] : 0
+      skipped = options.fetch(:skip) { 0 }
 
       query = collection(klass.to_s)
                 .find(criteria)

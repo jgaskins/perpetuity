@@ -183,6 +183,10 @@ module Perpetuity
       raise ArgumentError.new('Attempted to decrement a non-numeric value')
     end
 
+    def sample
+      all.drop(rand(count)).limit(1).first
+    end
+
     def persisted? object
       object.instance_variable_defined?(:@id)
     end

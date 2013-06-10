@@ -3,7 +3,7 @@ require 'perpetuity/reference'
 module Perpetuity
   class Retrieval
     include Enumerable
-    attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :quantity_per_page
+    attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :result_offset
 
     def initialize mapper, criteria
       @mapper = mapper
@@ -29,14 +29,16 @@ module Perpetuity
 
     def page page
       retrieval = clone
+      retrieval.result_limit ||= 20
       retrieval.result_page = page
-      retrieval.quantity_per_page = 20
+      retrieval.result_offset = (page - 1) * retrieval.result_limit
       retrieval
     end
 
     def per_page per
       retrieval = clone
-      retrieval.quantity_per_page = per
+      retrieval.result_limit = per
+      retrieval.result_offset = (retrieval.result_page - 1) * per
       retrieval
     end
 
@@ -56,8 +58,8 @@ module Perpetuity
       {
         attribute: sort_attribute,
         direction: sort_direction,
-        limit: result_limit || quantity_per_page,
-        page: result_page
+        limit: result_limit,
+        skip: result_offset
       }
     end
 
@@ -73,6 +75,13 @@ module Perpetuity
       retrieval = clone
       retrieval.result_limit = lim
       
+      retrieval
+    end
+
+    def drop count
+      retrieval = clone
+      retrieval.result_offset = count
+
       retrieval
     end
   end

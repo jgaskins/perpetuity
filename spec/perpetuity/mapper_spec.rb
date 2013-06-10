@@ -60,7 +60,7 @@ module Perpetuity
       end
 
       describe 'finding a single object' do
-        let(:options) { {:attribute=>nil, :direction=>nil, :limit=>nil, :page=>nil} }
+        let(:options) { {:attribute=>nil, :direction=>nil, :limit=>nil, :skip=>nil} }
         let(:returned_object) { double('Retrieved Object', class: Object) }
 
         it 'finds an object by ID' do

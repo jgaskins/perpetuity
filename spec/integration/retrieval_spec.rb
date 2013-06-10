@@ -184,4 +184,23 @@ describe "retrieval" do
     ids = users.map { |retrieved_user| mapper.id_for(retrieved_user) }
     ids.should include mapper.id_for(user)
   end
+
+  it 'skips a specified number of objects' do
+    author = SecureRandom.hex
+    articles = 3.times.map { Article.new(SecureRandom.hex, nil, author) }.sort_by(&:title)
+    articles.each { |article| mapper.insert article }
+
+    ret = mapper.select { |article| article.author == author }.drop(2).sort(:title).first
+    ret.should == articles.last
+  end
+
+  describe 'selecting random objects' do
+    it 'selects a random object' do
+      mapper.delete_all
+      articles = 3.times.map { Article.new(SecureRandom.hex) }
+      articles.each { |article| mapper.insert article }
+
+      articles.should include mapper.sample
+    end
+  end
 end
