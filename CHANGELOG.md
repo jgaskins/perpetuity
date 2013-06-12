@@ -1,3 +1,9 @@
+## Version 0.6.2
+
+- Make sure `Retrieval#first` limits the query to a single item
+- Add `Mapper#sample`/`Retrieval#sample`
+- Add `Retrieval#drop` to allow skipping a specific number of objects
+
 ## Version 0.6.1
 
 - Fix reference equality bug
