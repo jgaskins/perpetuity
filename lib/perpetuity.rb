@@ -3,6 +3,7 @@ require "perpetuity/mongodb"
 require "perpetuity/config"
 require "perpetuity/mapper"
 require "perpetuity/mapper_registry"
+require "perpetuity/rails"
 
 module Perpetuity
   def self.configure &block
