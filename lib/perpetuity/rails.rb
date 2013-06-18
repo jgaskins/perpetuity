@@ -1,9 +1,10 @@
 require 'perpetuity/rails/mapper_reloader'
+require 'perpetuity/rails_model'
 
 module Perpetuity
-  def self.add_rails_support!
+  def self.insert_mapper_reloader_middleware
     ::Rails.application.config.middleware.use Rails::MapperReloader
   end
-
-  add_rails_support! if defined? ::Rails
 end
+
+Perpetuity.insert_mapper_reloader_middleware

@@ -3,10 +3,10 @@ require "perpetuity/mongodb"
 require "perpetuity/config"
 require "perpetuity/mapper"
 require "perpetuity/mapper_registry"
-require "perpetuity/rails"
 
 module Perpetuity
   def self.configure &block
+    detect_rails
     configuration.instance_exec(&block)
   end
   
@@ -32,5 +32,10 @@ module Perpetuity
     adapters = { mongodb: MongoDB }
 
     configure { data_source adapters[adapter].new(options.merge(db: db_name)) }
+  end
+
+  # Necessary to be able to check whether Rails is loaded and initialized
+  def self.detect_rails
+    require File.expand_path('../perpetuity/rails.rb', __FILE__) if defined? Rails
   end
 end
