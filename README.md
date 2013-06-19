@@ -27,7 +27,10 @@ Perpetuity.data_source :mongodb, 'my_database'
 If your database is on another server or you need authentication, you can specify those as options:
 
 ```ruby
-Perpetuity.data_source :mongodb, 'my_database', host: 'mongo.example.com', port: 27017, username: 'mongo', password: 'password'
+Perpetuity.data_source :mongodb, 'my_database', host: 'mongo.example.com',
+                                                port: 27017,
+                                                username: 'mongo',
+                                                password: 'password'
 ```
 
 ## Setting up object mappers
