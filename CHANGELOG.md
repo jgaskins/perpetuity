@@ -1,3 +1,8 @@
+## Version 0.7.0
+
+- Add `Perpetuity::RailsModel`, an ActiveModel-compliant mixin
+- Check Rails app directory for mappers dynamically if the mapper registry is missing a particular model class
+
 ## Version 0.6.2
 
 - Make sure `Retrieval#first` limits the query to a single item

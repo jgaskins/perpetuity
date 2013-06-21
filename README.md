@@ -213,6 +213,30 @@ Perpetuity[Article].reindex!
 
 You could put this in a rake task to be executed when you deploy your app.
 
+## Rails Integration
+
+Let's face it, most Ruby apps run on Rails, so we need to be able to support it. Beginning with 0.7.0, Perpetuity automatically detects Rails when you configure it and will load Rails support at that point.
+
+### Dynamic mapper reloading
+
+Previous versions of Perpetuity would break when Rails reloaded your models in development mode due to class objects being different. It now reloads mappers dynamically based on whether the class has been reloaded.
+
+In order for this to work, your mapper files need to be named `*_mapper.rb` and be stored anywhere inside your project's `app` directory.
+
+### ActiveModel-compliant API
+
+Perpetuity deals with POROs just fine but Rails does not. This is why you have to include `ActiveModel::Model` in your objects that you want to pass to various Rails methods (such as `redirect_to`, `form_for` and `render`).
+
+In your models, including `ActiveModel::Model` in Rails 4 (or the underlying modules in Rails 3) will give you the API that Rails expects but that won't work with Perpetuity. For example, ActiveModel assumes an `id` method but your model may not provide it, so instead of including ActiveModel we provide a `RailsModel` mixin.
+
+```ruby
+class Person
+  include Perpetuity::RailsModel
+end
+```
+
+This will let Rails know how to talk to your models in the way that Perpetuity handles them.
+
 ## Contributing
 
 There are plenty of opportunities to improve what's here and possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests, issues or [tweets](http://twitter.com/jamie_gaskins) and I'll do what I can for them.
