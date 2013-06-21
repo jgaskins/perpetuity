@@ -3,7 +3,7 @@ module Perpetuity
     include Enumerable
 
     def initialize
-      @mappers = Hash.new { |_, klass| raise KeyError, "No mapper for #{klass}" }
+      @mappers = Hash.new
     end
 
     def has_mapper? klass
@@ -11,6 +11,13 @@ module Perpetuity
     end
 
     def [] klass
+      mapper_class = @mappers.fetch(klass) do
+        load_mappers
+        unless @mappers.has_key? klass
+          raise KeyError, "No mapper for #{klass}"
+        end
+      end
+
       @mappers[klass].new(self)
     end
 
@@ -20,6 +27,14 @@ module Perpetuity
 
     def each &block
       @mappers.each &block
+    end
+
+    def load_mappers
+      check_rails_app_for_mappers.each(&method(:load))
+    end
+
+    def check_rails_app_for_mappers
+      Dir['app/**/*_mapper.rb']
     end
   end
 end
