@@ -4,6 +4,7 @@ require 'perpetuity/mongodb/index'
 require 'perpetuity/mongodb/serializer'
 require 'set'
 require 'perpetuity/exceptions/duplicate_key_error'
+require 'perpetuity/attribute'
 
 module Perpetuity
   class MongoDB
@@ -173,7 +174,7 @@ module Perpetuity
         key = index['key'].keys.first
         direction = index['key'][key]
         unique = index['unique']
-        Index.new(klass, key, order: Index::KEY_ORDERS[direction], unique: unique)
+        Index.new(klass, Attribute.new(key), order: Index::KEY_ORDERS[direction], unique: unique)
       end.to_set
     end
 

@@ -1,7 +1,7 @@
 module Perpetuity
   class Attribute
     attr_reader :name, :type
-    def initialize(name, type, options = {})
+    def initialize(name, type=nil, options = {})
       @name = name
       @type = type
 
