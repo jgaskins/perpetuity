@@ -8,6 +8,13 @@ describe 'indexing' do
       index :name, unique: true
     end
   end
+  let(:mapper_class_without_index) do
+    klass = mapper_class.dup
+    klass.new.indexes.reject! do |index|
+      index.attribute.name == :name
+    end
+    klass
+  end
   let(:mapper) { mapper_class.new }
   let(:name_index) do
     mapper.indexes.find do |index|
@@ -38,6 +45,15 @@ describe 'indexing' do
 
   it 'specifies uniqueness of the index' do
     name_index.should be_unique
+  end
+
+  it 'removes other indexes' do
+    mapper.reindex!
+    mapper_without_index = mapper_class_without_index.new
+    mapper_without_index.reindex!
+    mapper.data_source.active_indexes(Object).any? do |index|
+      index.attribute.name.to_s == 'name'
+    end.should be_false
   end
 end
 
