@@ -50,5 +50,9 @@ module Perpetuity
     it 'checks for inclusion' do
       (attribute.in [1, 2, 3]).should be_a MongoDB::QueryExpression
     end
+
+    it 'checks for its own truthiness' do
+      attribute.to_db.should == ((attribute != false) & (attribute != nil)).to_db
+    end
   end
 end

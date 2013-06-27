@@ -53,71 +53,90 @@ describe "retrieval" do
   end
 
   describe "Array-like syntax" do
-    let(:draft) { Article.new 'Draft', 'draft content', nil, Time.now + 30 }
-    let(:published) { Article.new 'Published', 'content', nil, Time.now - 30, 3 }
+    describe 'using comparison operators' do
+      let(:draft) { Article.new 'Draft', 'draft content', nil, Time.now + 30 }
+      let(:published) { Article.new 'Published', 'content', nil, Time.now - 30, 3 }
 
-    let(:published_id) { mapper.id_for published }
-    let(:draft_id) { mapper.id_for draft }
+      let(:published_id) { mapper.id_for published }
+      let(:draft_id) { mapper.id_for draft }
 
-    before do
-      mapper.insert draft
-      mapper.insert published
+      before do
+        mapper.insert draft
+        mapper.insert published
+      end
+
+      it 'selects objects using equality' do
+        selected = mapper.select { |article| article.title == 'Published' }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should include published_id
+        ids.should_not include draft_id
+      end
+
+      it 'selects objects using greater-than' do
+        selected = mapper.select { |article| article.published_at < Time.now }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should include published_id
+        ids.should_not include draft_id
+      end
+
+      it 'selects objects using greater-than-or-equal' do
+        selected = mapper.select { |article| article.views >= 3 }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should include published_id
+        ids.should_not include draft_id
+      end
+
+      it 'selects objects using less-than' do
+        selected = mapper.select { |article| article.views < 3 }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should include draft_id
+        ids.should_not include published_id
+      end
+
+      it 'selects objects using less-than-or-equal' do
+        selected = mapper.select { |article| article.views <= 0 }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should include draft_id
+        ids.should_not include published_id
+      end
+
+      it 'selects objects using inequality' do
+        selected = mapper.select { |article| article.title != 'Draft' }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should_not include draft_id
+        ids.should include published_id
+      end
+
+      it 'selects objects using regular expressions' do
+        selected = mapper.select { |article| article.title =~ /Pub/ }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should include published_id
+        ids.should_not include draft_id
+      end
+
+      it 'selects objects using inclusion' do
+        selected = mapper.select { |article| article.title.in %w( Published ) }
+        ids = selected.map { |article| mapper.id_for article }
+        ids.should include published_id
+        ids.should_not include draft_id
+      end
     end
 
-    it 'selects objects using equality' do
-      selected = mapper.select { |article| article.title == 'Published' }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should include published_id
-      ids.should_not include draft_id
-    end
+    it 'selects objects that are truthy' do
+      article_with_truthy_title = Article.new('I have a title')
+      article_with_false_title = Article.new(false)
+      article_with_nil_title = Article.new(nil)
 
-    it 'selects objects using greater-than' do
-      selected = mapper.select { |article| article.published_at < Time.now }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should include published_id
-      ids.should_not include draft_id
-    end
+      false_id  = mapper.insert article_with_false_title
+      truthy_id = mapper.insert article_with_truthy_title
+      nil_id    = mapper.insert article_with_nil_title
 
-    it 'selects objects using greater-than-or-equal' do
-      selected = mapper.select { |article| article.views >= 3 }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should include published_id
-      ids.should_not include draft_id
-    end
+      selected = mapper.select { |article| article.title }
+      ids = selected.map { |article| mapper.id_for(article) }
 
-    it 'selects objects using less-than' do
-      selected = mapper.select { |article| article.views < 3 }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should include draft_id
-      ids.should_not include published_id
-    end
-
-    it 'selects objects using less-than-or-equal' do
-      selected = mapper.select { |article| article.views <= 0 }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should include draft_id
-      ids.should_not include published_id
-    end
-
-    it 'selects objects using inequality' do
-      selected = mapper.select { |article| article.title != 'Draft' }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should_not include draft_id
-      ids.should include published_id
-    end
-
-    it 'selects objects using regular expressions' do
-      selected = mapper.select { |article| article.title =~ /Pub/ }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should include published_id
-      ids.should_not include draft_id
-    end
-
-    it 'selects objects using inclusion' do
-      selected = mapper.select { |article| article.title.in %w( Published ) }
-      ids = selected.map { |article| mapper.id_for article }
-      ids.should include published_id
-      ids.should_not include draft_id
+      ids.should     include truthy_id
+      ids.should_not include false_id
+      ids.should_not include nil_id
     end
   end
 

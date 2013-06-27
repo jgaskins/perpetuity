@@ -46,6 +46,10 @@ module Perpetuity
         name
       end
 
+      def to_db
+        ((self != false) & (self != nil)).to_db
+      end
+
       def method_missing name
         if name.to_s == 'id'
           name = :"#{self.name}.__metadata__.#{name}"
