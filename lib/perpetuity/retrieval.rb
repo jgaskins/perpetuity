@@ -92,6 +92,7 @@ module Perpetuity
       
       retrieval
     end
+    alias_method :take, :limit
 
     def drop count
       retrieval = clone
