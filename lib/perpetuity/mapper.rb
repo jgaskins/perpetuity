@@ -198,7 +198,7 @@ module Perpetuity
     end
 
     def id_for object
-      object.instance_variable_get(:@id)
+      object.instance_variable_get(:@id) if persisted?(object)
     end
 
     def self.validate &block

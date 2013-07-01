@@ -16,9 +16,10 @@ module Perpetuity
         unless @mappers.has_key? klass
           raise KeyError, "No mapper for #{klass}"
         end
+        @mappers[klass]
       end
 
-      @mappers[klass].new(self)
+      mapper_class.new(self)
     end
 
     def []= klass, mapper
@@ -26,7 +27,7 @@ module Perpetuity
     end
 
     def each &block
-      @mappers.each &block
+      @mappers.each(&block)
     end
 
     def load_mappers

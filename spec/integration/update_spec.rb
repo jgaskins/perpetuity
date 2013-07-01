@@ -53,8 +53,8 @@ describe 'updating' do
     mapper.save retrieved_book
 
     retrieved_authors = Perpetuity[Book].find(mapper.id_for retrieved_book).authors
-    retrieved_authors.map(&:klass).should == [User, User]
-    retrieved_authors.map(&:id).should == [mapper.id_for(dave), mapper.id_for(andy)]
+    retrieved_authors.map(&:klass).should be == [User, User]
+    retrieved_authors.map(&:id).should be == [mapper.id_for(dave), mapper.id_for(andy)]
   end
 
   describe 'atomic increments/decrements' do

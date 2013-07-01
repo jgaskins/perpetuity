@@ -18,34 +18,34 @@ module Perpetuity
     end
 
     it 'returns the id as to_param' do
-      object.to_param.should == nil
+      object.to_param.should be == nil
       object.id = 'foo'
-      object.to_param.should == 'foo'
+      object.to_param.should be == 'foo'
     end
 
     it 'returns the keys on the object' do
-      object.to_key.should == nil
+      object.to_key.should be == nil
       object.id = 'bar'
-      object.to_key.should == ['bar']
+      object.to_key.should be == ['bar']
     end
 
     it 'returns the model name' do
-      klass.model_name.should == klass
+      klass.model_name.should be == klass
     end
 
     it 'returns the param_key' do
       stub_const 'Foo::Bar', klass
-      Foo::Bar.param_key.should == 'foo_bar'
+      Foo::Bar.param_key.should be == 'foo_bar'
     end
 
     it 'returns the route_key' do
       stub_const 'Foo::Bar', klass
-      Foo::Bar.route_key.should == 'foo_bars'
+      Foo::Bar.route_key.should be == 'foo_bars'
     end
 
     it 'returns the singular_route_key' do
       stub_const 'Foo::Bar', klass
-      Foo::Bar.singular_route_key.should == 'foo_bar'
+      Foo::Bar.singular_route_key.should be == 'foo_bar'
     end
   end
 end

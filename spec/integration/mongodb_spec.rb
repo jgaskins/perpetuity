@@ -148,9 +148,9 @@ module Perpetuity
         id = mongo.insert klass, count: 1
         mongo.increment klass, id, :count
         mongo.increment klass, id, :count, 10
-        mongo.retrieve(klass, id: id).first['count'].should == 12
+        mongo.retrieve(klass, id: id).first['count'].should be == 12
         mongo.increment klass, id, :count, -1
-        mongo.retrieve(klass, id: id).first['count'].should == 11
+        mongo.retrieve(klass, id: id).first['count'].should be == 11
       end
     end
 

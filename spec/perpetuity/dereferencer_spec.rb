@@ -30,6 +30,8 @@ module Perpetuity
 
     context 'with multiple references' do
       it 'returns the array of dereferenced objects' do
+        first.instance_variable_set :@id, 1
+        second.instance_variable_set :@id, 2
         mapper.should_receive(:select) { objects }
         derefer.load([first_ref, second_ref]).should == objects
       end

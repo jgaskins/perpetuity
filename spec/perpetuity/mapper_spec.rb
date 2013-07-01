@@ -64,6 +64,7 @@ module Perpetuity
         let(:returned_object) { double('Retrieved Object', class: Object) }
 
         it 'finds an object by ID' do
+          returned_object.instance_variable_set :@id, 1
           criteria = { id: 1 }
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }
@@ -77,16 +78,16 @@ module Perpetuity
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }.twice
 
-          mapper.select   { |e| e.name == 'foo' }.to_a.should == [returned_object]
-          mapper.find_all { |e| e.name == 'foo' }.to_a.should == [returned_object]
+          mapper.select   { |e| e.name == 'foo' }.to_a.should be == [returned_object]
+          mapper.find_all { |e| e.name == 'foo' }.to_a.should be == [returned_object]
         end
 
         it 'finds an object with a block' do
           criteria = { name: 'foo' }
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }.twice
-          mapper.find   { |o| o.name == 'foo' }.should == returned_object
-          mapper.detect { |o| o.name == 'foo' }.should == returned_object
+          mapper.find   { |o| o.name == 'foo' }.should be == returned_object
+          mapper.detect { |o| o.name == 'foo' }.should be == returned_object
         end
 
         it 'caches results' do
