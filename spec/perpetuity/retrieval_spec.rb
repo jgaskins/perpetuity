@@ -60,5 +60,11 @@ module Perpetuity
 
       results.map(&:id).should == [0]
     end
+
+    it 'clears results cache' do
+      retrieval.result_cache = [1,2,3]
+      retrieval.clear_cache
+      retrieval.result_cache.should be_nil
+    end
   end
 end

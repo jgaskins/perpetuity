@@ -3,7 +3,7 @@ require 'perpetuity/reference'
 module Perpetuity
   class Retrieval
     include Enumerable
-    attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :result_offset
+    attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :result_offset, :result_cache
 
     def initialize mapper, criteria
       @mapper = mapper
@@ -16,6 +16,7 @@ module Perpetuity
       retrieval = clone
       retrieval.sort_attribute = attribute
       retrieval.sort_direction = :ascending
+      retrieval.clear_cache
 
       retrieval
     end
@@ -23,6 +24,7 @@ module Perpetuity
     def reverse
       retrieval = clone
       retrieval.sort_direction = retrieval.sort_direction == :descending ? :ascending : :descending
+      retrieval.clear_cache
 
       retrieval
     end
@@ -32,6 +34,7 @@ module Perpetuity
       retrieval.result_limit ||= 20
       retrieval.result_page = page
       retrieval.result_offset = (page - 1) * retrieval.result_limit
+      retrieval.clear_cache
       retrieval
     end
 
@@ -39,6 +42,7 @@ module Perpetuity
       retrieval = clone
       retrieval.result_limit = per
       retrieval.result_offset = (retrieval.result_page - 1) * per
+      retrieval.clear_cache
       retrieval
     end
 
@@ -47,7 +51,7 @@ module Perpetuity
     end
 
     def to_a
-      @results ||= @data_source.unserialize(@data_source.retrieve(@class, @criteria, options), @mapper)
+      @result_cache ||= @data_source.unserialize(@data_source.retrieve(@class, @criteria, options), @mapper)
     end
 
     def count
@@ -84,6 +88,7 @@ module Perpetuity
     def limit lim
       retrieval = clone
       retrieval.result_limit = lim
+      retrieval.clear_cache
       
       retrieval
     end
@@ -91,8 +96,13 @@ module Perpetuity
     def drop count
       retrieval = clone
       retrieval.result_offset = count
+      retrieval.clear_cache
 
       retrieval
+    end
+
+    def clear_cache
+      @result_cache = nil
     end
   end
 end
