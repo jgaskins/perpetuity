@@ -65,14 +65,26 @@ module Perpetuity
 
     def insert object
       raise "#{object} is invalid and cannot be persisted." unless self.class.validations.valid?(object)
-      serializable_attributes = serialize(object)
-      if o_id = object.instance_exec(&self.class.id)
-        serializable_attributes[:id] = o_id
+      objects = Array(object)
+      serialized_objects = objects.map do |obj|
+        attributes = serialize(obj)
+        if o_id = obj.instance_exec(&self.class.id)
+          attributes[:id] = o_id
+        end
+
+        attributes
       end
 
-      new_id = data_source.insert mapped_class, serializable_attributes
-      give_id_to object, new_id
-      new_id
+      new_ids = data_source.insert(mapped_class, serialized_objects)
+      objects.each_with_index do |obj, index|
+        give_id_to obj, new_ids[index]
+      end
+
+      if object.is_a? Array
+        new_ids
+      else
+        new_ids.first
+      end
     end
 
     def self.data_source(configuration=Perpetuity.configuration)

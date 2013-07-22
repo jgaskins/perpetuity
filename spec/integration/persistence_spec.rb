@@ -11,6 +11,13 @@ describe 'Persistence' do
     mapper.find(mapper.id_for(article)).title.should eq 'I have a title'
   end
 
+  it 'persists multiple objects' do
+    mapper.delete_all
+    articles = 2.times.map { Article.new(SecureRandom.hex) }
+    expect { mapper.insert articles }.to change { mapper.count }.by 2
+    mapper.all.sort(:title).to_a.should == articles.sort_by(&:title)
+  end
+
   it 'returns the id of the persisted object' do
     article = Article.new
     mapper.insert(article).should eq mapper.id_for(article)

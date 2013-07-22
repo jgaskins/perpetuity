@@ -46,11 +46,18 @@ module Perpetuity
       database[klass.to_s]
     end
 
-    def insert klass, attributes
-      attributes[:_id] = attributes.delete(:id) || Moped::BSON::ObjectId.new
+    def insert klass, objects
+      if objects.is_a? Array
+        objects.each do |object|
+          object[:_id] = object.delete(:id) || Moped::BSON::ObjectId.new
+        end
 
-      collection(klass).insert attributes
-      attributes[:_id]
+        collection(klass).insert objects
+        objects.map { |object| object[:_id] }
+      else
+        insert(klass, [objects]).first
+      end
+
     rescue Moped::Errors::OperationFailure => e
       if e.message =~ /duplicate key/
         e.message =~ /\$(\w+)_\d.*dup key: { : (.*) }/

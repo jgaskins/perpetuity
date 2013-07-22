@@ -48,6 +48,15 @@ module Perpetuity
       its(:password)  { should == password }
     end
 
+    it 'inserts documents into a collection' do
+      expect { mongo.insert klass, name: 'foo' }.to change { mongo.count klass }.by 1
+    end
+
+    it 'inserts multiple documents into a collection' do
+      expect { mongo.insert klass, [{name: 'foo'}, {name: 'bar'}] }
+        .to change { mongo.count klass }.by 2
+    end
+
     it 'removes all documents from a collection' do
       mongo.insert klass, {}
       mongo.delete_all klass
