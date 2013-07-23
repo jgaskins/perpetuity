@@ -1,3 +1,13 @@
+## Version 0.7.1
+
+- Allow insertion of multiple objects in `Mapper#insert`
+- Alias `Retrieval#limit` as `Retrieval#take` for `Enumerable` compatibility
+- Leave result cache when branching to new retrievals if previous retrieval had triggered a query
+- Silence warnings (some still exist in Moped, unfortunately)
+- Add finding based on attribute truthiness. For example: `mapper.find { |obj| obj.name }` finds objects whose `name` is neither `nil` nor `false`.
+- When you remove an index call from the mapper DSL, `Mapper#reindex!` now removes that index from the DB
+- Previously activated indexes in the DB are converted to `Perpetuity::Attribute`s rather than stored in the format specific to the DB driver
+
 ## Version 0.7.0
 
 - Add `Perpetuity::RailsModel`, an ActiveModel-compliant mixin
