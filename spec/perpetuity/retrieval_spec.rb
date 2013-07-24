@@ -54,7 +54,7 @@ module Perpetuity
       return_object.stub(id: return_data[:id])
       options = { attribute: nil, direction: nil, limit: nil, skip: nil }
 
-      data_source.should_receive(:retrieve).with(Object, {}, options).
+      data_source.should_receive(:retrieve).with(Object, query, options).
                   and_return([return_data])
       data_source.should_receive(:unserialize).with([return_data], mapper) { [return_object] }
       results = retrieval.to_a

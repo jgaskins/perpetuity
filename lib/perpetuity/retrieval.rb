@@ -51,11 +51,11 @@ module Perpetuity
     end
 
     def to_a
-      @result_cache ||= @data_source.unserialize(@data_source.retrieve(@class, @query.to_db, options), @mapper)
+      @result_cache ||= @data_source.unserialize(@data_source.retrieve(@class, @query, options), @mapper)
     end
 
     def count
-      @data_source.count(@class, @query.to_db)
+      @data_source.count(@class, @query)
     end
 
     def first

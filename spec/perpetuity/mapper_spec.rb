@@ -65,7 +65,7 @@ module Perpetuity
 
         it 'finds an object by ID' do
           returned_object.instance_variable_set :@id, 1
-          criteria = { id: 1 }
+          criteria = data_source.query { |o| o.id == 1 }
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }
 
@@ -73,7 +73,7 @@ module Perpetuity
         end
 
         it 'finds multiple objects with a block' do
-          criteria = { name: 'foo' }
+          criteria = data_source.query { |o| o.name == 'foo' }
           options = self.options.merge(limit: nil)
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }.twice
@@ -83,7 +83,7 @@ module Perpetuity
         end
 
         it 'finds an object with a block' do
-          criteria = { name: 'foo' }
+          criteria = data_source.query { |o| o.name == 'foo' }
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }.twice
           mapper.find   { |o| o.name == 'foo' }.should be == returned_object
@@ -92,7 +92,7 @@ module Perpetuity
 
         it 'caches results' do
           mapper.give_id_to returned_object, 1
-          criteria = { id: 1 }
+          criteria = data_source.query { |o| o.id == 1 }
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }
                      .once
@@ -102,7 +102,7 @@ module Perpetuity
         end
 
         it 'does not cache nil results' do
-          criteria = { id: 1 }
+          criteria = data_source.query { |o| o.id == 1 }
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [] }
                      .twice

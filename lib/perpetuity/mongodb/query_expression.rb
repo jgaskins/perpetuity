@@ -4,7 +4,7 @@ require 'perpetuity/mongodb/query_intersection'
 module Perpetuity
   class MongoDB
     class QueryExpression
-      attr_accessor :comparator, :negated
+      attr_accessor :attribute, :comparator, :negated, :value
 
       def initialize attribute, comparator, value
         @attribute = attribute
@@ -81,6 +81,13 @@ module Perpetuity
         expr = dup
         expr.negated = true
         expr
+      end
+
+      def == other
+        attribute == other.attribute &&
+        comparator == other.comparator &&
+        value == other.value &&
+        negated == other.negated
       end
     end
   end

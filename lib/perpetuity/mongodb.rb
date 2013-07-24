@@ -1,5 +1,6 @@
 require 'moped'
 require 'perpetuity/mongodb/query'
+require 'perpetuity/mongodb/nil_query'
 require 'perpetuity/mongodb/index'
 require 'perpetuity/mongodb/serializer'
 require 'set'
@@ -67,8 +68,8 @@ module Perpetuity
       end
     end
 
-    def count klass, criteria={}, &block
-      q = block_given? ? query(&block).to_db : criteria
+    def count klass, criteria=nil_query, &block
+      q = block_given? ? query(&block).to_db : criteria.to_db
       collection(klass).find(q).count
     end
 
@@ -85,7 +86,7 @@ module Perpetuity
 
     def retrieve klass, criteria, options = {}
       # MongoDB uses '_id' as its ID field.
-      criteria = to_bson_id(criteria)
+      criteria = to_bson_id(criteria.to_db)
 
       skipped = options.fetch(:skip) { 0 }
 
@@ -137,7 +138,7 @@ module Perpetuity
     end
 
     def all klass
-      retrieve klass, {}, {}
+      retrieve klass, nil_query, {}
     end
     
     def delete id, klass
@@ -158,6 +159,10 @@ module Perpetuity
 
     def query &block
       Query.new(&block)
+    end
+
+    def nil_query
+      NilQuery.new
     end
 
     def negate_query &block

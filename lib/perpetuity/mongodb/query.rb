@@ -4,6 +4,7 @@ require 'perpetuity/mongodb/nil_query'
 module Perpetuity
   class MongoDB
     class Query
+      attr_reader :query
       def initialize &block
         if block_given?
           @query = block.call(self)
@@ -22,6 +23,10 @@ module Perpetuity
 
       def method_missing missing_method
         QueryAttribute.new missing_method
+      end
+
+      def == other
+        query == other.query
       end
     end
   end

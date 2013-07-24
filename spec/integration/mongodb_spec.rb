@@ -86,7 +86,7 @@ module Perpetuity
 
     it 'gets all of the documents in a collection' do
       values = [{value: 1}, {value: 2}]
-      mongo.should_receive(:retrieve).with(Object, {}, {})
+      mongo.should_receive(:retrieve).with(Object, mongo.nil_query, {})
            .and_return(values)
       mongo.all(Object).should == values
     end
@@ -95,7 +95,7 @@ module Perpetuity
       time = Time.now.utc
       id = mongo.insert Object, {inserted: time}
 
-      object = mongo.retrieve(Object, id: id.to_s).first
+      object = mongo.retrieve(Object, mongo.query{|o| o.id == id.to_s }).first
       retrieved_time = object["inserted"]
       retrieved_time.to_f.should be_within(0.001).of time.to_f
     end
@@ -157,9 +157,10 @@ module Perpetuity
         id = mongo.insert klass, count: 1
         mongo.increment klass, id, :count
         mongo.increment klass, id, :count, 10
-        mongo.retrieve(klass, id: id).first['count'].should be == 12
+        query = mongo.query { |o| o.id == id }
+        mongo.retrieve(klass, query).first['count'].should be == 12
         mongo.increment klass, id, :count, -1
-        mongo.retrieve(klass, id: id).first['count'].should be == 11
+        mongo.retrieve(klass, query).first['count'].should be == 11
       end
     end
 
