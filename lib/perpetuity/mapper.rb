@@ -120,7 +120,7 @@ module Perpetuity
     end
 
     def select &block
-      retrieve data_source.query(&block).to_db
+      retrieve data_source.query(&block)
     end
 
     alias :find_all :select
@@ -145,7 +145,7 @@ module Perpetuity
     alias :detect :find
 
     def reject &block
-      retrieve data_source.negate_query(&block).to_db
+      retrieve data_source.negate_query(&block)
     end
 
     def delete object
@@ -239,8 +239,8 @@ module Perpetuity
 
     private
 
-    def retrieve criteria={}
-      Perpetuity::Retrieval.new self, criteria
+    def retrieve query=data_source.query
+      Perpetuity::Retrieval.new self, query
     end
   end
 end

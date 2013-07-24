@@ -1,10 +1,15 @@
 require 'perpetuity/mongodb/query_attribute'
+require 'perpetuity/mongodb/nil_query'
 
 module Perpetuity
   class MongoDB
     class Query
       def initialize &block
-        @query = block.call(self)
+        if block_given?
+          @query = block.call(self)
+        else
+          @query = NilQuery.new
+        end
       end
 
       def to_db

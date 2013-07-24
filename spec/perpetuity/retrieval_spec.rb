@@ -5,7 +5,8 @@ module Perpetuity
     let(:data_source) { double('data_source') }
     let(:registry) { double('mapper_registry') }
     let(:mapper) { double(mapped_class: Object, data_source: data_source, mapper_registry: registry) }
-    let(:retrieval) { Perpetuity::Retrieval.new mapper, {} }
+    let(:query) { double('Query', to_db: {}) }
+    let(:retrieval) { Perpetuity::Retrieval.new mapper, query }
     subject { retrieval }
 
     it "sorts the results" do

@@ -5,10 +5,10 @@ module Perpetuity
     include Enumerable
     attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :result_offset, :result_cache
 
-    def initialize mapper, criteria
+    def initialize mapper, query
       @mapper = mapper
       @class = mapper.mapped_class
-      @criteria = criteria
+      @query = query
       @data_source = mapper.data_source
     end
     
@@ -51,11 +51,11 @@ module Perpetuity
     end
 
     def to_a
-      @result_cache ||= @data_source.unserialize(@data_source.retrieve(@class, @criteria, options), @mapper)
+      @result_cache ||= @data_source.unserialize(@data_source.retrieve(@class, @query.to_db, options), @mapper)
     end
 
     def count
-      @data_source.count(@class, @criteria)
+      @data_source.count(@class, @query.to_db)
     end
 
     def first
