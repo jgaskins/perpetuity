@@ -47,12 +47,15 @@ module Perpetuity
 
     def reindex!
       indexes.each { |index| data_source.activate_index! index }
-      (data_source.active_indexes(mapped_class) - indexes).reject do |index|
-        # TODO: Make this not MongoDB-specific
-        index.attribute.name.to_s == '_id'
-      end.each do |index|
+      unspecified_indexes.each do |index|
         data_source.remove_index index
       end
+    end
+
+    def unspecified_indexes
+      active_indexes = data_source.active_indexes(mapped_class)
+      active_but_unspecified_indexes = (active_indexes - indexes)
+      active_but_unspecified_indexes.reject { |index| index.attribute =~ /id/ }
     end
 
     def attributes

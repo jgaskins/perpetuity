@@ -17,5 +17,9 @@ module Perpetuity
     def to_s
       name
     end
+
+    def =~ regexp
+      name.to_s =~ regexp
+    end
   end
 end
