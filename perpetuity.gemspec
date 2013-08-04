@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/jgaskins/perpetuity.git"
   s.summary     = %q{Persistence library allowing serialization of Ruby objects}
   s.description = %q{Persistence layer for Ruby objects}
+  s.license     = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
