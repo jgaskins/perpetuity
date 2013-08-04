@@ -1,3 +1,7 @@
+## Version 0.7.2
+
+- Add license to gemspec for the benefit of [Rubygems.org](http://rubygems.org/gems/perpetuity)
+
 ## Version 0.7.1
 
 - Only unmarshal attributes that we marshaled to begin with. This disallows the use of false marshaled objects. — with [Kevin Sjöberg](https://github.com/KevinSjoberg)
