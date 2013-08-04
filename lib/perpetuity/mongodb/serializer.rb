@@ -36,7 +36,7 @@ module Perpetuity
           elsif mapper_registry.has_mapper?(value.class)
             serialize_with_foreign_mapper(value, attrib.embedded?)
           else
-            Marshal.dump(value)
+            marshal(value)
           end
 
           [attrib.name.to_s, serialized_value]
@@ -76,25 +76,26 @@ module Perpetuity
       end
 
       def unserialize_attribute data
-        if data.is_a?(String) && data.start_with?("\u0004") # if it's marshaled
-          Marshal.load(data)
-        elsif data.is_a? Array
-          data.map { |i| unserialize_attribute i }
-        elsif data.is_a? Hash
-          metadata = data.delete('__metadata__')
-          if metadata
-            klass = metadata['class'].split('::').inject(Kernel) do |scope, const_name|
-              scope.const_get(const_name)
-            end
-            id = metadata['id']
+        return data.map { |i| unserialize_attribute i } if data.is_a? Array
+        return data unless data.is_a? Hash
+        metadata  = data.fetch("__metadata__", {})
+        marshaled = data.fetch("__marshaled__", false)
 
-            if id
-              object = Reference.new(klass, id)
-            else
-              object = unserialize_object(data, klass)
-            end
+        if marshaled
+          value = data.fetch("value")
+          return unmarshal(value)
+        end
+
+        if metadata.any?
+          klass = metadata['class'].split('::').inject(Kernel) do |scope, const_name|
+            scope.const_get(const_name)
+          end
+          id = metadata['id']
+
+          if id
+            Reference.new(klass, id)
           else
-            data
+            unserialize_object(data, klass)
           end
         else
           data
@@ -131,7 +132,7 @@ module Perpetuity
               serialize_reference value
             end
           else
-            Marshal.dump(value)
+            marshal value
           end
         end
       end
@@ -151,6 +152,17 @@ module Perpetuity
             'id'    => reference.id
           }
         }
+      end
+
+      def marshal value
+        {
+          '__marshaled__' => true,
+          'value' => Marshal.dump(value)
+        }
+      end
+
+      def unmarshal value
+        Marshal.load(value)
       end
     end
   end

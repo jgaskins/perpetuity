@@ -61,7 +61,7 @@ module Perpetuity
 
       describe 'finding a single object' do
         let(:options) { {:attribute=>nil, :direction=>nil, :limit=>1, :skip=>nil} }
-        let(:returned_object) { double('Retrieved Object', class: Object) }
+        let(:returned_object) { double('Retrieved Object', class: Object, delete: nil) }
 
         it 'finds an object by ID' do
           returned_object.instance_variable_set :@id, 1

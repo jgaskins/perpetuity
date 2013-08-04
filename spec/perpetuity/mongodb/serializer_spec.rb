@@ -63,11 +63,7 @@ module Perpetuity
 
       context 'with objects that have hashes as attributes' do
         let(:name_data) { {first_name: 'Jamie', last_name: 'Gaskins'} }
-        let(:serialized_data) do
-          {
-            'name' => name_data
-          }
-        end
+        let(:serialized_data) { { 'name' => name_data } }
         let(:user) { User.new(name_data) }
         let(:user_serializer) { Serializer.new(user_mapper) }
 
@@ -84,21 +80,6 @@ module Perpetuity
         it 'unserializes' do
           user_serializer.unserialize(serialized_data).name.should be == user.name
         end
-      end
-
-      describe 'unserializes attributes' do
-        let(:unserializable_object) { 1.to_c }
-        let(:serialized_attrs) { [ Marshal.dump(unserializable_object) ] }
-        let(:objects) { serializer.unserialize(serialized_attrs)  }
-        subject { objects.first }
-
-        before do
-          user_mapper.stub(data_source: data_source)
-          book_mapper.stub(data_source: data_source)
-        end
-
-        it { should be_a Complex }
-        it { should eq unserializable_object}
       end
 
       describe 'with an array of references' do
@@ -146,6 +127,73 @@ module Perpetuity
 
           serializer.serialize(car).should == { 'model' => car_model }
         end
+      end
+
+      context 'with marshaled data' do
+        let(:unserializable_value) { 1..10 }
+
+        it 'stores metadata with marshal information' do
+          book = Book.new(unserializable_value)
+
+          book_mapper.stub(data_source: data_source)
+          data_source.stub(:can_serialize?).with(book.title) { false }
+
+          serializer.serialize(book).should == {
+            'title' => {
+              '__marshaled__' => true,
+              'value' => Marshal.dump(unserializable_value)
+            },
+            'authors' => []
+          }
+        end
+
+        it 'stores marshaled attributes within arrays' do
+          book = Book.new([unserializable_value])
+          book_mapper.stub(data_source: data_source)
+          data_source.stub(:can_serialize?).with(book.title.first) { false }
+
+          serializer.serialize(book).should == {
+            'title' => [{
+              '__marshaled__' => true,
+              'value' => Marshal.dump(unserializable_value)
+            }],
+            'authors' => []
+          }
+        end
+
+        it 'unmarshals data that has been marshaled by the serializer' do
+          data = {
+            'title' => {
+              '__marshaled__' => true,
+              'value' => Marshal.dump(unserializable_value),
+            }
+          }
+          serializer.unserialize(data).title.should be_a unserializable_value.class
+        end
+
+        it 'does not unmarshal data not marshaled by the serializer' do
+          data = { 'title' => Marshal.dump(unserializable_value) }
+
+          serializer.unserialize(data).title.should be_a String
+        end
+      end
+
+      it 'unserializes a hash of primitives' do
+        time = Time.now
+        serialized_data = {
+          'number' => 1,
+          'string' => 'hello',
+          'boolean' => true,
+          'float' => 7.5,
+          'time' => time
+        }
+
+        object = serializer.unserialize(serialized_data)
+        object.instance_variable_get(:@number).should == 1
+        object.instance_variable_get(:@string).should == 'hello'
+        object.instance_variable_get(:@boolean).should == true
+        object.instance_variable_get(:@float).should == 7.5
+        object.instance_variable_get(:@time).should == time
       end
     end
   end

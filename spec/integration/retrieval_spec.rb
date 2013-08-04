@@ -222,4 +222,13 @@ describe "retrieval" do
       articles.should include mapper.sample
     end
   end
+
+  it 'does not unmarshal objects that were saved as strings' do
+    fake_title = Marshal.dump(Object.new)
+    id = mapper.insert Article.new(fake_title)
+
+    retrieved = mapper.find(id)
+    retrieved.title.should be_a String
+    retrieved.title.should == fake_title
+  end
 end
