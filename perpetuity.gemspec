@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Perpetuity::VERSION
   s.authors     = ["Jamie Gaskins"]
   s.email       = ["jgaskins@gmail.com"]
-  s.homepage    = "https://github.com/jgaskins/perpetuity.git"
+  s.homepage    = "https://github.com/jgaskins/perpetuity"
   s.summary     = %q{Persistence library allowing serialization of Ruby objects}
   s.description = %q{Persistence layer for Ruby objects}
   s.license     = 'MIT'
