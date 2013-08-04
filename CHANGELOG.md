@@ -1,5 +1,6 @@
 ## Version 0.7.1
 
+- Only unmarshal attributes that we marshaled to begin with. This disallows the use of false marshaled objects. — with [Kevin Sjöberg](https://github.com/KevinSjoberg)
 - Allow insertion of multiple objects in `Mapper#insert`
 - Alias `Retrieval#limit` as `Retrieval#take` for `Enumerable` compatibility
 - Leave result cache when branching to new retrievals if previous retrieval had triggered a query
