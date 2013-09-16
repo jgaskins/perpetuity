@@ -1,4 +1,5 @@
 require 'perpetuity/data_injectable'
+require 'perpetuity/reference'
 
 module Perpetuity
   class MongoDB
