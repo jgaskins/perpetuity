@@ -62,6 +62,10 @@ module Perpetuity
       self.class.attributes
     end
 
+    def attribute_set
+      self.class.attribute_set
+    end
+
     def delete_all
       data_source.delete_all mapped_class
     end
