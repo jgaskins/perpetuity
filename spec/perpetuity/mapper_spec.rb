@@ -123,6 +123,22 @@ module Perpetuity
         mapper.save object
       end
 
+      it 'can serialize only changed attributes for updates' do
+        mapper_class.attribute :modified
+        mapper_class.attribute :unmodified
+        object = Object.new
+        object.instance_variable_set :@id, 1
+        object.instance_variable_set :@modified, false
+        object.instance_variable_set :@unmodified, false
+        mapper.identity_map << object
+
+        object.instance_variable_set :@modified, true
+
+        mapper.serialize_changed_attributes(object).should == {
+          'modified' => true
+        }
+      end
+
       it 'deletes an object from the data source' do
         object = Object.new
 

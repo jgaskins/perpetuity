@@ -2,23 +2,29 @@ require 'perpetuity/identity_map'
 
 module Perpetuity
   describe IdentityMap do
-    let(:object_mapper) { double('Mapper', id_for: 1) }
-    let(:object) { double('Object', class: Object) }
     let(:id_map) { IdentityMap.new }
 
     context 'when the object exists in the IdentityMap' do
-      let(:object) { double('Object', class: Object) }
+      let(:object) { Object.new }
 
-      before { object.instance_variable_set :@id, 1 }
+      before do
+        object.instance_variable_set :@id, 1
+        id_map << object
+      end
 
       it 'returns the object with the given class and id' do
-        id_map << object
-        id_map[Object, 1].should == object
+        retrieved = id_map[Object, 1]
+
+        retrieved.instance_variable_get(:@id).should == 1
+      end
+
+      specify 'the object returned is a duplicate, not the same object' do
+        id_map[Object, 1].should_not be object
       end
 
       it 'stringifies keys when checking' do
-        id_map << object
-        id_map[Object, '1'].should == object
+        retrieved = id_map[Object, '1']
+        retrieved.instance_variable_get(:@id).should == 1
       end
     end
 

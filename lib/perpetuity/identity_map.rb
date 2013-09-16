@@ -13,7 +13,7 @@ module Perpetuity
     def << object
       klass = object.class
       id = object.instance_variable_get(:@id)
-      map[klass][id.to_s] = object
+      map[klass][id.to_s] = object.dup
     end
   end
 end

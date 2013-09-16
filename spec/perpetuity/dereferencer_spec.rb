@@ -18,7 +18,8 @@ module Perpetuity
         mapper.should_receive(:find).with(1) { first }
 
         derefer.load first_ref
-        derefer[first_ref].should == first
+        id = derefer[first_ref].instance_variable_get(:@id)
+        id.should == 1
       end
     end
 

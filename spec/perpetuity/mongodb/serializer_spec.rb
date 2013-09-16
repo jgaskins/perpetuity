@@ -61,6 +61,18 @@ module Perpetuity
         }
       end
 
+      it 'can serialize only changed attributes' do
+        book = Book.new('Original Title')
+        updated_book = book.dup
+        updated_book.title = 'New Title'
+        book_mapper.stub(data_source: data_source)
+        data_source.stub(:can_serialize?).with('New Title') { true }
+        data_source.stub(:can_serialize?).with('Original Title') { true }
+        serializer.serialize_changes(updated_book, book).should == {
+          'title' => 'New Title'
+        }
+      end
+
       context 'with objects that have hashes as attributes' do
         let(:name_data) { {first_name: 'Jamie', last_name: 'Gaskins'} }
         let(:serialized_data) { { 'name' => name_data } }

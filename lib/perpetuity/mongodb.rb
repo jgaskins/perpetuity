@@ -146,7 +146,7 @@ module Perpetuity
     end
 
     def update klass, id, new_data
-      find(klass, id).update(new_data)
+      find(klass, id).update('$set' => new_data)
     end
 
     def can_serialize? value
@@ -212,6 +212,10 @@ module Perpetuity
 
     def serialize object, mapper
       Serializer.new(mapper).serialize object
+    end
+
+    def serialize_changed_attributes object, original, mapper
+      Serializer.new(mapper).serialize_changes object, original
     end
 
     def unserialize data, mapper

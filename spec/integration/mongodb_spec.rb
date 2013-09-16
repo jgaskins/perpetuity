@@ -100,6 +100,38 @@ module Perpetuity
       retrieved_time.to_f.should be_within(0.001).of time.to_f
     end
 
+    describe 'serialization' do
+      let(:object) { Object.new }
+      let(:foo_attribute) { double('Attribute', name: :foo) }
+      let(:baz_attribute) { double('Attribute', name: :baz) }
+      let(:mapper) { double('Mapper',
+                            mapped_class: Object,
+                            mapper_registry: {},
+                            attribute_set: Set[foo_attribute, baz_attribute],
+                            data_source: mongo,
+                           ) }
+
+      before do
+        object.instance_variable_set :@foo, 'bar'
+        object.instance_variable_set :@baz, 'quux'
+      end
+
+      it 'serializes objects' do
+        mongo.serialize(object, mapper).should == {
+          'foo' => 'bar',
+          'baz' => 'quux'
+        }
+      end
+
+      it 'can serialize only modified attributes of objects' do
+        updated = object.dup
+        updated.instance_variable_set :@foo, 'foo'
+
+        serialized = mongo.serialize_changed_attributes(updated, object, mapper)
+        serialized.should == { 'foo' => 'foo' }
+      end
+    end
+
     describe 'serializable objects' do
       let(:serializable_values) { [nil, true, false, 1, 1.2, '', [], {}, Time.now] }
 

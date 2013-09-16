@@ -190,7 +190,12 @@ module Perpetuity
     end
 
     def save object
-      update object, serialize(object), false
+      changed_attributes = serialize_changed_attributes(object)
+      if changed_attributes && changed_attributes.any?
+        update object, changed_attributes
+      else
+        update object, serialize(object), false
+      end
     end
 
     def increment object, attribute, count=1
@@ -236,6 +241,13 @@ module Perpetuity
       end
 
       attributes
+    end
+
+    def serialize_changed_attributes object
+      cached = identity_map[object.class, id_for(object)]
+      if cached
+        data_source.serialize_changed_attributes(object, cached, self)
+      end
     end
 
     def self.mapped_class

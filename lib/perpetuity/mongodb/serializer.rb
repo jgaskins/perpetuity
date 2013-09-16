@@ -46,6 +46,10 @@ module Perpetuity
         Hash[attrs.compact]
       end
 
+      def serialize_changes changed, original
+        Hash[Array(serialize(changed)) - Array(serialize(original))]
+      end
+
       def unserialize data
         if data.is_a? Array
           unserialize_object_array data

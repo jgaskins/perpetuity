@@ -26,6 +26,24 @@ describe 'updating' do
     mapper.find(mapper.id_for article).title.should eq new_title
   end
 
+  it 'only updates attributes which have changed since last retrieval' do
+    first_mapper = Perpetuity[Article]
+    second_mapper = Perpetuity[Article]
+    article_id = first_mapper.id_for(article)
+    first_article = first_mapper.find(article_id)
+    second_article = second_mapper.find(article_id)
+
+    # Change different attributes on each
+    first_article.title = 'New title'
+    second_article.views = 7
+    first_mapper.save first_article
+    second_mapper.save second_article
+
+    canonical_article = mapper.find(article_id)
+    canonical_article.title.should == 'New title'
+    canonical_article.views.should == 7
+  end
+
   it 'updates an object with referenced attributes' do
     user = User.new
     article.author = user
