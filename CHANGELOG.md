@@ -1,3 +1,7 @@
+## Version 0.7.3
+
+- Only save attributes which have changed
+
 ## Version 0.7.2
 
 - Add license to gemspec for the benefit of [Rubygems.org](http://rubygems.org/gems/perpetuity)
