@@ -22,7 +22,7 @@ module Perpetuity
       end
 
       def serialize object
-        attrs = mapper.class.attribute_set.map do |attrib|
+        attrs = mapper.attribute_set.map do |attrib|
           next unless has_attribute? object, attrib.name
 
           value = attribute_for object, attrib.name
