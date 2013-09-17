@@ -17,7 +17,8 @@ module Perpetuity
 
       def sql_value
         if value.is_a? String or value.is_a? Symbol
-          "'#{value}'"
+          sanitized = value.to_s.gsub("'") { "\\'" }
+          "'#{sanitized}'"
         elsif value.is_a? Regexp
           "'#{value.to_s.sub(/\A\(\?-mix\:/, '').sub(/\)\z/, '')}'"
         elsif value.is_a? Array
