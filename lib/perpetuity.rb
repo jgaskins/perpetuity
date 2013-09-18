@@ -1,5 +1,6 @@
 require "perpetuity/version"
 require "perpetuity/mongodb"
+require "perpetuity/postgres"
 require "perpetuity/config"
 require "perpetuity/mapper"
 require "perpetuity/mapper_registry"
@@ -29,9 +30,10 @@ module Perpetuity
   end
 
   def self.data_source adapter, db_name, options={}
-    adapters = { mongodb: MongoDB }
+    adapters = { mongodb: 'MongoDB', postgres: 'Postgres' }
+    adapter_class = const_get(adapters[adapter])
 
-    configure { data_source adapters[adapter].new(options.merge(db: db_name)) }
+    configure { data_source adapter_class.new(options.merge(db: db_name)) }
   end
 
   # Necessary to be able to check whether Rails is loaded and initialized
