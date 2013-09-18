@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", "~> 2.13"
   s.add_runtime_dependency "moped"
+  s.add_runtime_dependency "pg"
 end
