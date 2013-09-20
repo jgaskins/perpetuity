@@ -2,7 +2,7 @@ require 'perpetuity/attribute'
 
 module Perpetuity
   describe Attribute do
-    let(:attribute) { Attribute.new :article, Object }
+    let(:attribute) { Attribute.new :article, Object, default: 1 }
     subject { attribute }
 
     it 'has a name' do
@@ -11,6 +11,11 @@ module Perpetuity
 
     it 'has a type' do
       subject.type.should == Object
+    end
+
+    it 'can get extra options' do
+      attribute.options.should == { default: 1 }
+      attribute.options(:default).should == 1
     end
 
     it 'can be embedded' do

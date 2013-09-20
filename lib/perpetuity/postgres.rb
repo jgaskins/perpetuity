@@ -1,6 +1,7 @@
 require 'perpetuity/postgres/connection'
 require 'perpetuity/postgres/query'
 require 'perpetuity/postgres/table'
+require 'perpetuity/postgres/table/attribute'
 
 module Perpetuity
   class Postgres
@@ -24,8 +25,44 @@ module Perpetuity
       )
     end
 
-    def insert klass, data
-      []
+    def insert data, mapper
+      table = table_name(mapper.mapped_class)
+      column_names = data.keys.join(',')
+      values = data.values.map { |value| postgresify(value) }.join(',')
+      sql = "INSERT INTO #{table} (#{column_names}) VALUES "
+      sql << "(#{values}) RETURNING id"
+
+      result = connection.execute(sql).to_a
+      result.first['id']
+    rescue PG::UndefinedTable # Table doesn't exist, so we need to create it.
+      create_table_from_mapper mapper
+    end
+
+    def count klass
+      table = table_name(klass)
+      sql = "SELECT COUNT(*) FROM #{table}"
+      connection.execute(sql).to_a.first['count'].to_i
+    end
+
+    def postgresify value
+      if value.is_a? String
+        "'#{value}'"
+      elsif value == true || value == false
+        value.to_s.upcase
+      else
+        value.to_s
+      end
+    end
+
+    def find klass, id
+      table = table_name(klass)
+      id = postgresify(id)
+      sql = "SELECT * FROM #{table} WHERE id = #{id}"
+      connection.execute(sql).to_a.first
+    end
+
+    def table_name klass
+      klass.to_s.inspect
     end
 
     def query klass, &block
@@ -39,7 +76,7 @@ module Perpetuity
     end
 
     def drop_table name
-      connection.execute "DROP TABLE IF EXISTS #{name}"
+      connection.execute "DROP TABLE IF EXISTS #{name.inspect}"
     end
 
     def create_table name, attributes
@@ -47,7 +84,7 @@ module Perpetuity
     end
 
     def has_table? name
-      connection.tables.include? name.downcase
+      connection.tables.include? name
     end
 
     def serialize object, mapper
@@ -55,6 +92,16 @@ module Perpetuity
     end
 
     def unserialize data, mapper
+    end
+
+    def create_table_from_mapper mapper
+      attributes = mapper.attribute_set.map do |attr|
+        name = attr.name
+        type = attr.type
+        options = attr.options
+        Table::Attribute.new name, type, options
+      end
+      create_table mapper.mapped_class.to_s, attributes
     end
   end
 end

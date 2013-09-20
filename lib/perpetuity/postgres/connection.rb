@@ -19,6 +19,9 @@ module Perpetuity
 
       def connect
         @pg_connection = PG.connect(options)
+        use_uuid_extension
+
+        @pg_connection
       rescue PG::ConnectionBad => e
         p e
         tries ||= 0
@@ -63,6 +66,13 @@ module Perpetuity
         end
 
         options
+      end
+
+      private
+      def use_uuid_extension
+        @pg_connection.exec 'CREATE EXTENSION "uuid-ossp"'
+      rescue PG::DuplicateObject
+        # Ignore. It just means the extension's already been loaded.
       end
     end
   end

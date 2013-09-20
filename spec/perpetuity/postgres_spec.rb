@@ -1,5 +1,6 @@
 require 'perpetuity/postgres'
 require 'perpetuity/postgres/table/attribute'
+require 'perpetuity/mapper'
 
 module Perpetuity
   describe Postgres do
@@ -45,15 +46,45 @@ module Perpetuity
       end
     end
 
-    it 'creates tables' do
-      postgres.drop_table 'Article'
+    it 'creates and drops tables' do
       postgres.create_table 'Article', [
         Postgres::Table::Attribute.new('title', String, max_length: 40),
         Postgres::Table::Attribute.new('body', String),
         Postgres::Table::Attribute.new('author', Object)
       ]
-
       postgres.should have_table('Article')
+
+      postgres.drop_table 'Article'
+      postgres.should_not have_table 'Article'
+    end
+
+    it 'converts values into something that works with the DB' do
+      postgres.postgresify("string").should == "'string'"
+      postgres.postgresify(1).should == '1'
+      postgres.postgresify(true).should == 'TRUE'
+    end
+
+    describe 'working with data' do
+      let(:user_mapper) do
+        registry = {}
+        Class.new(Mapper) do
+          map 'User', registry
+          attribute :name, type: String, default: 'lol'
+        end.new(registry)
+      end
+      let(:data) { { name: 'Jamie' } }
+
+      it 'inserts data and finds by id' do
+        id = postgres.insert data, user_mapper
+        result = postgres.find('User', id)
+
+        id.should =~ /[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/
+        result['name'].should == 'Jamie'
+      end
+
+      it 'counts objects' do
+        expect { postgres.insert data, user_mapper }.to change { postgres.count('User') }.by 1
+      end
     end
 
     describe 'query generation' do
