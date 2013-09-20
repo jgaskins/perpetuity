@@ -2,16 +2,12 @@ require 'spec_helper'
 require 'support/test_classes'
 
 describe 'associations with other objects' do
-  let(:user) { User.new }
-  let(:topic) { Topic.new }
+  let(:user) { User.new('Flump') }
+  let(:topic) { Topic.new('Title', user) }
   let(:user_mapper) { Perpetuity[User] }
   let(:topic_mapper) { Perpetuity[Topic] }
 
   before do
-    user.name = 'Flump'
-    topic.creator = user
-    topic.title = 'Title'
-
     user_mapper.insert user
     topic_mapper.insert topic
   end

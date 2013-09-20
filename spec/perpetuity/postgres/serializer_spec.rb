@@ -1,6 +1,6 @@
 require 'perpetuity/postgres/serializer'
 require 'perpetuity/mapper'
-require 'support/test_classes/user'
+require 'support/test_classes/book'
 
 module Perpetuity
   class Postgres
@@ -9,15 +9,24 @@ module Perpetuity
       let(:mapper_class) do
         registry = self.registry
         Class.new(Mapper) do
-          map User, registry
-          attribute :name, type: String
+          map Book, registry
+          attribute :title, type: String
+          attribute :authors, type: Array
         end
       end
       let(:mapper) { mapper_class.new(registry) }
       let(:serializer) { Serializer.new(mapper) }
 
       it 'serializes simple objects' do
-        serializer.serialize(User.new('Jamie')).should == { 'name' => 'Jamie' }
+        serializer.serialize(Book.new('Foo')).should == { 'title' => 'Foo', 'authors' => [] }
+      end
+
+      it 'serializes nested objects' do
+        serializer.serialize_attribute('string').should == "'string'"
+        serializer.serialize_attribute(1).should == 1
+        serializer.serialize_attribute(nil).should == 'NULL'
+        serializer.serialize_attribute(true).should == 'TRUE'
+        serializer.serialize_attribute(false).should == 'FALSE'
       end
     end
   end

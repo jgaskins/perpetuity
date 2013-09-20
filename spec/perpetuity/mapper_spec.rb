@@ -47,8 +47,7 @@ module Perpetuity
         obj.instance_variable_set '@my_attribute', 'foo'
         data_source.should_receive(:can_serialize?).with('foo') { true }
         data_source.should_receive(:insert)
-                   .with(Object,
-                         [{ 'my_attribute' => 'foo' }])
+                   .with(Object, [{ 'my_attribute' => 'foo' }], mapper.attribute_set)
                    .and_return(['bar'])
 
         mapper.insert(obj).should be == 'bar'

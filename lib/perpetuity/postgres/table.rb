@@ -7,7 +7,7 @@ module Perpetuity
       attr_reader :name, :attributes
       def initialize name, attributes
         @name = name.to_s
-        @attributes = attributes
+        @attributes = attributes.to_a
 
         generate_id_attribute unless has_id_attribute?
       end

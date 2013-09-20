@@ -5,6 +5,6 @@ class User
   end
 
   def == other
-    name == other.name
+    other.is_a?(self.class) && name == other.name
   end
 end

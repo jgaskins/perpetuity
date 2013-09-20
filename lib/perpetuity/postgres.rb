@@ -1,4 +1,6 @@
+require 'json'
 require 'perpetuity/postgres/connection'
+require 'perpetuity/postgres/serializer'
 require 'perpetuity/postgres/query'
 require 'perpetuity/postgres/table'
 require 'perpetuity/postgres/table/attribute'
@@ -25,33 +27,27 @@ module Perpetuity
       )
     end
 
-    def insert data, mapper
-      table = table_name(mapper.mapped_class)
-      column_names = data.keys.join(',')
-      values = data.values.map { |value| postgresify(value) }.join(',')
-      sql = "INSERT INTO #{table} (#{column_names}) VALUES "
-      sql << "(#{values}) RETURNING id"
+    def insert klass, data, attributes
+      if data.is_a? Array
+        table = table_name(klass)
+        column_names = data.first.keys.join(',')
+        values = data.map { |datum| "(#{datum.values.map { |value| postgresify(value) }.join(',')})" }.join(',')
+        sql = "INSERT INTO #{table} (#{column_names}) VALUES "
+        sql << "#{values} RETURNING id"
 
-      result = connection.execute(sql).to_a
-      result.first['id']
+        results = connection.execute(sql).to_a
+        results.map { |result| result['id'] }
+      else
+        insert(klass, [data], attributes).first
+      end
     rescue PG::UndefinedTable # Table doesn't exist, so we need to create it.
-      create_table_from_mapper mapper
+      create_table_with_attributes klass, attributes
     end
 
     def count klass
       table = table_name(klass)
       sql = "SELECT COUNT(*) FROM #{table}"
       connection.execute(sql).to_a.first['count'].to_i
-    end
-
-    def postgresify value
-      if value.is_a? String
-        "'#{value}'"
-      elsif value == true || value == false
-        value.to_s.upcase
-      else
-        value.to_s
-      end
     end
 
     def find klass, id
@@ -87,6 +83,10 @@ module Perpetuity
       connection.tables.include? name
     end
 
+    def postgresify value
+      Serializer.new(nil).serialize_attribute value
+    end
+
     def serialize object, mapper
       Serializer.new(mapper).serialize object
     end
@@ -94,14 +94,14 @@ module Perpetuity
     def unserialize data, mapper
     end
 
-    def create_table_from_mapper mapper
-      attributes = mapper.attribute_set.map do |attr|
+    def create_table_with_attributes klass, attributes
+      table_attributes = attributes.map do |attr|
         name = attr.name
         type = attr.type
         options = attr.options
         Table::Attribute.new name, type, options
       end
-      create_table mapper.mapped_class.to_s, attributes
+      create_table klass.to_s, table_attributes
     end
   end
 end

@@ -47,7 +47,7 @@ module Perpetuity
       database[klass.to_s]
     end
 
-    def insert klass, objects
+    def insert klass, objects, _
       if objects.is_a? Array
         objects.each do |object|
           object[:_id] = object.delete(:id) || Moped::BSON::ObjectId.new
@@ -56,7 +56,7 @@ module Perpetuity
         collection(klass).insert objects
         objects.map { |object| object[:_id] }
       else
-        insert(klass, [objects]).first
+        insert(klass, [objects], _).first
       end
 
     rescue Moped::Errors::OperationFailure => e

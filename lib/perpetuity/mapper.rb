@@ -73,7 +73,7 @@ module Perpetuity
       objects = Array(object)
       serialized_objects = objects.map { |obj| serialize(obj) }
 
-      new_ids = data_source.insert(mapped_class, serialized_objects)
+      new_ids = data_source.insert(mapped_class, serialized_objects, attribute_set)
       objects.each_with_index do |obj, index|
         give_id_to obj, new_ids[index]
       end

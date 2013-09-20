@@ -1,6 +1,6 @@
 require 'perpetuity/postgres'
 require 'perpetuity/postgres/table/attribute'
-require 'perpetuity/mapper'
+require 'perpetuity/attribute'
 
 module Perpetuity
   describe Postgres do
@@ -60,22 +60,16 @@ module Perpetuity
 
     it 'converts values into something that works with the DB' do
       postgres.postgresify("string").should == "'string'"
-      postgres.postgresify(1).should == '1'
+      postgres.postgresify(1).should == 1
       postgres.postgresify(true).should == 'TRUE'
     end
 
     describe 'working with data' do
-      let(:user_mapper) do
-        registry = {}
-        Class.new(Mapper) do
-          map 'User', registry
-          attribute :name, type: String, default: 'lol'
-        end.new(registry)
-      end
+      let(:attributes) { [Attribute.new(:name, String)] }
       let(:data) { { name: 'Jamie' } }
 
       it 'inserts data and finds by id' do
-        id = postgres.insert data, user_mapper
+        id = postgres.insert 'User', data, attributes
         result = postgres.find('User', id)
 
         id.should =~ /[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/
@@ -83,7 +77,7 @@ module Perpetuity
       end
 
       it 'counts objects' do
-        expect { postgres.insert data, user_mapper }.to change { postgres.count('User') }.by 1
+        expect { postgres.insert 'User', data, attributes }.to change { postgres.count('User') }.by 1
       end
     end
 

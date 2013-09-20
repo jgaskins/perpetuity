@@ -16,6 +16,20 @@ module Perpetuity
 
         attrs
       end
+
+      def serialize_attribute value
+        if value.is_a? String
+          "'#{value}'"
+        elsif value.is_a? Numeric
+          value
+        elsif value.nil?
+          'NULL'
+        elsif value == true || value == false
+          value.to_s.upcase
+        else
+          value.to_json
+        end
+      end
     end
   end
 end

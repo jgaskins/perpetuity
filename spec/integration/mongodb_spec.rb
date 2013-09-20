@@ -49,16 +49,16 @@ module Perpetuity
     end
 
     it 'inserts documents into a collection' do
-      expect { mongo.insert klass, name: 'foo' }.to change { mongo.count klass }.by 1
+      expect { mongo.insert klass, { name: 'foo' }, [] }.to change { mongo.count klass }.by 1
     end
 
     it 'inserts multiple documents into a collection' do
-      expect { mongo.insert klass, [{name: 'foo'}, {name: 'bar'}] }
+      expect { mongo.insert klass, [{name: 'foo'}, {name: 'bar'}], [] }
         .to change { mongo.count klass }.by 2
     end
 
     it 'removes all documents from a collection' do
-      mongo.insert klass, {}
+      mongo.insert klass, {}, []
       mongo.delete_all klass
       mongo.count(klass).should == 0
     end
@@ -66,21 +66,21 @@ module Perpetuity
     it 'counts the documents in a collection' do
       mongo.delete_all klass
       3.times do
-        mongo.insert klass, {}
+        mongo.insert klass, {}, []
       end
       mongo.count(klass).should == 3
     end
 
     it 'counts the documents matching a query' do
       mongo.delete_all klass
-      1.times { mongo.insert klass, { name: 'bar' } }
-      3.times { mongo.insert klass, { name: 'foo' } }
+      1.times { mongo.insert klass, { name: 'bar' }, [] }
+      3.times { mongo.insert klass, { name: 'foo' }, [] }
       mongo.count(klass) { |o| o.name == 'foo' }.should == 3
     end
 
     it 'gets the first document in a collection' do
       value = {value: 1}
-      mongo.insert klass, value
+      mongo.insert klass, value, []
       mongo.first(klass)[:hypothetical_value].should == value['value']
     end
 
@@ -93,7 +93,7 @@ module Perpetuity
 
     it 'retrieves by id if the id is a string' do
       time = Time.now.utc
-      id = mongo.insert Object, {inserted: time}
+      id = mongo.insert Object, {inserted: time}, []
 
       object = mongo.retrieve(Object, mongo.query{|o| o.id == id.to_s }).first
       retrieved_time = object["inserted"]
@@ -137,7 +137,7 @@ module Perpetuity
 
       it 'can insert serializable values' do
         serializable_values.each do |value|
-          mongo.insert(Object, {value: value}).should be_a Moped::BSON::ObjectId
+          mongo.insert(Object, {value: value}, []).should be_a Moped::BSON::ObjectId
           mongo.can_serialize?(value).should be_true
         end
       end
@@ -186,7 +186,7 @@ module Perpetuity
       after(:all) { mongo.delete_all klass }
 
       it 'increments the value of an attribute' do
-        id = mongo.insert klass, count: 1
+        id = mongo.insert klass, { count: 1 }, []
         mongo.increment klass, id, :count
         mongo.increment klass, id, :count, 10
         query = mongo.query { |o| o.id == id }
@@ -208,9 +208,9 @@ module Perpetuity
       after { mongo.drop_collection Object }
 
       it 'raises an exception when insertion fails' do
-        mongo.insert Object, data
+        mongo.insert Object, data, []
 
-        expect { mongo.insert Object, data }.to raise_error DuplicateKeyError,
+        expect { mongo.insert Object, data, [] }.to raise_error DuplicateKeyError,
           'Tried to insert Object with duplicate unique index: foo => "bar"'
       end
     end
