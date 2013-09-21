@@ -1,6 +1,5 @@
 require 'perpetuity/attribute_set'
 require 'perpetuity/attribute'
-require 'perpetuity/validations'
 require 'perpetuity/data_injectable'
 require 'perpetuity/dereferencer'
 require 'perpetuity/retrieval'
@@ -71,7 +70,6 @@ module Perpetuity
     end
 
     def insert object
-      raise "#{object} is invalid and cannot be persisted." unless self.class.validations.valid?(object)
       objects = Array(object)
       serialized_objects = objects.map { |obj| serialize(obj) }
 
@@ -220,14 +218,6 @@ module Perpetuity
 
     def id_for object
       object.instance_variable_get(:@id) if persisted?(object)
-    end
-
-    def self.validate &block
-      validations.instance_exec(&block)
-    end
-
-    def self.validations
-      @validations ||= ValidationSet.new
     end
 
     def data_source

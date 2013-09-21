@@ -50,10 +50,6 @@ Perpetuity.generate_mapper_for(Car) do
   attribute :make
   attribute :model
   attribute :seats
-
-  validate do
-    present :make
-  end
 end
 
 Perpetuity.generate_mapper_for CRM::Person do
