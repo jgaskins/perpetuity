@@ -48,6 +48,8 @@ module Perpetuity
       table = table_name(klass)
       sql = "SELECT COUNT(*) FROM #{table}"
       connection.execute(sql).to_a.first['count'].to_i
+    rescue PG::UndefinedTable
+      0
     end
 
     def find klass, id

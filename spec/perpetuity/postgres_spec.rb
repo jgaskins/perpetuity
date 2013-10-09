@@ -79,6 +79,11 @@ module Perpetuity
       it 'counts objects' do
         expect { postgres.insert 'User', data, attributes }.to change { postgres.count('User') }.by 1
       end
+
+      it 'returns a count of 0 when the table does not exist' do
+        postgres.drop_table 'Article'
+        postgres.count('Article').should == 0
+      end
     end
 
     describe 'query generation' do
