@@ -1,3 +1,4 @@
+require 'json'
 module Perpetuity
   class Postgres
     class Serializer
@@ -8,13 +9,13 @@ module Perpetuity
       end
 
       def serialize object
-        attrs = {}
-        mapper.attribute_set.each do |attribute|
+        attrs = mapper.attribute_set.map do |attribute|
           attr_name = attribute.name.to_s
-          attrs[attr_name] = object.instance_variable_get("@#{attr_name}")
-        end
+          value = object.instance_variable_get("@#{attr_name}")
+          serialize_attribute(value)
+        end.join(',')
 
-        attrs
+        "(#{attrs})"
       end
 
       def serialize_attribute value
@@ -22,12 +23,28 @@ module Perpetuity
           "'#{value}'"
         elsif value.is_a? Numeric
           value
+        elsif value.is_a? Array
+          serialize_array value
+        elsif value.is_a? Time
+
         elsif value.nil?
           'NULL'
         elsif value == true || value == false
           value.to_s.upcase
         else
           value.to_json
+        end
+      end
+
+      def serialize_array value
+        %Q('#{value.map { |item| serialize_within_json(item) }}')
+      end
+
+      def serialize_within_json value
+        if value.is_a? Numeric
+          value
+        elsif value.is_a? String
+          value
         end
       end
     end

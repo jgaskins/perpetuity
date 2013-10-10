@@ -66,7 +66,7 @@ module Perpetuity
 
     describe 'working with data' do
       let(:attributes) { [Attribute.new(:name, String)] }
-      let(:data) { { name: 'Jamie' } }
+      let(:data) { ["('Jamie')"] }
 
       it 'inserts data and finds by id' do
         id = postgres.insert 'User', data, attributes
@@ -83,6 +83,12 @@ module Perpetuity
       it 'returns a count of 0 when the table does not exist' do
         postgres.drop_table 'Article'
         postgres.count('Article').should == 0
+      end
+
+      it 'deletes all records' do
+        postgres.insert 'User', data, attributes
+        postgres.delete_all 'User'
+        postgres.count('User').should == 0
       end
     end
 

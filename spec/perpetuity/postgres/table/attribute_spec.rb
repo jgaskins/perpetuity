@@ -53,6 +53,14 @@ module Perpetuity
           end
         end
 
+        describe 'times' do
+          let(:timestamp) { Attribute.new('timestamp', Time) }
+
+          it 'converts to the SQL DATETIME type' do
+            timestamp.sql_type.should == 'DATETIME'
+          end
+        end
+
         describe 'non-serializable types' do
           let(:author) { Attribute.new('author', Object) }
 

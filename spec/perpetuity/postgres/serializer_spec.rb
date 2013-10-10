@@ -18,7 +18,11 @@ module Perpetuity
       let(:serializer) { Serializer.new(mapper) }
 
       it 'serializes simple objects' do
-        serializer.serialize(Book.new('Foo')).should == { 'title' => 'Foo', 'authors' => [] }
+        serializer.serialize(Book.new('Foo')).should == %q{('Foo','[]')}
+      end
+
+      it 'serializes an array as JSON' do
+        serializer.serialize_array([1, 'foo']).should == %q{'[1, "foo"]'}
       end
 
       it 'serializes nested objects' do

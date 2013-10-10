@@ -28,10 +28,10 @@ module Perpetuity
     end
 
     def insert klass, data, attributes
-      if data.is_a? Array
+      if data.first.is_a? Array
         table = table_name(klass)
-        column_names = data.first.keys.join(',')
-        values = data.map { |datum| "(#{datum.values.map { |value| postgresify(value) }.join(',')})" }.join(',')
+        column_names = attributes.map { |attr| attr.name.to_s }.join(',')
+        values = data.join(',')
         sql = "INSERT INTO #{table} (#{column_names}) VALUES "
         sql << "#{values} RETURNING id"
 
@@ -54,13 +54,21 @@ module Perpetuity
 
     def find klass, id
       table = table_name(klass)
-      id = postgresify(id)
+      id = "'#{id}'"
       sql = "SELECT * FROM #{table} WHERE id = #{id}"
       connection.execute(sql).to_a.first
     end
 
     def table_name klass
       klass.to_s.inspect
+    end
+
+    def delete_all klass
+      table = table_name(klass)
+      sql = "DELETE FROM #{table}"
+      connection.execute(sql)
+    rescue PG::UndefinedTable
+      # Do nothing. There is already nothing here.
     end
 
     def query klass, &block

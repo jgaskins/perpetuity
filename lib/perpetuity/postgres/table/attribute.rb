@@ -24,6 +24,8 @@ module Perpetuity
             end
           elsif type == UUID
             'UUID'
+          elsif type == Time
+            'DATETIME'
           else
             'JSON'
           end

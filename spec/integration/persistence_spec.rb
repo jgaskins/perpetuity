@@ -1,13 +1,14 @@
 require 'spec_helper'
 require 'support/test_classes'
+require 'securerandom'
 
 describe 'Persistence' do
   let(:mapper) { Perpetuity[Article] }
 
   it "persists an object" do
     article = Article.new 'I have a title'
-    expect { mapper.insert article }.
-      to change { mapper.count }.by 1
+    mapper.serialize article
+    expect { mapper.insert article }.to change { mapper.count }.by 1
     mapper.find(mapper.id_for(article)).title.should eq 'I have a title'
   end
 
