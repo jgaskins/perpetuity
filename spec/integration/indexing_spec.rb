@@ -24,7 +24,7 @@ describe 'indexing' do
   let(:db_name) { Perpetuity.configuration.data_source.db }
 
   before do
-    Perpetuity.data_source :mongodb, db_name
+    load './spec/spec_helper.rb'
     mapper.data_source.drop_collection Object
   end
   after { mapper.data_source.drop_collection Object }
