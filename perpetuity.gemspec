@@ -20,6 +20,4 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", "~> 2.13"
-  s.add_development_dependency "perpetuity-postgres", github: "jgaskins/perpetuity-postgres"
-  s.add_development_dependency "perpetuity-mongodb", github: "jgaskins/perpetuity-mongodb"
 end

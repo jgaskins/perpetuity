@@ -1,3 +1,5 @@
+require 'bundler/setup'
+
 if ENV['PERPETUITY_ADAPTER'] == 'postgres'
   require 'perpetuity/postgres'
   Perpetuity.data_source :postgres, 'perpetuity_gem_test', user: ENV['USER'], password: nil
