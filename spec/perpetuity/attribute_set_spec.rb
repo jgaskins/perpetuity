@@ -3,7 +3,7 @@ require 'perpetuity/attribute_set'
 module Perpetuity
   describe AttributeSet do
     it 'contains attributes' do
-      attribute = double('Attribute')
+      attribute = double('Attribute', name: :foo)
       subject << attribute
 
       subject.first.should eq attribute

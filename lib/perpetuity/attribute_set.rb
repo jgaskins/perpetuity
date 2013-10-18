@@ -1,23 +1,21 @@
-require 'set'
-
 module Perpetuity
   class AttributeSet
     include Enumerable
 
     def initialize
-      @attributes = Set.new
+      @attributes = {}
     end
 
     def << attribute
-      @attributes << attribute
+      @attributes[attribute.name] = attribute
     end
 
     def [] name
-      @attributes.find { |attr| attr.name == name }
+      @attributes[name]
     end
 
     def each &block
-      @attributes.each(&block)
+      @attributes.values.each(&block)
     end
   end
 end
