@@ -4,16 +4,16 @@ end
 
 class UserMapper < Perpetuity::Mapper
   map User
-  attribute :name
+  attribute :name, type: String
 end
 
 Perpetuity.generate_mapper_for Article do
-  attribute :title
-  attribute :body
-  attribute :author
-  attribute :comments, embedded: true
-  attribute :published_at
-  attribute :views
+  attribute :title, type: String
+  attribute :body, type: String
+  attribute :author, type: User
+  attribute :comments, type: Array, embedded: true
+  attribute :published_at, type: Time
+  attribute :views, type: Integer
 
   def published
     select { |article| (article.published_at.not_equal? nil) &
@@ -27,36 +27,36 @@ Perpetuity.generate_mapper_for Article do
 end
 
 Perpetuity.generate_mapper_for(Comment) do
-  attribute :body
-  attribute :author
+  attribute :body, type: String
+  attribute :author, type: User
 end
 
 Perpetuity.generate_mapper_for Book do
   id { title.gsub(/\W+/, '-').downcase }
-  attribute :title
-  attribute :authors
+  attribute :title, type: String
+  attribute :authors, type: Array
 end
 
 Perpetuity.generate_mapper_for Message do
-  attribute :text
+  attribute :text, type: String
 end
 
 Perpetuity.generate_mapper_for(Topic) do
-  attribute :title
-  attribute :creator
+  attribute :title, type: String
+  attribute :creator, type: User
 end
 
 Perpetuity.generate_mapper_for(Car) do
-  attribute :make
-  attribute :model
-  attribute :seats
+  attribute :make, type: String
+  attribute :model, type: String
+  attribute :seats, type: Integer
 end
 
 Perpetuity.generate_mapper_for CRM::Person do
-  attribute :name
+  attribute :name, type: String
 end
 
 Perpetuity.generate_mapper_for GenericObject do
-  attribute :referenced_attribute
-  attribute :embedded_attribute, embedded: true
+  attribute :referenced_attribute, type: Object
+  attribute :embedded_attribute, type: Object, embedded: true
 end
