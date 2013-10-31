@@ -172,9 +172,13 @@ module Perpetuity
       end
     end
 
-    def self.id &block
+    def self.id type=nil, &block
       if block_given?
         @id = block
+        if type
+          attribute :id, type: type
+        end
+        nil
       else
         @id ||= -> { nil }
       end
@@ -227,7 +231,7 @@ module Perpetuity
     def serialize object
       attributes = data_source.serialize(object, self)
       if o_id = generate_id_for(object)
-        attributes[:id] = o_id
+        attributes['id'] = o_id
       end
 
       attributes

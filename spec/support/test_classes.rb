@@ -32,7 +32,7 @@ Perpetuity.generate_mapper_for(Comment) do
 end
 
 Perpetuity.generate_mapper_for Book do
-  id { title.gsub(/\W+/, '-').downcase }
+  id(String) { title.gsub(/\W+/, '-').downcase }
   attribute :title, type: String
   attribute :authors, type: Array
 end

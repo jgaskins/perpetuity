@@ -176,5 +176,22 @@ module Perpetuity
         end
       end
     end
+
+    describe 'setting the id manually' do
+      context 'when setting the type' do
+        it 'adds the attribute to the attribute set' do
+          mapper_class.id(String) { 1.to_s }
+          id_attr = mapper_class.attribute_set[:id]
+          id_attr.type.should be String
+        end
+      end
+
+      context 'when not setting the type' do
+        it 'does not add the attribute' do
+          mapper_class.id { 1.to_s }
+          mapper_class.attribute_set[:id].should be_nil
+        end
+      end
+    end
   end
 end
