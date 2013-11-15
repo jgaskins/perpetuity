@@ -8,7 +8,7 @@ module Perpetuity
     detect_rails
     configuration.instance_exec(&block)
   end
-  
+
   def self.configuration
     @configuration ||= Configuration.new
   end
@@ -28,7 +28,7 @@ module Perpetuity
   end
 
   def self.data_source adapter, db_name, options={}
-    adapters = { mongodb: 'MongoDB', postgres: 'Postgres' }
+    adapters = { dynamodb: 'DynamoDB', mongodb: 'MongoDB', postgres: 'Postgres' }
     adapter_class = const_get(adapters[adapter])
 
     configure { data_source adapter_class.new(options.merge(db: db_name)) }
