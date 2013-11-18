@@ -195,15 +195,6 @@ describe "retrieval" do
     end
   end
 
-  it 'selects objects with nested data' do
-    user = User.new(first_name: 'foo', last_name: 'bar')
-    mapper = Perpetuity[User]
-    mapper.insert user
-    users = mapper.select { |u| u.name.first_name == 'foo' }
-    ids = users.map { |retrieved_user| mapper.id_for(retrieved_user) }
-    ids.should include mapper.id_for(user)
-  end
-
   it 'skips a specified number of objects' do
     author = SecureRandom.hex
     articles = 3.times.map { Article.new(SecureRandom.hex, nil, author) }.sort_by(&:title)
