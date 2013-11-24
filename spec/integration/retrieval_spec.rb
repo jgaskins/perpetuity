@@ -196,12 +196,13 @@ describe "retrieval" do
   end
 
   it 'skips a specified number of objects' do
-    author = SecureRandom.hex
-    articles = 3.times.map { Article.new(SecureRandom.hex, nil, author) }.sort_by(&:title)
+    title = SecureRandom.hex
+    articles = 3.times.map { Article.new(title) }.sort_by { |article| mapper.id_for(article) }
     articles.each { |article| mapper.insert article }
 
-    ret = mapper.select { |article| article.author == author }.drop(2).sort(:title).first
-    ret.should == articles.last
+    ret = mapper.select { |article| article.title == title }.drop(2).sort(:id).to_a
+    ret.should have(1).items
+    ret.first.should == articles.last
   end
 
   describe 'selecting random objects' do
