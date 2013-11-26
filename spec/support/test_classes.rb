@@ -16,7 +16,7 @@ Perpetuity.generate_mapper_for Article do
   attribute :views, type: Integer
 
   def published
-    select { |article| (article.published_at.not_equal? nil) &
+    select { |article| (article.published_at != nil) &
                        (article.published_at < Time.now) }
   end
 
