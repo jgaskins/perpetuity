@@ -5,7 +5,7 @@ module Perpetuity
     end
 
     def inject_data object, data
-      data.each_pair do |attribute,value|
+      data.each do |attribute,value|
         inject_attribute object, attribute, value
       end
       give_id_to object if object.instance_variables.include?(:@id)
