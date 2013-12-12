@@ -3,6 +3,7 @@ require 'perpetuity/attribute'
 require 'perpetuity/data_injectable'
 require 'perpetuity/dereferencer'
 require 'perpetuity/retrieval'
+require 'perpetuity/duplicator'
 
 module Perpetuity
   class Mapper
@@ -137,7 +138,7 @@ module Perpetuity
         result = select { |object| object.id == id }.first
 
         if cache_result and !result.nil?
-          identity_map << result
+          identity_map << Duplicator.new(result).object
         end
 
         result
