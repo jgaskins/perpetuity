@@ -2,7 +2,7 @@
 
 Perpetuity is a simple Ruby object persistence layer that attempts to follow Martin Fowler's Data Mapper pattern, allowing you to use plain-old Ruby objects in your Ruby apps in order to decouple your domain logic from the database as well as speed up your tests. There is no need for your model classes to inherit from another class or even include a mix-in.
 
-Your objects will hopefully eventually be able to be persisted into whichever database you like. Right now, only MongoDB is supported. Other persistence solutions will come later.
+Your objects will hopefully eventually be able to be persisted into whichever database you like. Right now, only MongoDB is supported. There is also a [PostgreSQL adapter](https://github.com/jgaskins/perpetuity-postgres) under heavy development (nearly up-to-date with the [MongoDB adapter](https://github.com/jgaskins/perpetuity-mongodb)). Other persistence solutions will come later.
 
 ## How it works
 
@@ -16,15 +16,25 @@ Add the following to your Gemfile and run `bundle` to install it.
 gem 'perpetuity'
 ```
 
-## Configuration
-
-The only currently supported persistence method is MongoDB. Other schemaless solutions can probably be implemented easily. The simplest configuration is with the following line:
+**NOTE:** In version 1.0, you will need to install the Perpetuity database adapter, which will pull in the core Perpetuity gem:
 
 ```ruby
-Perpetuity.data_source :mongodb, 'my_database'
+gem 'perpetuity/mongodb'  # if using MongoDB
+gem 'perpetuity/postgres' # if using Postgres
 ```
 
-If your database is on another server or you need authentication, you can specify those as options:
+## Configuration
+
+The only currently supported persistence method is MongoDB, but stay tuned for the [Postgres adapter](https://github.com/jgaskins/perpetuity-postgres). Other schemaless solutions can probably be implemented easily. The simplest configuration is with the following line:
+
+```ruby
+Perpetuity.data_source :mongodb, 'my_mongo_database'
+Perpetuity.data_source :postgres, 'my_pg_database'
+```
+
+*Note:* You cannot use different databases in the same app like that. At least, not yet. :-)
+
+If your database is on another server/port or you need authentication, you can specify those as options:
 
 ```ruby
 Perpetuity.data_source :mongodb, 'my_database', host: 'mongo.example.com',
@@ -129,7 +139,7 @@ Perpetuity.generate_mapper_for Comment do
 end
 ```
 
-In this case, the article has an array of `Comment` objects, which the serializer knows that MongoDB cannot serialize. It will then tell the `Comment` mapper to serialize it and it stores that within the array.
+In this case, the article has an array of `Comment` objects, which the serializer knows that the data source cannot serialize. It will then tell the `Comment` mapper to serialize it and it stores that within the array.
 
 If some of the comments aren't objects of class `Comment`, it will adapt and serialize them according to their class. This works very well for objects that can have attributes of various types, such as a `User` having a profile attribute that can be either a `UserProfile` or `AdminProfile` object. You don't need to declare anything different for this case, just store the appropriate type of object into the `User`'s `profile` attribute and the mapper will take care of the details.
 
@@ -187,7 +197,7 @@ Perpetuity.generate_mapper_for Article do
 end
 ```
 
-Also, MongoDB, as well as some other databases, provide the ability to specify an order for the index. For example, if you want to query your blog with articles in descending order, you can specify a descending-order index on the timestamp for increased query performance.
+Also, some databases provide the ability to specify an order for the index. For example, if you want to query your blog with articles in descending order, you can specify a descending-order index on the timestamp for increased query performance.
 
 ```ruby
 Perpetuity.generate_mapper_for Article do
@@ -197,7 +207,7 @@ end
 
 ### Applying indexes
 
-It's very important to keep in mind that specifying an index does not create it on the database immediately. If you did this, you could potentially introduce downtime every time you specify a new index and deploy your application.
+It's very important to keep in mind that specifying an index does not create it on the database immediately. If you did this, you could potentially introduce downtime every time you specify a new index and deploy your application. Additionally, if a unique index fails to apply, you would not be able to start your app.
 
 In order to apply indexes to the database, you must send `reindex!` to the mapper. For example:
 
@@ -221,7 +231,7 @@ Let's face it, most Ruby apps run on Rails, so we need to be able to support it.
 
 Previous versions of Perpetuity would break when Rails reloaded your models in development mode due to class objects being different. It now reloads mappers dynamically based on whether the class has been reloaded.
 
-In order for this to work, your mapper files need to be named `*_mapper.rb` and be stored anywhere inside your project's `app` directory.
+In order for this to work, your mapper files need to be named `*_mapper.rb` and be stored anywhere inside your project's `app` directory. Usually, this would be `app/mappers`, but this is not enforced.
 
 ### ActiveModel-compliant API
 
