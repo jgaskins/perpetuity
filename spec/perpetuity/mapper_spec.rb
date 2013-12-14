@@ -92,6 +92,9 @@ module Perpetuity
         it 'caches results' do
           mapper.give_id_to returned_object, 1
           criteria = data_source.query { |o| o.id == 1 }
+          duplicate = returned_object.dup
+          duplicate.stub(class: returned_object.class)
+          returned_object.stub(dup: duplicate)
           data_source.should_receive(:retrieve)
                      .with(Object, criteria, options) { [returned_object] }
                      .once
