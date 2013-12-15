@@ -1,8 +1,7 @@
 language: ruby
 rvm:
   - 1.9.3
-  - rbx-19mode
-  - jruby-19mode
+  - rbx
   - 2.0.0
 services:
   - mongodb
