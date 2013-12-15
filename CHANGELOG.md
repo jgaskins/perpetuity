@@ -1,3 +1,13 @@
+## Version 1.0.0.beta
+
+- Duplicate objects properly for the identity map. The identity map holds references to objects pulled out of the DB. We need to duplicate these references on insertion and retrieval from the identity map to make sure that modifications to an object do not pollute the version in the identity map.
+- Add support for the [Amazon DynamoDB adapter](https://github.com/cardspring/perpetuity-dynamodb) by [Cardspring](https://github.com/cardspring). This adapter is still in very early development.
+- Allow passing in the type of the `id` attribute for databases that enforce column/field types. This allows us to say `id(String) { ... }`, telling the database that `id` needs to be a String.
+- Use hashes for AttributeSets to reduce serialization time.
+- Extract all database-specific logic to their own gems. The existing MongoDB adapter has been moved to the `perpetuity-mongodb` gem and there is a PostgreSQL adapter that lives under `perpetuity-postgres`.
+- Allow specs to be run on top of `perpetuity-postgres`
+- Remove validations.
+
 ## Version 0.7.3
 
 - Only save attributes which have changed
