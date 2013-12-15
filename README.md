@@ -17,6 +17,8 @@ gem 'perpetuity/mongodb', '~> 1.0.0.beta'  # if using MongoDB
 gem 'perpetuity/postgres'                  # if using Postgres
 ```
 
+Note that you do not need to explicitly declare the `perpetuity` gem as a dependency. The database adapter takes care of that for you. It works just like including `rspec-rails` into your Rails app.
+
 ## Configuration
 
 The only currently-1.0-quality adapter is MongoDB, but stay tuned for the [Postgres adapter](https://github.com/jgaskins/perpetuity-postgres). The simplest configuration is with the following line:
