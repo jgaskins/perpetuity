@@ -5,6 +5,6 @@ rvm:
   - 2.0.0
 matrix:
   allow_failures:
-    - rbx
+    - rvm: rbx
 services:
   - mongodb
