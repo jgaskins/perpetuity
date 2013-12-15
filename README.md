@@ -13,26 +13,20 @@ In the Data Mapper pattern, the objects you work with don't understand how to pe
 Add the following to your Gemfile and run `bundle` to install it.
 
 ```ruby
-gem 'perpetuity'
-```
-
-**NOTE:** In version 1.0, you will need to install the Perpetuity database adapter, which will pull in the core Perpetuity gem:
-
-```ruby
-gem 'perpetuity/mongodb'  # if using MongoDB
-gem 'perpetuity/postgres' # if using Postgres
+gem 'perpetuity/mongodb', '~> 1.0.0.beta'  # if using MongoDB
+gem 'perpetuity/postgres'                  # if using Postgres
 ```
 
 ## Configuration
 
-The only currently supported persistence method is MongoDB, but stay tuned for the [Postgres adapter](https://github.com/jgaskins/perpetuity-postgres). Other schemaless solutions can probably be implemented easily. The simplest configuration is with the following line:
+The only currently-1.0-quality adapter is MongoDB, but stay tuned for the [Postgres adapter](https://github.com/jgaskins/perpetuity-postgres). The simplest configuration is with the following line:
 
 ```ruby
 Perpetuity.data_source :mongodb, 'my_mongo_database'
 Perpetuity.data_source :postgres, 'my_pg_database'
 ```
 
-*Note:* You cannot use different databases in the same app like that. At least, not yet. :-)
+*Note:* You cannot use different databases in the same app like that. At least, not yet. :-) Possibly a 1.1 feature?
 
 If your database is on another server/port or you need authentication, you can specify those as options:
 
@@ -42,6 +36,8 @@ Perpetuity.data_source :mongodb, 'my_database', host: 'mongo.example.com',
                                                 username: 'mongo',
                                                 password: 'password'
 ```
+
+If you are using Perpetuity with a multithreaded application, you can specify a `:pool_size` parameter to set up a connection pool. If you omit this parameter, it will use the data source's default pool size.
 
 ## Setting up object mappers
 
