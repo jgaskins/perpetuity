@@ -27,11 +27,8 @@ module Perpetuity
     @mapper_registry ||= MapperRegistry.new
   end
 
-  def self.data_source adapter, db_name, options={}
-    adapters = { dynamodb: 'DynamoDB', mongodb: 'MongoDB', postgres: 'Postgres' }
-    adapter_class = const_get(adapters[adapter])
-
-    configure { data_source adapter_class.new(options.merge(db: db_name)) }
+  def self.data_source *args
+    configure { data_source *args }
   end
 
   # Necessary to be able to check whether Rails is loaded and initialized
