@@ -8,6 +8,7 @@ module Perpetuity
 
     def << attribute
       @attributes[attribute.name] = attribute
+      self
     end
 
     def [] name
