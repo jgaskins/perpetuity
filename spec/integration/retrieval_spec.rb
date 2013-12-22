@@ -223,4 +223,30 @@ describe "retrieval" do
     retrieved.title.should be_a String
     retrieved.title.should == fake_title
   end
+
+  describe 'Enumerable methods within queries' do
+    let(:article_with_comments) do
+      Article.new(SecureRandom.hex, SecureRandom.hex).tap do |a|
+        a.comments << Comment.new
+      end
+    end
+    let(:article_without_comments) do
+      Article.new(SecureRandom.hex, SecureRandom.hex)
+    end
+    let(:articles) { [ article_with_comments, article_without_comments ] }
+
+    before { mapper.insert articles }
+
+    it 'checks for the existence of attributes in an array' do
+      results = mapper.select { |article| article.comments.any? }.to_a
+      results.should include article_with_comments
+      results.should_not include article_without_comments
+    end
+
+    it 'checks that an array has no elements' do
+      results = mapper.select { |article| article.comments.none? }.to_a
+      results.should include article_without_comments
+      results.should_not include article_with_comments
+    end
+  end
 end
