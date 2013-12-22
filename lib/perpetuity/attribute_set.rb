@@ -2,8 +2,11 @@ module Perpetuity
   class AttributeSet
     include Enumerable
 
-    def initialize
+    def initialize *attributes
       @attributes = {}
+      attributes.each do |attribute|
+        self << attribute
+      end
     end
 
     def << attribute
