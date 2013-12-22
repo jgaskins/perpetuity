@@ -204,15 +204,11 @@ module Perpetuity
     def increment object, attribute, count=1
       id = id_for(object) || object
       data_source.increment mapped_class, id, attribute, count
-    rescue
-      raise ArgumentError.new('Attempted to increment a non-numeric value')
     end
 
     def decrement object, attribute, count=1
       id = id_for(object) || object
       data_source.increment mapped_class, id, attribute, -count
-    rescue
-      raise ArgumentError.new('Attempted to decrement a non-numeric value')
     end
 
     def sample
