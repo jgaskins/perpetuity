@@ -4,7 +4,7 @@ describe 'indexing' do
   let(:mapper_class) do
     Class.new(Perpetuity::Mapper) do
       map Object
-      attribute :name
+      attribute :name, type: String
       index :name, unique: true
     end
   end
