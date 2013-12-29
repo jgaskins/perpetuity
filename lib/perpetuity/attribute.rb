@@ -24,11 +24,16 @@ module Perpetuity
     end
 
     def to_s
-      name
+      name.to_s
     end
 
     def =~ regexp
       name.to_s =~ regexp
+    end
+
+    def == other
+      other.is_a?(self.class) &&
+      name.to_s == other.name.to_s
     end
   end
 end

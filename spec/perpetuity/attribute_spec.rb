@@ -26,5 +26,9 @@ module Perpetuity
     it 'can match a regex' do
       expect(attribute =~ /article/).to be_true
     end
+
+    it 'uses its name when converted to a string' do
+      attribute.to_s.should == 'article'
+    end
   end
 end
