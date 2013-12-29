@@ -40,7 +40,6 @@ describe 'indexing' do
   it 'creates indexes' do
     mapper.reindex!
     name_index.should be_active
-    mapper.remove_index! name_index
   end
 
   it 'specifies uniqueness of the index' do
