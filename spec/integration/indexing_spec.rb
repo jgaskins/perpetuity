@@ -39,6 +39,9 @@ describe 'indexing' do
 
   it 'creates indexes' do
     mapper.reindex!
+    mapper.data_source.active_indexes(Object).map do |index|
+      index.attribute.name.to_s
+    end.should include 'name'
     name_index.should be_active
   end
 
