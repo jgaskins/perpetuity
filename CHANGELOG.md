@@ -1,3 +1,11 @@
+## Version 1.0.0.beta2
+
+- Allow data source to be configured with a URI. This lets you say `Perpetuity.data_source "postgres://user:password@postgres.example.com:5432/my_database"`, keeping you from having to split up the URI yourself.
+- Remove overreaching rescue clauses to let exceptions get rescued inside the adapters
+- Allow AttributeSet to be initialized w/ attributes
+- Remove Mongo-specific code
+
+
 ## Version 1.0.0.beta
 
 - Duplicate objects properly for the identity map. The identity map holds references to objects pulled out of the DB. We need to duplicate these references on insertion and retrieval from the identity map to make sure that modifications to an object do not pollute the version in the identity map.
