@@ -1,3 +1,7 @@
+## Version 1.0.0.beta3
+
+- Fix title-case -> snake-case support to convert something like `UserRegistration` to `user_registration`. Previously, it would return `userregistration`.
+
 ## Version 1.0.0.beta2
 
 - Allow data source to be configured with a URI. This lets you say `Perpetuity.data_source "postgres://user:password@postgres.example.com:5432/my_database"`, keeping you from having to split up the URI yourself.
