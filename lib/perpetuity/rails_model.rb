@@ -22,7 +22,10 @@ module Perpetuity
       end
 
       def param_key
-        self.to_s.downcase.gsub('::', '_')
+        to_s.gsub('::', '_')
+            .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+            .gsub(/([a-z\d])([A-Z])/,'\1_\2')
+            .downcase
       end
 
       def route_key

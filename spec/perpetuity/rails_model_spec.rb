@@ -33,9 +33,16 @@ module Perpetuity
       klass.model_name.should be == klass
     end
 
-    it 'returns the param_key' do
-      stub_const 'Foo::Bar', klass
-      Foo::Bar.param_key.should be == 'foo_bar'
+    describe 'param_key' do
+      it 'converts :: to _' do
+        stub_const 'Foo::Bar', klass
+        Foo::Bar.param_key.should be == 'foo_bar'
+      end
+
+      it 'converts title-case to snake-case' do
+        stub_const 'UserRegistration', klass
+        UserRegistration.param_key.should be == 'user_registration'
+      end
     end
 
     it 'returns the route_key' do
