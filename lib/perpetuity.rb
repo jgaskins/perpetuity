@@ -5,6 +5,7 @@ require "perpetuity/mapper_registry"
 
 module Perpetuity
   def self.configure &block
+    register_standard_adapters
     detect_rails
     configuration.instance_exec(&block)
   end
@@ -42,8 +43,17 @@ module Perpetuity
     end
   end
 
+  private
+
   # Necessary to be able to check whether Rails is loaded and initialized
   def self.detect_rails
     require File.expand_path('../perpetuity/rails.rb', __FILE__) if defined? Rails
+  end
+
+  # Necessary until these adapters are updated to register themselves.
+  def self.register_standard_adapters
+    Perpetuity.register_adapter :mongodb => Perpetuity::MongoDB if defined?(Perpetuity::MongoDB)
+    Perpetuity.register_adapter :postgres => Perpetuity::Postgres if defined?(Perpetuity::Postgres)
+    Perpetuity.register_adapter :dynamodb => Perpetuity::DynamoDB if defined?(Perpetuity::DynamoDB)
   end
 end

@@ -44,13 +44,7 @@ module Perpetuity
     end
 
     def self.adapters
-      if @adapters.nil?
-        @adapters = {}
-        @adapters[:dynamodb] = Perpetuity::DynamoDB if defined?(Perpetuity::DynamoDB)
-        @adapters[:mongodb] = Perpetuity::MongoDB if defined?(Perpetuity::MongoDB)
-        @adapters[:postgres] = Perpetuity::Postgres if defined?(Perpetuity::Postgres)
-      end
-      @adapters
+      @adapters ||= {}
     end
 
     def adapter name
