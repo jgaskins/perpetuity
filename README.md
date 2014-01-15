@@ -248,3 +248,11 @@ This will let Rails know how to talk to your models in the way that Perpetuity h
 ## Contributing
 
 There are plenty of opportunities to improve what's here and possibly some design decisions that need some more refinement. You can help. If you have ideas to build on this, send some love in the form of pull requests, issues or [tweets](http://twitter.com/jamie_gaskins) and I'll do what I can for them.
+
+Please be sure that the tests run before submitting a pull request. Just run `rspec`.
+
+The tests include integration with an adapter. By default, this is the MongoDB adapter, but you can change that to Postgres by setting the `PERPETUITY_ADAPTER` environment variable to `postgres`.
+
+When testing with the MongoDB adapter, you'll need to have MongoDB running. On Mac OS X, you can install MongoDB via Homebrew and start it with `mongod`. No configuration is necessary.
+
+When testing with the Postgres adapter, you'll need to have PostgreSQL running. On Mac OS X, you can install PostgreSQL via Homebrew and start it with `pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start`. No other configuration is necessary, as long as the user has rights to create a database. NOTE: The Postgres adapter is incomplete at this time, and the tests do not yet pass with this adapter.
