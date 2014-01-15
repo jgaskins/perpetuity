@@ -31,6 +31,17 @@ module Perpetuity
     configure { data_source *args }
   end
 
+  def self.register_adapter adapters
+    config_adapters = Perpetuity::Configuration.adapters
+    adapters.each do |adapter_name, adapter_class|
+      if config_adapters.has_key?(adapter_name) && config_adapters[adapter_name] != adapter_class
+        raise "That adapter name has already been registered for #{config_adapters[adapter_name]}"
+      else
+        config_adapters[adapter_name] = adapter_class
+      end
+    end
+  end
+
   # Necessary to be able to check whether Rails is loaded and initialized
   def self.detect_rails
     require File.expand_path('../perpetuity/rails.rb', __FILE__) if defined? Rails

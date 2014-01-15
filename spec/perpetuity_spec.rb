@@ -49,4 +49,16 @@ describe Perpetuity do
       unpublished_ids.should include draft_id, not_yet_published_id
     end
   end
+
+  describe 'adapter registration' do
+    before do
+      class ExampleAdapter; end
+    end
+
+    it 'registers an adapter' do
+      Perpetuity.register_adapter :example => ExampleAdapter
+      Perpetuity::Configuration.adapters[:example].should == ExampleAdapter
+    end
+  end
+
 end
