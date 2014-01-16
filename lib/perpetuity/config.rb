@@ -14,7 +14,7 @@ module Perpetuity
           adapter = args.shift
           db_name = args.shift
           options = args.shift || {}
-          adapter_class = Perpetuity.const_get(adapter(adapter))
+          adapter_class = adapter(adapter)
 
           @db = adapter_class.new(options.merge(db: db_name))
         end
@@ -28,7 +28,7 @@ module Perpetuity
       options = args.shift || {}
 
       protocol = uri.scheme
-      klass = Perpetuity.const_get(adapter(protocol))
+      klass = adapter(protocol)
       db_options = {
         db: uri.path[1..-1],
         username: uri.user,
@@ -44,11 +44,7 @@ module Perpetuity
     end
 
     def self.adapters
-      @adapters ||= {
-        dynamodb: 'DynamoDB',
-        mongodb:  'MongoDB',
-        postgres: 'Postgres',
-      }
+      @adapters ||= {}
     end
 
     def adapter name
