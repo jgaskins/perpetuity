@@ -132,7 +132,7 @@ module Perpetuity
         object.instance_variable_set :@id, 1
         object.instance_variable_set :@modified, false
         object.instance_variable_set :@unmodified, false
-        mapper.identity_map << object
+        mapper.dirty_tracker << object
 
         object.instance_variable_set :@modified, true
 

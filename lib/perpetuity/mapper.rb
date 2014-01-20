@@ -3,16 +3,17 @@ require 'perpetuity/attribute'
 require 'perpetuity/data_injectable'
 require 'perpetuity/dereferencer'
 require 'perpetuity/retrieval'
-require 'perpetuity/duplicator'
+require 'perpetuity/dirty_tracker'
 
 module Perpetuity
   class Mapper
     include DataInjectable
-    attr_reader :mapper_registry, :identity_map
+    attr_reader :mapper_registry, :identity_map, :dirty_tracker
 
     def initialize registry=Perpetuity.mapper_registry
       @mapper_registry = registry
       @identity_map = IdentityMap.new
+      @dirty_tracker = DirtyTracker.new
     end
 
     def self.map klass, registry=Perpetuity.mapper_registry
@@ -128,7 +129,7 @@ module Perpetuity
 
     alias :find_all :select
 
-    def find id=nil, cache_result=true, &block
+    def find id=nil, &block
       if block_given?
         select(&block).first
       else
@@ -137,8 +138,9 @@ module Perpetuity
 
         result = select { |object| object.id == id }.first
 
-        if cache_result and !result.nil?
-          identity_map << Duplicator.new(result).object
+        unless result.nil?
+          identity_map << result
+          dirty_tracker << result
         end
 
         result
@@ -237,7 +239,7 @@ module Perpetuity
     end
 
     def serialize_changed_attributes object
-      cached = identity_map[object.class, id_for(object)]
+      cached = dirty_tracker[object.class, id_for(object)]
       if cached
         data_source.serialize_changed_attributes(object, cached, self)
       end
