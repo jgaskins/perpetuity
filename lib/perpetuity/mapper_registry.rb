@@ -11,15 +11,22 @@ module Perpetuity
     end
 
     def [] klass
-      mapper_class = @mappers.fetch(klass) do
+      mapper_class(klass).new(self)
+    end
+
+    def mapper_for klass, options={}
+      identity_map = options[:identity_map]
+      mapper_class(klass).new(self, *Array(identity_map))
+    end
+
+    def mapper_class klass
+      @mappers.fetch(klass) do
         load_mappers
         unless @mappers.has_key? klass
           raise KeyError, "No mapper for #{klass}"
         end
         @mappers[klass]
       end
-
-      mapper_class.new(self)
     end
 
     def []= klass, mapper

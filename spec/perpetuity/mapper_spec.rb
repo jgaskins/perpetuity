@@ -196,5 +196,14 @@ module Perpetuity
         end
       end
     end
+
+    describe 'using an existing identity map' do
+      it 'is initialized with an existing map' do
+        registry = Object.new
+        id_map = Object.new
+        mapper = Mapper.new(registry, id_map)
+        mapper.identity_map.should be id_map
+      end
+    end
   end
 end

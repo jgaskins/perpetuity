@@ -16,6 +16,10 @@ module Perpetuity
       it 'loads objects based on the specified objects and attribute' do
         first.instance_variable_set :@id, 1
         mapper.should_receive(:find).with(1) { first }
+        id_map = IdentityMap.new
+        derefer.stub(map: id_map)
+        registry.stub(:mapper_for)
+                .with(Object, identity_map: id_map) { mapper }
 
         derefer.load first_ref
         id = derefer[first_ref].instance_variable_get(:@id)

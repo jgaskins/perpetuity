@@ -5,8 +5,8 @@ module Perpetuity
   class Dereferencer
     attr_reader :map, :mapper_registry
 
-    def initialize mapper_registry
-      @map = IdentityMap.new
+    def initialize mapper_registry, identity_map=IdentityMap.new
+      @map = identity_map
       @mapper_registry = mapper_registry
     end
 
@@ -37,7 +37,7 @@ module Perpetuity
     def objects klass, ids
       ids = ids.uniq
       if ids.one?
-        mapper_registry[klass].find(ids.first)
+        mapper_registry.mapper_for(klass, identity_map: map).find(ids.first)
       elsif ids.none?
         []
       else

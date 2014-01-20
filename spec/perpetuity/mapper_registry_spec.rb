@@ -1,9 +1,10 @@
 require 'perpetuity/mapper_registry'
+require 'perpetuity/mapper'
 
 module Perpetuity
   describe MapperRegistry do
     let(:registry) { MapperRegistry.new }
-    let(:mapper) { Class.new { def initialize(map_reg); end } }
+    let(:mapper) { Mapper }
     subject { registry }
 
     before { registry[Object] = mapper }
@@ -29,6 +30,12 @@ module Perpetuity
         registry.should_receive(:load).with(mapper_file)
         registry.load_mappers
       end
+    end
+
+    it 'returns a mapper initialized with the specified identity map' do
+      identity_map = double('IdentityMap')
+      mapper = registry.mapper_for(Object, identity_map: identity_map)
+      mapper.identity_map.should be identity_map
     end
   end
 end

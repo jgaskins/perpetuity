@@ -10,9 +10,9 @@ module Perpetuity
     include DataInjectable
     attr_reader :mapper_registry, :identity_map, :dirty_tracker
 
-    def initialize registry=Perpetuity.mapper_registry
+    def initialize registry=Perpetuity.mapper_registry, id_map=IdentityMap.new
       @mapper_registry = registry
-      @identity_map = IdentityMap.new
+      @identity_map = id_map
       @dirty_tracker = DirtyTracker.new
     end
 
@@ -160,7 +160,7 @@ module Perpetuity
 
     def load_association! object, attribute
       objects = Array(object)
-      dereferencer = Dereferencer.new(mapper_registry)
+      dereferencer = Dereferencer.new(mapper_registry, identity_map)
       dereferencer.load objects.map { |obj| obj.instance_variable_get("@#{attribute}") }
 
       objects.each do |obj|
