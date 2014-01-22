@@ -136,7 +136,11 @@ module Perpetuity
         cached_value = identity_map[mapped_class, id]
         return cached_value if cached_value
 
-        result = select { |object| object.id == id }.first
+        result = if id.is_a? Array
+                   select { |object| object.id.in id }
+                 else
+                   select { |object| object.id == id }.first
+                 end
 
         unless result.nil?
           identity_map << result

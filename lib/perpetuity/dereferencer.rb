@@ -41,9 +41,7 @@ module Perpetuity
       elsif ids.none?
         []
       else
-        mapper_registry[klass].select { |object|
-          object.id.in ids.uniq
-        }.to_a
+        mapper_registry[klass].find(ids.uniq).to_a
       end
     end
 

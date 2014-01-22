@@ -71,6 +71,17 @@ module Perpetuity
           mapper.find(1).should be == returned_object
         end
 
+        it 'finds multiple objects by ID' do
+          first, second = double, double
+          criteria = data_source.query { |o| o.id.in [1, 2] }
+          options.merge! limit: nil
+          data_source.should_receive(:retrieve)
+                     .with(Object, criteria, options)
+                     .and_return [first, second]
+
+          mapper.find([1, 2]).to_a.should be == [first, second]
+        end
+
         it 'finds multiple objects with a block' do
           criteria = data_source.query { |o| o.name == 'foo' }
           options = self.options.merge(limit: nil)
