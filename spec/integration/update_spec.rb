@@ -15,11 +15,6 @@ describe 'updating' do
     mapper.find(mapper.id_for article).title.should eq new_title
   end
 
-  it 'updates the object in memory' do
-    mapper.update article, title: new_title
-    article.title.should eq new_title
-  end
-
   it 'resaves the object in the database' do
     article.title = new_title
     mapper.save article

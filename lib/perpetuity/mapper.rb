@@ -191,10 +191,8 @@ module Perpetuity
       end
     end
 
-    def update object, new_data, update_in_memory = true
+    def update object, new_data
       id = object.is_a?(mapped_class) ? id_for(object) : object
-
-      inject_data object, new_data if update_in_memory
       data_source.update mapped_class, id, new_data
     end
 
@@ -203,7 +201,7 @@ module Perpetuity
       if changed_attributes && changed_attributes.any?
         update object, changed_attributes
       else
-        update object, serialize(object), false
+        update object, serialize(object)
       end
     end
 
