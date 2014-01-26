@@ -1,3 +1,10 @@
+## Version 1.0.0.beta4
+
+- Remove in-memory updating of objects using the `Mapper#update` method.
+- Separate dirty tracking from `IdentityMap` and return to a real Identity Map.
+- Pass IdentityMap around when loading associations
+- Add `Perpetuity.register_adapter` method to allow various data-source adapters to register without Perpetuity knowing about them.
+
 ## Version 1.0.0.beta3
 
 - Fix title-case -> snake-case support to convert something like `UserRegistration` to `user_registration`. Previously, it would return `userregistration`.
