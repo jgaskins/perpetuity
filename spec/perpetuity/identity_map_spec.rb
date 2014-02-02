@@ -28,11 +28,6 @@ module Perpetuity
       specify 'the object returned is the same object' do
         id_map[klass, 1].should be object
       end
-
-      it 'stringifies keys when checking' do
-        retrieved = id_map[klass, '1']
-        retrieved.id.should == 1
-      end
     end
 
     context 'when the object does not exist in the IdentityMap' do

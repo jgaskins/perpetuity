@@ -5,13 +5,13 @@ module Perpetuity
     end
 
     def [] klass, id
-      @map[klass][id.to_s]
+      @map[klass][id]
     end
 
     def << object
       klass = object.class
       id = object.instance_variable_get(:@id)
-      @map[klass][id.to_s] = object
+      @map[klass][id] = object
     end
   end
 end
