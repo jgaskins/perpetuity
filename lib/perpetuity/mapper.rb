@@ -137,14 +137,19 @@ module Perpetuity
         return cached_value if cached_value
 
         result = if id.is_a? Array
-                   select { |object| object.id.in id }
+                   ids = id
+                   ids_in_map = ids & identity_map.ids_for(mapped_class)
+                   ids_to_select = ids - ids_in_map
+                   retrieved = select { |object| object.id.in ids_to_select }.to_a
+                   from_map = ids_in_map.map { |id| identity_map[mapped_class, id] }
+                   retrieved + from_map
                  else
                    select { |object| object.id == id }.first
                  end
 
-        unless result.nil?
-          identity_map << result
-          dirty_tracker << result
+        Array(result).each do |r|
+          identity_map << r
+          dirty_tracker << r
         end
 
         result

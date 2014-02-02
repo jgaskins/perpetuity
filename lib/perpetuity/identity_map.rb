@@ -13,5 +13,9 @@ module Perpetuity
       id = object.instance_variable_get(:@id)
       @map[klass][id] = object
     end
+
+    def ids_for klass
+      @map[klass].keys
+    end
   end
 end

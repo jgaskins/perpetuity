@@ -3,18 +3,17 @@ require 'perpetuity/identity_map'
 module Perpetuity
   describe IdentityMap do
     let(:id_map) { IdentityMap.new }
-
-    context 'when the object exists in the IdentityMap' do
-      let(:klass) do
-        Class.new do
-          attr_reader :id
-          def initialize id
-            @id = id
-          end
+    let(:klass) do
+      Class.new do
+        attr_reader :id
+        def initialize id
+          @id = id
         end
       end
-      let(:object) { klass.new(1) }
+    end
+    let(:object) { klass.new(1) }
 
+    context 'when the object exists in the IdentityMap' do
       before do
         id_map << object
       end
@@ -34,6 +33,11 @@ module Perpetuity
       it 'returns nil' do
         id_map[Object, 1].should be_nil
       end
+    end
+
+    it 'returns all of the ids it contains' do
+      id_map << object
+      id_map.ids_for(klass).should == [1]
     end
   end
 end
