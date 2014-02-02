@@ -1,3 +1,8 @@
+## Version 1.0.0.beta5
+
+- Don't stringify ids in `IdentityMap`. This should result in a little better performance. To be honest, I'm not even sure anymore why I put that in there.
+- Use the IdentityMap when retrieving multiple objects by id.
+
 ## Version 1.0.0.beta4
 
 - Remove in-memory updating of objects using the `Mapper#update` method.
