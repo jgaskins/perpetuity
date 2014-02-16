@@ -130,33 +130,33 @@ module Perpetuity
     alias :find_all :select
 
     def find id=nil, &block
-      if block_given?
-        select(&block).first
-      else
-        cached_value = identity_map[mapped_class, id]
-        return cached_value if cached_value
+      return select(&block).first if block_given?
 
-        result = if id.is_a? Array
-                   ids = id
-                   ids_in_map = ids & identity_map.ids_for(mapped_class)
-                   ids_to_select = ids - ids_in_map
-                   retrieved = select { |object| object.id.in ids_to_select }.to_a
-                   from_map = ids_in_map.map { |id| identity_map[mapped_class, id] }
-                   retrieved + from_map
-                 else
-                   select { |object| object.id == id }.first
-                 end
+      result = if id.is_a? Array
+                 find_all_by_ids id
+               else
+                 identity_map[mapped_class, id] ||
+                 select { |object| object.id == id }.first
+               end
 
-        Array(result).each do |r|
-          identity_map << r
-          dirty_tracker << r
-        end
-
-        result
+      Array(result).each do |r|
+        identity_map << r
+        dirty_tracker << r
       end
+
+      result
     end
 
     alias :detect :find
+
+    def find_all_by_ids ids
+      ids_in_map    = ids & identity_map.ids_for(mapped_class)
+      ids_to_select = ids - ids_in_map
+      retrieved     = select { |object| object.id.in ids_to_select }.to_a
+      from_map      = ids_in_map.map { |id| identity_map[mapped_class, id] }
+
+      retrieved.concat from_map
+    end
 
     def reject &block
       retrieve data_source.negate_query(&block)
