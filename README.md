@@ -2,7 +2,7 @@
 
 Perpetuity is a simple Ruby object persistence layer that attempts to follow Martin Fowler's Data Mapper pattern, allowing you to use plain-old Ruby objects in your Ruby apps in order to decouple your domain logic from the database as well as speed up your tests. There is no need for your model classes to inherit from another class or even include a mix-in.
 
-Your objects will hopefully eventually be able to be persisted into whichever database you like. Right now, only MongoDB is supported. There is also a [PostgreSQL adapter](https://github.com/jgaskins/perpetuity-postgres) under heavy development (nearly up-to-date with the [MongoDB adapter](https://github.com/jgaskins/perpetuity-mongodb)). Other persistence solutions will come later.
+Your objects will hopefully eventually be able to be persisted into whichever database you like. Right now, there are only a [PostgreSQL adapter](https://github.com/jgaskins/perpetuity-postgres) and a [MongoDB adapter](https://github.com/jgaskins/perpetuity-mongodb). Other persistence solutions will come later.
 
 ## How it works
 
