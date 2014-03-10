@@ -155,7 +155,7 @@ module Perpetuity
       it 'deletes an object from the data source' do
         object = Object.new
 
-        data_source.should_receive(:delete).with object, Object
+        data_source.should_receive(:delete).with [object], Object
         mapper.delete object
       end
 

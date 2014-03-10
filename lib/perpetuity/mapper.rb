@@ -162,9 +162,11 @@ module Perpetuity
       retrieve data_source.negate_query(&block)
     end
 
-    def delete object
-      id = persisted?(object) ? id_for(object) : object
-      data_source.delete id, mapped_class
+    def delete object_or_array
+      ids = Array(object_or_array).map { |object|
+        persisted?(object) ? id_for(object) : object
+      }
+      data_source.delete ids, mapped_class
     end
 
     def load_association! object, attribute
