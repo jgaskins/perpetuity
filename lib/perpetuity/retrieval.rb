@@ -1,14 +1,17 @@
 require 'perpetuity/reference'
+require 'perpetuity/identity_map'
 
 module Perpetuity
   class Retrieval
     include Enumerable
     attr_accessor :sort_attribute, :sort_direction, :result_limit, :result_page, :result_offset, :result_cache
+    attr_reader :identity_map
 
-    def initialize mapper, query
+    def initialize mapper, query, options={}
       @mapper = mapper
       @class = mapper.mapped_class
       @query = query
+      @identity_map = options.fetch(:identity_map) { IdentityMap.new }
       @data_source = mapper.data_source
     end
     
@@ -52,6 +55,18 @@ module Perpetuity
 
     def to_a
       @result_cache ||= @data_source.unserialize(@data_source.retrieve(@class, @query, options), @mapper)
+
+      @result_cache.map do |result|
+        klass = result.class
+        id = @mapper.id_for(result)
+
+        if cached_result = identity_map[klass, id]
+          cached_result
+        else
+          identity_map << result
+          result
+        end
+      end
     end
 
     def count

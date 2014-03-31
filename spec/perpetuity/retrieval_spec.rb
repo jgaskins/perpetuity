@@ -1,4 +1,5 @@
 require 'perpetuity/retrieval'
+require 'perpetuity/mapper'
 
 module Perpetuity
   describe Retrieval do
@@ -57,6 +58,7 @@ module Perpetuity
       data_source.should_receive(:retrieve).with(Object, query, options).
                   and_return([return_data])
       data_source.should_receive(:unserialize).with([return_data], mapper) { [return_object] }
+      mapper.stub(:id_for)
       results = retrieval.to_a
 
       results.map(&:id).should == [0]
@@ -66,6 +68,26 @@ module Perpetuity
       retrieval.result_cache = [1,2,3]
       retrieval.clear_cache
       retrieval.result_cache.should be_nil
+    end
+
+    describe 'identity map' do
+      let(:id_map) { IdentityMap.new }
+      let(:retrieval) { Retrieval.new(mapper, query, identity_map: id_map) }
+
+      it 'maintains an identity_map' do
+        retrieval.identity_map.should be id_map
+      end
+
+      it 'returns objects from the identity map with queries' do
+        result = Object.new
+        result.instance_variable_set :@id, '1'
+        id_map << result
+        mapper.stub(id_for: '1')
+        data_source.stub(:retrieve)
+        data_source.stub(unserialize: [result.dup])
+
+        retrieval.to_a.should include result
+      end
     end
   end
 end

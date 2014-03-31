@@ -249,4 +249,18 @@ describe "retrieval" do
       results.should_not include article_with_comments
     end
   end
+
+  describe 'identity map' do
+    let(:id) { mapper.insert Article.new }
+
+    it 'returns the same object when requested with the same id' do
+      mapper.find(id).should be mapper.find(id)
+    end
+
+    it 'returns the same object when requested with a block' do
+      first = mapper.find { |article| article.id == id }
+      second = mapper.find { |article| article.id == id }
+      first.should be second
+    end
+  end
 end

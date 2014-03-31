@@ -265,7 +265,7 @@ module Perpetuity
     private
 
     def retrieve query=data_source.query
-      Perpetuity::Retrieval.new self, query
+      Perpetuity::Retrieval.new self, query, identity_map: identity_map
     end
   end
 end
