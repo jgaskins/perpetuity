@@ -73,6 +73,8 @@ module Perpetuity
 
         it 'finds multiple objects by ID' do
           first, second = double, double
+          first.instance_variable_set :@id, 1
+          second.instance_variable_set :@id, 2
           criteria = data_source.query { |o| o.id.in [1, 2] }
           options.merge! limit: nil
           data_source.should_receive(:retrieve)
