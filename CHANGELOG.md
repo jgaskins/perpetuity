@@ -1,3 +1,7 @@
+## Version 1.0.0
+
+- Invoke identity map when using `mapper.select` and `mapper.find` with a block.
+
 ## Version 1.0.0.beta5
 
 - Don't stringify ids in `IdentityMap`. This should result in a little better performance. To be honest, I'm not even sure anymore why I put that in there.
