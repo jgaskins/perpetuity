@@ -15,8 +15,8 @@ module Perpetuity
     end
 
     def mapper_for klass, options={}
-      identity_map = options[:identity_map]
-      mapper_class(klass).new(self, *Array(identity_map))
+      identity_map = options.fetch(:identity_map) { IdentityMap.new }
+      mapper_class(klass).new(self, identity_map)
     end
 
     def mapper_class klass
