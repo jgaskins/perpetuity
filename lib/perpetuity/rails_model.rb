@@ -39,6 +39,10 @@ module Perpetuity
       def singular_route_key
         param_key
       end
+
+      def to_partial_path
+        "#{name.downcase}s/_#{name.downcase}"
+      end
     end
   end
 end

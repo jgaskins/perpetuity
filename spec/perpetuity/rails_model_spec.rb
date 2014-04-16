@@ -54,5 +54,10 @@ module Perpetuity
       stub_const 'Foo::Bar', klass
       Foo::Bar.singular_route_key.should be == 'foo_bar'
     end
+
+    it 'returns the partial path' do
+      stub_const 'Article', klass
+      Article.to_partial_path.should be == 'articles/_article'
+    end
   end
 end
