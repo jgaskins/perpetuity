@@ -58,7 +58,7 @@ module Perpetuity
         mapper.count.should be == 4
       end
 
-      describe 'finding a single object' do
+      describe 'finding specific objects' do
         let(:options) { {:attribute=>nil, :direction=>nil, :limit=>1, :skip=>nil} }
         let(:returned_object) { double('Retrieved Object', class: Object, delete: nil) }
 
