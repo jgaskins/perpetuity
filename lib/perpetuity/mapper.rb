@@ -152,7 +152,11 @@ module Perpetuity
     def find_all_by_ids ids
       ids_in_map    = ids & identity_map.ids_for(mapped_class)
       ids_to_select = ids - ids_in_map
-      retrieved     = select { |object| object.id.in ids_to_select }.to_a
+      retrieved     = if ids_to_select.any?
+                        select { |object| object.id.in ids_to_select }.to_a
+                      else
+                        []
+                      end
       from_map      = ids_in_map.map { |id| identity_map[mapped_class, id] }
 
       retrieved.concat from_map
