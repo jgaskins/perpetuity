@@ -34,8 +34,13 @@ module Perpetuity
       attribute_set.map(&:name)
     end
 
-    def self.index attribute, options={}
-      data_source.index mapped_class, attribute_set[attribute], options
+    def self.index attribute_names, options={}
+      attributes = Array(attribute_names).map { |name| attribute_set[name] }
+      if attributes.one?
+        data_source.index mapped_class, attributes.first, options
+      else
+        data_source.index mapped_class, attributes, options
+      end
     end
 
     def remove_index! index
