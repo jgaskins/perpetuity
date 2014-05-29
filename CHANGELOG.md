@@ -1,6 +1,8 @@
 ## Version 1.0.0
 
 - Invoke identity map when using `mapper.select` and `mapper.find` with a block.
+- When finding objects with an array of ids, if they are all contained in the identity map, we don't issue a query.
+- Allow indexes on multiple attributes.
 
 ## Version 1.0.0.beta5
 
