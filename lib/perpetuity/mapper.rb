@@ -9,6 +9,9 @@ module Perpetuity
   class Mapper
     include DataInjectable
     attr_reader :mapper_registry, :identity_map, :dirty_tracker
+    class << self
+      attr_accessor :collection_name
+    end
 
     def initialize registry=Perpetuity.mapper_registry, id_map=IdentityMap.new
       @mapper_registry = registry
@@ -19,6 +22,7 @@ module Perpetuity
     def self.map klass, registry=Perpetuity.mapper_registry
       registry[klass] = self
       @mapped_class = klass
+      @collection_name = klass.name
     end
 
     def self.attribute_set
@@ -37,9 +41,9 @@ module Perpetuity
     def self.index attribute_names, options={}
       attributes = Array(attribute_names).map { |name| attribute_set[name] }
       if attributes.one?
-        data_source.index mapped_class, attributes.first, options
+        data_source.index collection_name, attributes.first, options
       else
-        data_source.index mapped_class, attributes, options
+        data_source.index collection_name, attributes, options
       end
     end
 
@@ -48,7 +52,7 @@ module Perpetuity
     end
 
     def indexes
-      data_source.indexes(mapped_class)
+      data_source.indexes(collection_name)
     end
 
     def reindex!
@@ -59,7 +63,7 @@ module Perpetuity
     end
 
     def unspecified_indexes
-      active_indexes = data_source.active_indexes(mapped_class)
+      active_indexes = data_source.active_indexes(collection_name)
       active_but_unspecified_indexes = (active_indexes - indexes)
       active_but_unspecified_indexes.reject { |index| index.attribute =~ /id/ }
     end
@@ -73,14 +77,14 @@ module Perpetuity
     end
 
     def delete_all
-      data_source.delete_all mapped_class
+      data_source.delete_all collection_name
     end
 
     def insert object
       objects = Array(object)
       serialized_objects = objects.map { |obj| serialize(obj) }
 
-      new_ids = data_source.insert(mapped_class, serialized_objects, attribute_set)
+      new_ids = data_source.insert(collection_name, serialized_objects, attribute_set)
       objects.each_with_index do |obj, index|
         give_id_to obj, new_ids[index]
       end
@@ -101,7 +105,7 @@ module Perpetuity
     end
 
     def count &block
-      data_source.count mapped_class, &block
+      data_source.count collection_name, &block
     end
 
     def any? &block
@@ -175,7 +179,7 @@ module Perpetuity
       ids = Array(object_or_array).map { |object|
         persisted?(object) ? id_for(object) : object
       }
-      data_source.delete ids, mapped_class
+      data_source.delete ids, collection_name
     end
 
     def load_association! object, attribute
@@ -209,7 +213,7 @@ module Perpetuity
 
     def update object, new_data
       id = object.is_a?(mapped_class) ? id_for(object) : object
-      data_source.update mapped_class, id, new_data
+      data_source.update collection_name, id, new_data
     end
 
     def save object
@@ -223,12 +227,12 @@ module Perpetuity
 
     def increment object, attribute, count=1
       id = id_for(object) || object
-      data_source.increment mapped_class, id, attribute, count
+      data_source.increment collection_name, id, attribute, count
     end
 
     def decrement object, attribute, count=1
       id = id_for(object) || object
-      data_source.increment mapped_class, id, attribute, -count
+      data_source.increment collection_name, id, attribute, -count
     end
 
     def sample
@@ -267,8 +271,16 @@ module Perpetuity
       @mapped_class
     end
 
+    def self.collection name
+      @collection_name = name.to_s
+    end
+
     def mapped_class
       self.class.mapped_class
+    end
+
+    def collection_name
+      self.class.collection_name
     end
 
     private

@@ -9,7 +9,7 @@ module Perpetuity
 
     def initialize mapper, query, options={}
       @mapper = mapper
-      @class = mapper.mapped_class
+      @collection_name = mapper.collection_name
       @query = query
       @identity_map = options.fetch(:identity_map) { IdentityMap.new }
       @data_source = mapper.data_source
@@ -54,7 +54,7 @@ module Perpetuity
     end
 
     def to_a
-      @result_cache ||= @data_source.unserialize(@data_source.retrieve(@class, @query, options), @mapper)
+      @result_cache ||= @data_source.unserialize(@data_source.retrieve(@collection_name, @query, options), @mapper)
 
       @result_cache.map do |result|
         klass = result.class
@@ -70,7 +70,7 @@ module Perpetuity
     end
 
     def count
-      @data_source.count(@class, @query)
+      @data_source.count(@collection_name, @query)
     end
 
     def first

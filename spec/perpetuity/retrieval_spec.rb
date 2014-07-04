@@ -5,7 +5,7 @@ module Perpetuity
   describe Retrieval do
     let(:data_source) { double('data_source') }
     let(:registry) { double('mapper_registry') }
-    let(:mapper) { double(mapped_class: Object, data_source: data_source, mapper_registry: registry) }
+    let(:mapper) { double(collection_name: 'Object', data_source: data_source, mapper_registry: registry) }
     let(:query) { double('Query', to_db: {}) }
     let(:retrieval) { Perpetuity::Retrieval.new mapper, query }
     subject { retrieval }
@@ -55,7 +55,7 @@ module Perpetuity
       return_object.stub(id: return_data[:id])
       options = { attribute: nil, direction: nil, limit: nil, skip: nil }
 
-      data_source.should_receive(:retrieve).with(Object, query, options).
+      data_source.should_receive(:retrieve).with('Object', query, options).
                   and_return([return_data])
       data_source.should_receive(:unserialize).with([return_data], mapper) { [return_object] }
       mapper.stub(:id_for)

@@ -47,14 +47,14 @@ module Perpetuity
         obj.instance_variable_set '@my_attribute', 'foo'
         data_source.should_receive(:can_serialize?).with('foo') { true }
         data_source.should_receive(:insert)
-                   .with(Object, [{ 'my_attribute' => 'foo' }], mapper.attribute_set)
+                   .with('Object', [{ 'my_attribute' => 'foo' }], mapper.attribute_set)
                    .and_return(['bar'])
 
         mapper.insert(obj).should be == 'bar'
       end
 
       it 'counts objects of its mapped class in the data source' do
-        data_source.should_receive(:count).with(Object) { 4 }
+        data_source.should_receive(:count).with('Object') { 4 }
         mapper.count.should be == 4
       end
 
@@ -66,7 +66,7 @@ module Perpetuity
           returned_object.instance_variable_set :@id, 1
           criteria = data_source.query { |o| o.id == 1 }
           data_source.should_receive(:retrieve)
-                     .with(Object, criteria, options) { [returned_object] }
+                     .with('Object', criteria, options) { [returned_object] }
 
           mapper.find(1).should be == returned_object
         end
@@ -78,7 +78,7 @@ module Perpetuity
           criteria = data_source.query { |o| o.id.in [1, 2] }
           options.merge! limit: nil
           data_source.should_receive(:retrieve)
-                     .with(Object, criteria, options)
+                     .with('Object', criteria, options)
                      .and_return [first, second]
 
           mapper.find([1, 2]).to_a.should be == [first, second]
@@ -88,7 +88,7 @@ module Perpetuity
           criteria = data_source.query { |o| o.name == 'foo' }
           options = self.options.merge(limit: nil)
           data_source.should_receive(:retrieve)
-                     .with(Object, criteria, options) { [returned_object] }.twice
+                     .with('Object', criteria, options) { [returned_object] }.twice
 
           mapper.select   { |e| e.name == 'foo' }.to_a.should be == [returned_object]
           mapper.find_all { |e| e.name == 'foo' }.to_a.should be == [returned_object]
@@ -97,7 +97,7 @@ module Perpetuity
         it 'finds an object with a block' do
           criteria = data_source.query { |o| o.name == 'foo' }
           data_source.should_receive(:retrieve)
-                     .with(Object, criteria, options) { [returned_object] }.twice
+                     .with('Object', criteria, options) { [returned_object] }.twice
           mapper.find   { |o| o.name == 'foo' }.should be == returned_object
           mapper.detect { |o| o.name == 'foo' }.should be == returned_object
         end
@@ -109,7 +109,7 @@ module Perpetuity
           duplicate.stub(class: returned_object.class)
           returned_object.stub(dup: duplicate)
           data_source.should_receive(:retrieve)
-                     .with(Object, criteria, options) { [returned_object] }
+                     .with('Object', criteria, options) { [returned_object] }
                      .once
 
           mapper.find(1)
@@ -119,7 +119,7 @@ module Perpetuity
         it 'does not cache nil results' do
           criteria = data_source.query { |o| o.id == 1 }
           data_source.should_receive(:retrieve)
-                     .with(Object, criteria, options) { [] }
+                     .with('Object', criteria, options) { [] }
                      .twice
 
           mapper.find(1)
@@ -133,7 +133,7 @@ module Perpetuity
         mapper.give_id_to object, 1
         object.instance_variable_set '@foo', 'bar'
         data_source.should_receive(:can_serialize?).with('bar') { true }
-        data_source.should_receive(:update).with Object, 1, { 'foo' => 'bar' }
+        data_source.should_receive(:update).with 'Object', 1, { 'foo' => 'bar' }
 
         mapper.save object
       end
@@ -157,12 +157,12 @@ module Perpetuity
       it 'deletes an object from the data source' do
         object = Object.new
 
-        data_source.should_receive(:delete).with [object], Object
+        data_source.should_receive(:delete).with [object], 'Object'
         mapper.delete object
       end
 
       it 'deletes all objects it manages' do
-        data_source.should_receive(:delete_all).with(Object)
+        data_source.should_receive(:delete_all).with('Object')
         mapper.delete_all
       end
     end
@@ -216,6 +216,18 @@ module Perpetuity
         id_map = Object.new
         mapper = Mapper.new(registry, id_map)
         mapper.identity_map.should be id_map
+      end
+    end
+
+    describe 'specifying the collection/table name' do
+      it 'changes the collection name' do
+        mapper_class.collection_name = 'articles'
+        mapper.collection_name.should == 'articles'
+      end
+
+      it 'defaults to the mapped class name' do
+        mapper_class.map Object
+        mapper.collection_name.should == 'Object'
       end
     end
   end
