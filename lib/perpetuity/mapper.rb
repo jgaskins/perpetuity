@@ -22,7 +22,7 @@ module Perpetuity
     def self.map klass, registry=Perpetuity.mapper_registry
       registry[klass] = self
       @mapped_class = klass
-      @collection_name = klass.name
+      collection klass.name
     end
 
     def self.attribute_set
