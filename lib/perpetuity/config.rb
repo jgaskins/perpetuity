@@ -1,7 +1,12 @@
+require 'logger'
 require 'uri'
 
 module Perpetuity
   class Configuration
+    def initialize
+      @logger = Logger.new(STDOUT)
+    end
+
     def data_source *args
       if args.any?
         db = args.first
@@ -21,6 +26,15 @@ module Perpetuity
       end
 
       @db
+    end
+
+    def logger *args
+      if args.any?
+        raise ArgumentError, 'Perpetuity::Configuration#logger takes 0..1 arguments'
+        @logger = args.first
+      end
+
+      @logger
     end
 
     def data_source_from_url *args

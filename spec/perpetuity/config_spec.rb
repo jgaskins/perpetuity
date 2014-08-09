@@ -32,5 +32,9 @@ module Perpetuity
       data_source.db.should == 'database'
       data_source.pool_size.should == 20
     end
+
+    it 'sets up a logger by default' do
+      config.logger.should be_a Logger
+    end
   end
 end

@@ -32,6 +32,10 @@ module Perpetuity
     configure { data_source *args }
   end
 
+  def self.logger
+    configuration.logger
+  end
+
   def self.register_adapter adapters
     config_adapters = Perpetuity::Configuration.adapters
     adapters.each do |adapter_name, adapter_class|
