@@ -5,6 +5,7 @@ module Perpetuity
   class Configuration
     def initialize
       @logger = Logger.new(STDOUT)
+      @logger.progname = 'Perpetuity'
     end
 
     def data_source *args
