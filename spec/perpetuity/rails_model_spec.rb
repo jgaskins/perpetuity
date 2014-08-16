@@ -59,5 +59,27 @@ module Perpetuity
       stub_const 'Article', klass
       Article.to_partial_path.should be == 'articles/_article'
     end
+
+    describe 'human' do
+      it 'returns the class name for a single-word class name' do
+        stub_const 'Article', klass
+        Article.human.should == 'Article'
+      end
+
+      it 'converts namespaced to capitalized words' do
+        stub_const 'Foo::Bar', klass
+        Foo::Bar.human.should == 'Foo Bar'
+      end
+
+      it 'separates title-cased words' do
+        stub_const 'FooBarBaz', klass
+        FooBarBaz.human.should == 'Foo Bar Baz'
+      end
+
+      it 'separates snake-cased, capitalized words' do
+        stub_const 'FOO_BAR_BAZ', klass
+        FOO_BAR_BAZ.human.should == 'Foo Bar Baz'
+      end
+    end
   end
 end

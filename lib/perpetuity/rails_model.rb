@@ -43,6 +43,15 @@ module Perpetuity
       def to_partial_path
         "#{name.downcase}s/_#{name.downcase}"
       end
+
+      def human
+        if name == name.upcase
+          name.split(/_/).map(&:capitalize).join(' ')
+        else
+          name.gsub(/::|_/, ' ')
+              .gsub(/(\w)([A-Z])/, '\1 \2')
+        end
+      end
     end
   end
 end
