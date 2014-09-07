@@ -174,7 +174,7 @@ module Perpetuity
         before { mapper.give_id_to object, 1 }
 
         it 'knows the object is persisted' do
-          mapper.persisted?(object).should be_true
+          mapper.persisted?(object).should be_truthy
         end
 
         it 'knows the id of the object' do
@@ -184,7 +184,7 @@ module Perpetuity
 
       context 'when not persisted' do
         it 'knows the object is not persisted' do
-          mapper.persisted?(object).should be_false
+          mapper.persisted?(object).should be_falsey
         end
 
         it 'returns a nil id' do

@@ -55,7 +55,7 @@ describe 'indexing' do
     mapper_without_index.reindex!
     mapper.data_source.active_indexes(Object).any? do |index|
       index.attribute.name.to_s == 'name'
-    end.should be_false
+    end.should be_falsey
   end
 end
 

@@ -8,8 +8,13 @@ module Perpetuity
 
     before { object.instance_variable_set :@id, 1 }
 
-    its(:klass) { should be Object }
-    its(:id)    { should be == 1 }
+    it "stores the object's class in the `klass` attribute" do
+      expect(reference.klass).to be Object
+    end
+
+    it "stores the object's id" do
+      expect(reference.id).to be 1
+    end
 
     describe 'comparability' do
       describe 'equality' do

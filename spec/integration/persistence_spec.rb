@@ -114,7 +114,7 @@ describe 'Persistence' do
 
     it 'persists even with colons in the names' do
       mapper.insert person
-      mapper.persisted?(person).should be_true
+      mapper.persisted?(person).should be_truthy
     end
   end
 end

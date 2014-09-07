@@ -42,7 +42,7 @@ describe "retrieval" do
 
   it 'limits result set' do
     5.times { mapper.insert Article.new }
-    mapper.all.limit(4).to_a.should have(4).items
+    mapper.all.limit(4).to_a.size.should eq 4
   end
 
   it 'counts result set' do
@@ -156,28 +156,28 @@ describe "retrieval" do
     end
 
     it 'checks whether any results match' do
-      mapper.any? { |article| article.title == title }.should be_true
-      mapper.any? { |article| article.title == SecureRandom.hex }.should be_false
+      mapper.any? { |article| article.title == title }.should be_truthy
+      mapper.any? { |article| article.title == SecureRandom.hex }.should be_falsey
     end
 
     it 'checks whether all results match' do
       mapper.delete_all
       2.times { |i| mapper.insert Article.new(title, nil, nil, nil, i) }
-      mapper.all? { |article| article.title == title }.should be_true
-      mapper.all? { |article| article.views == 0 }.should be_false
+      mapper.all? { |article| article.title == title }.should be_truthy
+      mapper.all? { |article| article.views == 0 }.should be_falsey
     end
 
     it 'checks whether only one result matches' do
       unique_title = SecureRandom.hex
       mapper.insert Article.new(unique_title)
-      mapper.one? { |article| article.title == unique_title }.should be_true
-      mapper.one? { |article| article.title == title }.should be_false
-      mapper.one? { |article| article.title == 'Title' }.should be_false
+      mapper.one? { |article| article.title == unique_title }.should be_truthy
+      mapper.one? { |article| article.title == title }.should be_falsey
+      mapper.one? { |article| article.title == 'Title' }.should be_falsey
     end
 
     it 'checks whether no results match' do
-      mapper.none? { |article| article.title == SecureRandom.hex }.should be_true
-      mapper.none? { |article| article.title == title }.should be_false
+      mapper.none? { |article| article.title == SecureRandom.hex }.should be_truthy
+      mapper.none? { |article| article.title == title }.should be_falsey
     end
   end
 
@@ -201,7 +201,7 @@ describe "retrieval" do
     articles.each { |article| mapper.insert article }
 
     ret = mapper.select { |article| article.title == title }.drop(2).sort(:id).to_a
-    ret.should have(1).items
+    ret.size.should eq 1
     ret.first.should == articles.last
   end
 

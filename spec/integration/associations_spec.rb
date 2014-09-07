@@ -14,11 +14,12 @@ describe 'associations with other objects' do
 
   describe 'referenced relationships' do
     let(:creator) { topic_mapper.find(topic_mapper.id_for topic).creator }
-    subject { creator }
 
-    it { should be_a Perpetuity::Reference }
-    its(:klass) { should be User }
-    its(:id) { should be == user_mapper.id_for(user) }
+    it 'stores a reference in the object attribute' do
+      expect(creator).to be_a Perpetuity::Reference
+      expect(creator.klass).to be User
+      expect(creator.id).to eq user_mapper.id_for(user)
+    end
   end
 
   it 'can retrieve a one-to-one association' do
