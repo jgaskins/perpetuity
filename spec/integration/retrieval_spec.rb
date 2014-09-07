@@ -14,9 +14,9 @@ describe "retrieval" do
     mapper.insert article
     retrieved = mapper.find(mapper.id_for article)
 
-    mapper.id_for(retrieved).should be == mapper.id_for(article)
-    retrieved.title.should eq article.title
-    retrieved.body.should eq article.body
+    expect(mapper.id_for(retrieved)).to be == mapper.id_for(article)
+    expect(retrieved.title).to be == article.title
+    expect(retrieved.body).to be == article.body
   end
 
   describe 'sorting' do
@@ -31,25 +31,25 @@ describe "retrieval" do
 
     it 'sorts results' do
       titles = mapper.all.sort(:published_at).map(&:title)
-      titles.should be == %w(First Second Third)
+      expect(titles).to be == %w(First Second Third)
     end
 
     it 'reverse-sorts results' do
       titles = mapper.all.sort(:published_at).reverse.map(&:title)
-      titles.should be == %w(Third Second First)
+      expect(titles).to be == %w(Third Second First)
     end
   end
 
   it 'limits result set' do
     5.times { mapper.insert Article.new }
-    mapper.all.limit(4).to_a.size.should eq 4
+    expect(mapper.all.limit(4).to_a.size).to eq 4
   end
 
   it 'counts result set' do
     title = "Foo #{Time.now.to_f}"
     mapper = Perpetuity[Article]
     5.times { mapper.insert Article.new(title) }
-    mapper.count { |article| article.title == title }.should == 5
+    expect(mapper.count { |article| article.title == title }).to be == 5
   end
 
   describe "Array-like syntax" do
@@ -68,57 +68,57 @@ describe "retrieval" do
       it 'selects objects using equality' do
         selected = mapper.select { |article| article.title == 'Published' }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should include published_id
-        ids.should_not include draft_id
+        expect(ids).to include published_id
+        expect(ids).not_to include draft_id
       end
 
       it 'selects objects using greater-than' do
         selected = mapper.select { |article| article.published_at < Time.now }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should include published_id
-        ids.should_not include draft_id
+        expect(ids).to include published_id
+        expect(ids).not_to include draft_id
       end
 
       it 'selects objects using greater-than-or-equal' do
         selected = mapper.select { |article| article.views >= 3 }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should include published_id
-        ids.should_not include draft_id
+        expect(ids).to include published_id
+        expect(ids).not_to include draft_id
       end
 
       it 'selects objects using less-than' do
         selected = mapper.select { |article| article.views < 3 }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should include draft_id
-        ids.should_not include published_id
+        expect(ids).to include draft_id
+        expect(ids).not_to include published_id
       end
 
       it 'selects objects using less-than-or-equal' do
         selected = mapper.select { |article| article.views <= 0 }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should include draft_id
-        ids.should_not include published_id
+        expect(ids).to include draft_id
+        expect(ids).not_to include published_id
       end
 
       it 'selects objects using inequality' do
         selected = mapper.select { |article| article.title != 'Draft' }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should_not include draft_id
-        ids.should include published_id
+        expect(ids).not_to include draft_id
+        expect(ids).to include published_id
       end
 
       it 'selects objects using regular expressions' do
         selected = mapper.select { |article| article.title =~ /Pub/ }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should include published_id
-        ids.should_not include draft_id
+        expect(ids).to include published_id
+        expect(ids).not_to include draft_id
       end
 
       it 'selects objects using inclusion' do
         selected = mapper.select { |article| article.title.in %w( Published ) }
         ids = selected.map { |article| mapper.id_for article }
-        ids.should include published_id
-        ids.should_not include draft_id
+        expect(ids).to include published_id
+        expect(ids).not_to include draft_id
       end
     end
 
@@ -134,9 +134,9 @@ describe "retrieval" do
       selected = mapper.select { |article| article.title }
       ids = selected.map { |article| mapper.id_for(article) }
 
-      ids.should     include truthy_id
-      ids.should_not include false_id
-      ids.should_not include nil_id
+      expect(ids).to     include truthy_id
+      expect(ids).not_to include false_id
+      expect(ids).not_to include nil_id
     end
   end
 
@@ -152,32 +152,32 @@ describe "retrieval" do
 
     it 'counts the results' do
       query = mapper.select { |article| article.title == title }
-      query.count.should == 2
+      expect(query.count).to be == 2
     end
 
     it 'checks whether any results match' do
-      mapper.any? { |article| article.title == title }.should be_truthy
-      mapper.any? { |article| article.title == SecureRandom.hex }.should be_falsey
+      expect(mapper.any? { |article| article.title == title }).to be_truthy
+      expect(mapper.any? { |article| article.title == SecureRandom.hex }).to be_falsey
     end
 
     it 'checks whether all results match' do
       mapper.delete_all
       2.times { |i| mapper.insert Article.new(title, nil, nil, nil, i) }
-      mapper.all? { |article| article.title == title }.should be_truthy
-      mapper.all? { |article| article.views == 0 }.should be_falsey
+      expect(mapper.all? { |article| article.title == title }).to be_truthy
+      expect(mapper.all? { |article| article.views == 0 }).to be_falsey
     end
 
     it 'checks whether only one result matches' do
       unique_title = SecureRandom.hex
       mapper.insert Article.new(unique_title)
-      mapper.one? { |article| article.title == unique_title }.should be_truthy
-      mapper.one? { |article| article.title == title }.should be_falsey
-      mapper.one? { |article| article.title == 'Title' }.should be_falsey
+      expect(mapper.one? { |article| article.title == unique_title }).to be_truthy
+      expect(mapper.one? { |article| article.title == title }).to be_falsey
+      expect(mapper.one? { |article| article.title == 'Title' }).to be_falsey
     end
 
     it 'checks whether no results match' do
-      mapper.none? { |article| article.title == SecureRandom.hex }.should be_truthy
-      mapper.none? { |article| article.title == title }.should be_falsey
+      expect(mapper.none? { |article| article.title == SecureRandom.hex }).to be_truthy
+      expect(mapper.none? { |article| article.title == title }).to be_falsey
     end
   end
 
@@ -191,7 +191,7 @@ describe "retrieval" do
       mapper.insert article
       retrieved_article = mapper.find(mapper.id_for article)
       mapper.load_association! retrieved_article, :author
-      retrieved_article.author.should be_a CRM::Person
+      expect(retrieved_article.author).to be_a CRM::Person
     end
   end
 
@@ -201,8 +201,8 @@ describe "retrieval" do
     articles.each { |article| mapper.insert article }
 
     ret = mapper.select { |article| article.title == title }.drop(2).sort(:id).to_a
-    ret.size.should eq 1
-    ret.first.should == articles.last
+    expect(ret.size).to eq 1
+    expect(ret.first).to be == articles.last
   end
 
   describe 'selecting random objects' do
@@ -211,7 +211,7 @@ describe "retrieval" do
       articles = 3.times.map { Article.new(SecureRandom.hex) }
       articles.each { |article| mapper.insert article }
 
-      articles.should include mapper.sample
+      expect(articles).to include mapper.sample
     end
   end
 
@@ -220,8 +220,8 @@ describe "retrieval" do
     id = mapper.insert Article.new(fake_title)
 
     retrieved = mapper.find(id)
-    retrieved.title.should be_a String
-    retrieved.title.should == fake_title
+    expect(retrieved.title).to be_a String
+    expect(retrieved.title).to be == fake_title
   end
 
   describe 'Enumerable methods within queries' do
@@ -239,14 +239,14 @@ describe "retrieval" do
 
     it 'checks for the existence of attributes in an array' do
       results = mapper.select { |article| article.comments.any? }.to_a
-      results.should include article_with_comments
-      results.should_not include article_without_comments
+      expect(results).to include article_with_comments
+      expect(results).not_to include article_without_comments
     end
 
     it 'checks that an array has no elements' do
       results = mapper.select { |article| article.comments.none? }.to_a
-      results.should include article_without_comments
-      results.should_not include article_with_comments
+      expect(results).to include article_without_comments
+      expect(results).not_to include article_with_comments
     end
   end
 
@@ -254,13 +254,13 @@ describe "retrieval" do
     let(:id) { mapper.insert Article.new }
 
     it 'returns the same object when requested with the same id' do
-      mapper.find(id).should be mapper.find(id)
+      expect(mapper.find(id)).to be mapper.find(id)
     end
 
     it 'returns the same object when requested with a block' do
       first = mapper.find { |article| article.id == id }
       second = mapper.find { |article| article.id == id }
-      first.should be second
+      expect(first).to be second
     end
   end
 end

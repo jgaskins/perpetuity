@@ -3,6 +3,7 @@ require 'perpetuity/postgres'
 
 module Perpetuity
   describe Configuration do
+    before(:all) { Perpetuity.register_standard_adapters }
     let(:config) { Configuration.new }
 
     it 'sets a data source' do
@@ -13,28 +14,28 @@ module Perpetuity
                          host: 'host',
                          port: 1337
 
-      config.data_source.should be_a Postgres
-      config.data_source.db.should == 'perpetuity'
-      config.data_source.username.should == 'username'
-      config.data_source.password.should == 'password'
-      config.data_source.host.should == 'host'
-      config.data_source.port.should == 1337
+      expect(config.data_source).to be_a Postgres
+      expect(config.data_source.db).to eq 'perpetuity'
+      expect(config.data_source.username).to eq 'username'
+      expect(config.data_source.password).to eq 'password'
+      expect(config.data_source.host).to eq 'host'
+      expect(config.data_source.port).to eq 1337
     end
 
     it 'allows a URL as its data source' do
       db = "postgres://username:password@host:1337/database"
       data_source = config.data_source(db, pool_size: 20)
-      data_source.should be_a Postgres
-      data_source.username.should == 'username'
-      data_source.password.should == 'password'
-      data_source.host.should == 'host'
-      data_source.port.should == 1337
-      data_source.db.should == 'database'
-      data_source.pool_size.should == 20
+      expect(data_source).to be_a Postgres
+      expect(data_source.username).to eq 'username'
+      expect(data_source.password).to eq 'password'
+      expect(data_source.host).to eq 'host'
+      expect(data_source.port).to eq 1337
+      expect(data_source.db).to eq 'database'
+      expect(data_source.pool_size).to eq 20
     end
 
     it 'sets up a logger by default' do
-      config.logger.should be_a Logger
+      expect(config.logger).to be_a Logger
     end
   end
 end

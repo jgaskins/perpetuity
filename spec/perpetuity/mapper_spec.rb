@@ -13,49 +13,49 @@ module Perpetuity
 
     it 'has correct attributes' do
       mapper_class.attribute :name
-      mapper_class.attributes.should eq [:name]
+      expect(mapper_class.attributes).to eq [:name]
     end
 
     it 'returns an empty attribute list when no attributes have been assigned' do
-      mapper_class.attributes.should be_empty
+      expect(mapper_class.attributes).to be_empty
     end
 
     it 'can have embedded attributes' do
       mapper_class.attribute :comments, embedded: true
-      mapper_class.attribute_set[:comments].should be_embedded
+      expect(mapper_class.attribute_set[:comments]).to be_embedded
     end
 
     it 'registers itself with the mapper registry' do
       mapper_class.map Object, registry
-      registry[Object].should be_instance_of mapper_class
+      expect(registry[Object]).to be_instance_of mapper_class
     end
 
     describe 'talking to the data source' do
       let(:data_source) { MongoDB.new(db: nil) }
       before do
-        mapper_class.stub(data_source: data_source)
+        allow(mapper_class).to receive(:data_source) { data_source }
         mapper_class.map Object, registry
       end
 
       specify 'mappers use the data source that the mapper class uses' do
-        mapper.data_source.should be data_source
+        expect(mapper.data_source).to be data_source
       end
 
       it 'inserts objects into a data source' do
         mapper_class.attribute :my_attribute
         obj = Object.new
         obj.instance_variable_set '@my_attribute', 'foo'
-        data_source.should_receive(:can_serialize?).with('foo') { true }
-        data_source.should_receive(:insert)
+        expect(data_source).to receive(:can_serialize?).with('foo') { true }
+        expect(data_source).to receive(:insert)
                    .with('Object', [{ 'my_attribute' => 'foo' }], mapper.attribute_set)
                    .and_return(['bar'])
 
-        mapper.insert(obj).should be == 'bar'
+        expect(mapper.insert(obj)).to be == 'bar'
       end
 
       it 'counts objects of its mapped class in the data source' do
-        data_source.should_receive(:count).with('Object') { 4 }
-        mapper.count.should be == 4
+        expect(data_source).to receive(:count).with('Object') { 4 }
+        expect(mapper.count).to be == 4
       end
 
       describe 'finding specific objects' do
@@ -65,10 +65,10 @@ module Perpetuity
         it 'finds an object by ID' do
           returned_object.instance_variable_set :@id, 1
           criteria = data_source.query { |o| o.id == 1 }
-          data_source.should_receive(:retrieve)
+          expect(data_source).to receive(:retrieve)
                      .with('Object', criteria, options) { [returned_object] }
 
-          mapper.find(1).should be == returned_object
+          expect(mapper.find(1)).to be == returned_object
         end
 
         it 'finds multiple objects by ID' do
@@ -77,38 +77,38 @@ module Perpetuity
           mapper.give_id_to second, 2
           criteria = data_source.query { |o| o.id.in [1, 2] }
           options.merge! limit: nil
-          data_source.should_receive(:retrieve)
+          expect(data_source).to receive(:retrieve)
                      .with('Object', criteria, options)
                      .and_return [first, second]
 
-          mapper.find([1, 2]).to_a.should be == [first, second]
+          expect(mapper.find([1, 2]).to_a).to be == [first, second]
         end
 
         it 'finds multiple objects with a block' do
           criteria = data_source.query { |o| o.name == 'foo' }
           options = self.options.merge(limit: nil)
-          data_source.should_receive(:retrieve)
+          expect(data_source).to receive(:retrieve)
                      .with('Object', criteria, options) { [returned_object] }.twice
 
-          mapper.select   { |e| e.name == 'foo' }.to_a.should be == [returned_object]
-          mapper.find_all { |e| e.name == 'foo' }.to_a.should be == [returned_object]
+          expect(mapper.select   { |e| e.name == 'foo' }.to_a).to be == [returned_object]
+          expect(mapper.find_all { |e| e.name == 'foo' }.to_a).to be == [returned_object]
         end
 
         it 'finds an object with a block' do
           criteria = data_source.query { |o| o.name == 'foo' }
-          data_source.should_receive(:retrieve)
+          expect(data_source).to receive(:retrieve)
                      .with('Object', criteria, options) { [returned_object] }.twice
-          mapper.find   { |o| o.name == 'foo' }.should be == returned_object
-          mapper.detect { |o| o.name == 'foo' }.should be == returned_object
+          expect(mapper.find   { |o| o.name == 'foo' }).to be == returned_object
+          expect(mapper.detect { |o| o.name == 'foo' }).to be == returned_object
         end
 
         it 'caches results' do
           mapper.give_id_to returned_object, 1
           criteria = data_source.query { |o| o.id == 1 }
           duplicate = returned_object.dup
-          duplicate.stub(class: returned_object.class)
-          returned_object.stub(dup: duplicate)
-          data_source.should_receive(:retrieve)
+          allow(duplicate).to receive(:class) { returned_object.class }
+          allow(returned_object).to receive(:dup) { duplicate }
+          expect(data_source).to receive(:retrieve)
                      .with('Object', criteria, options) { [returned_object] }
                      .once
 
@@ -118,7 +118,7 @@ module Perpetuity
 
         it 'does not cache nil results' do
           criteria = data_source.query { |o| o.id == 1 }
-          data_source.should_receive(:retrieve)
+          expect(data_source).to receive(:retrieve)
                      .with('Object', criteria, options) { [] }
                      .twice
 
@@ -132,8 +132,8 @@ module Perpetuity
         object = Object.new
         mapper.give_id_to object, 1
         object.instance_variable_set '@foo', 'bar'
-        data_source.should_receive(:can_serialize?).with('bar') { true }
-        data_source.should_receive(:update).with 'Object', 1, { 'foo' => 'bar' }
+        expect(data_source).to receive(:can_serialize?).with('bar') { true }
+        expect(data_source).to receive(:update).with 'Object', 1, { 'foo' => 'bar' }
 
         mapper.save object
       end
@@ -149,7 +149,7 @@ module Perpetuity
 
         object.instance_variable_set :@modified, true
 
-        mapper.serialize_changed_attributes(object).should == {
+        expect(mapper.serialize_changed_attributes(object)).to be == {
           'modified' => true
         }
       end
@@ -157,12 +157,12 @@ module Perpetuity
       it 'deletes an object from the data source' do
         object = Object.new
 
-        data_source.should_receive(:delete).with [object], 'Object'
+        expect(data_source).to receive(:delete).with [object], 'Object'
         mapper.delete object
       end
 
       it 'deletes all objects it manages' do
-        data_source.should_receive(:delete_all).with('Object')
+        expect(data_source).to receive(:delete_all).with('Object')
         mapper.delete_all
       end
     end
@@ -174,21 +174,21 @@ module Perpetuity
         before { mapper.give_id_to object, 1 }
 
         it 'knows the object is persisted' do
-          mapper.persisted?(object).should be_truthy
+          expect(mapper.persisted?(object)).to be_truthy
         end
 
         it 'knows the id of the object' do
-          mapper.id_for(object).should be == 1
+          expect(mapper.id_for(object)).to be == 1
         end
       end
 
       context 'when not persisted' do
         it 'knows the object is not persisted' do
-          mapper.persisted?(object).should be_falsey
+          expect(mapper.persisted?(object)).to be_falsey
         end
 
         it 'returns a nil id' do
-          mapper.id_for(object).should be_nil
+          expect(mapper.id_for(object)).to be_nil
         end
       end
     end
@@ -198,14 +198,14 @@ module Perpetuity
         it 'adds the attribute to the attribute set' do
           mapper_class.id(String) { 1.to_s }
           id_attr = mapper_class.attribute_set[:id]
-          id_attr.type.should be String
+          expect(id_attr.type).to be String
         end
       end
 
       context 'when not setting the type' do
         it 'does not add the attribute' do
           mapper_class.id { 1.to_s }
-          mapper_class.attribute_set[:id].should be_nil
+          expect(mapper_class.attribute_set[:id]).to be_nil
         end
       end
     end
@@ -215,19 +215,19 @@ module Perpetuity
         registry = Object.new
         id_map = Object.new
         mapper = Mapper.new(registry, id_map)
-        mapper.identity_map.should be id_map
+        expect(mapper.identity_map).to be id_map
       end
     end
 
     describe 'specifying the collection/table name' do
       it 'changes the collection name' do
         mapper_class.collection_name = 'articles'
-        mapper.collection_name.should == 'articles'
+        expect(mapper.collection_name).to be == 'articles'
       end
 
       it 'defaults to the mapped class name' do
         mapper_class.map Object
-        mapper.collection_name.should == 'Object'
+        expect(mapper.collection_name).to be == 'Object'
       end
     end
   end

@@ -6,21 +6,21 @@ module Perpetuity
     subject { attribute }
 
     it 'has a name' do
-      subject.name.should == :article
+      expect(subject.name).to be == :article
     end
 
     it 'has a type' do
-      subject.type.should == Object
+      expect(subject.type).to be == Object
     end
 
     it 'can get extra options' do
-      attribute.options.should == { default: 1 }
-      attribute.options(:default).should == 1
+      expect(attribute.options).to be == { default: 1 }
+      expect(attribute.options(:default)).to be == 1
     end
 
     it 'can be embedded' do
       attribute = Attribute.new :article, Object, embedded: true
-      attribute.should be_embedded
+      expect(attribute).to be_embedded
     end
 
     it 'can match a regex' do
@@ -28,7 +28,7 @@ module Perpetuity
     end
 
     it 'uses its name when converted to a string' do
-      attribute.to_s.should == 'article'
+      expect(attribute.to_s).to be == 'article'
     end
   end
 end

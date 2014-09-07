@@ -18,7 +18,7 @@ module Perpetuity
       let(:object) { klass.new(1, 'foo') }
 
       before do
-        mapper.stub(:id_for).with(object) { object.id }
+        allow(mapper).to receive(:id_for).with(object) { object.id }
         tracker << object
       end
 
@@ -26,23 +26,23 @@ module Perpetuity
         object.name = 'bar'
         retrieved = tracker[klass, 1]
 
-        retrieved.id.should == 1
-        retrieved.name.should == 'foo'
+        expect(retrieved.id).to be == 1
+        expect(retrieved.name).to be == 'foo'
       end
 
       specify 'the object returned is a duplicate' do
-        tracker[klass, 1].should_not be object
+        expect(tracker[klass, 1]).not_to be object
       end
 
       it 'stringifies keys when checking' do
         retrieved = tracker[klass, '1']
-        retrieved.id.should == 1
+        expect(retrieved.id).to be == 1
       end
     end
 
     context 'when the object does not exist in the IdentityMap' do
       it 'returns nil' do
-        tracker[Object, 1].should be_nil
+        expect(tracker[Object, 1]).to be_nil
       end
     end
   end

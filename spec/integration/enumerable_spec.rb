@@ -13,7 +13,7 @@ describe 'enumerable syntax' do
   end
 
   it 'finds a single object based on criteria' do
-    mapper.find { |a| a.title == foo.title }.should be == foo
+    expect(mapper.find { |a| a.title == foo.title }).to be == foo
   end
 
   context 'excludes objects based on criteria' do
@@ -23,26 +23,26 @@ describe 'enumerable syntax' do
 
     it 'excludes on equality' do
       articles = mapper.reject { |a| a.title == bar.title }.to_a
-      articles.should include foo
-      articles.should_not include bar
+      expect(articles).to include foo
+      expect(articles).not_to include bar
     end
 
     it 'excludes on inequality' do
       articles = mapper.reject { |a| a.published_at <= current_time }.to_a
-      articles.should include bar
-      articles.should_not include foo
+      expect(articles).to include bar
+      expect(articles).not_to include foo
     end
 
     it 'excludes on not-equal' do
       articles = mapper.reject { |a| a.title != foo.title }.to_a
-      articles.should include foo
-      articles.should_not include bar
+      expect(articles).to include foo
+      expect(articles).not_to include bar
     end
 
     it 'excludes on regex match' do
       articles = mapper.reject { |a| a.title =~ /Foo/ }.to_a
-      articles.should include bar
-      articles.should_not include foo
+      expect(articles).to include bar
+      expect(articles).not_to include foo
     end
   end
 end

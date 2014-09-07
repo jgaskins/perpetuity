@@ -26,7 +26,7 @@ describe 'associations with other objects' do
     retrieved_topic = topic_mapper.find(topic_mapper.id_for topic)
 
     topic_mapper.load_association! retrieved_topic, :creator
-    retrieved_topic.creator.name.should eq 'Flump'
+    expect(retrieved_topic.creator.name).to eq 'Flump'
   end
 
   describe 'associations with many objects' do
@@ -45,8 +45,8 @@ describe 'associations with other objects' do
       persisted_book = book_mapper.find(book_mapper.id_for pragprog_book)
       book_mapper.load_association! persisted_book, :authors
 
-      persisted_book.authors.first.name.should be == 'Dave'
-      persisted_book.authors.last.name.should be == 'Andy'
+      expect(persisted_book.authors.first.name).to be == 'Dave'
+      expect(persisted_book.authors.last.name).to be == 'Andy'
     end
 
     it 'can retrieve a many-to-many association' do
@@ -56,7 +56,8 @@ describe 'associations with other objects' do
 
       books = book_mapper.select { |book| book.id.in book_ids }.to_a
       book_mapper.load_association! books, :authors
-      books.map(&:authors).flatten.map(&:name).should include(*%w(Dave Andy Matt Aslak))
+      author_names = books.map(&:authors).flatten.map(&:name)
+      expect(author_names).to include(*%w(Dave Andy Matt Aslak))
     end
 
     it 'does not try dereferencing non-reference objects' do
@@ -69,7 +70,7 @@ describe 'associations with other objects' do
       mapper.insert article
       retrieved = mapper.find(mapper.id_for(article))
       mapper.load_association! retrieved, :author
-      retrieved.author.should == [foo, bar]
+      expect(retrieved.author).to be == [foo, bar]
     end
   end
 
@@ -88,7 +89,7 @@ describe 'associations with other objects' do
       it 'serializes attributes' do
         mapper.insert object
         attr = mapper.find(mapper.id_for object).embedded_attribute
-        attr.should be == [unserializable_object]
+        expect(attr).to be == [unserializable_object]
       end
     end
   end

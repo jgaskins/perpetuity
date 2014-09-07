@@ -3,18 +3,18 @@ require 'support/test_classes'
 
 describe 'pagination' do
   it 'specifies the page we want' do
-    Perpetuity[Article].all.should respond_to :page
+    expect(Perpetuity[Article].all).to respond_to :page
   end
 
   it 'specify the quantity per page' do
-    Perpetuity[Article].all.should respond_to :per_page
+    expect(Perpetuity[Article].all).to respond_to :per_page
   end
 
   it 'returns an empty set when there is no data for that page' do
     mapper = Perpetuity[Article]
     mapper.delete_all
     data = mapper.all.page(2)
-    data.should be_empty
+    expect(data).to be_empty
   end
 
   it 'specifies per-page quantity' do

@@ -12,73 +12,73 @@ module Perpetuity
     let(:wrapper) { object.to_model }
 
     it 'determines whether it is persisted based on @id ivar' do
-      object.should_not be_persisted
+      expect(object).not_to be_persisted
       object.id = 'lol'
-      object.should be_persisted
+      expect(object).to be_persisted
     end
 
     it 'returns the id as to_param' do
-      object.to_param.should be == nil
+      expect(object.to_param).to be == nil
       object.id = 'foo'
-      object.to_param.should be == 'foo'
+      expect(object.to_param).to be == 'foo'
     end
 
     it 'returns the keys on the object' do
-      object.to_key.should be == nil
+      expect(object.to_key).to be == nil
       object.id = 'bar'
-      object.to_key.should be == ['bar']
+      expect(object.to_key).to be == ['bar']
     end
 
     it 'returns the model name' do
-      klass.model_name.should be == klass
+      expect(klass.model_name).to be == klass
     end
 
     describe 'param_key' do
       it 'converts :: to _' do
         stub_const 'Foo::Bar', klass
-        Foo::Bar.param_key.should be == 'foo_bar'
+        expect(Foo::Bar.param_key).to be == 'foo_bar'
       end
 
       it 'converts title-case to snake-case' do
         stub_const 'UserRegistration', klass
-        UserRegistration.param_key.should be == 'user_registration'
+        expect(UserRegistration.param_key).to be == 'user_registration'
       end
     end
 
     it 'returns the route_key' do
       stub_const 'Foo::Bar', klass
-      Foo::Bar.route_key.should be == 'foo_bars'
+      expect(Foo::Bar.route_key).to be == 'foo_bars'
     end
 
     it 'returns the singular_route_key' do
       stub_const 'Foo::Bar', klass
-      Foo::Bar.singular_route_key.should be == 'foo_bar'
+      expect(Foo::Bar.singular_route_key).to be == 'foo_bar'
     end
 
     it 'returns the partial path' do
       stub_const 'Article', klass
-      Article.to_partial_path.should be == 'articles/_article'
+      expect(Article.to_partial_path).to be == 'articles/_article'
     end
 
     describe 'human' do
       it 'returns the class name for a single-word class name' do
         stub_const 'Article', klass
-        Article.human.should == 'Article'
+        expect(Article.human).to be == 'Article'
       end
 
       it 'converts namespaced to capitalized words' do
         stub_const 'Foo::Bar', klass
-        Foo::Bar.human.should == 'Foo Bar'
+        expect(Foo::Bar.human).to be == 'Foo Bar'
       end
 
       it 'separates title-cased words' do
         stub_const 'FooBarBaz', klass
-        FooBarBaz.human.should == 'Foo Bar Baz'
+        expect(FooBarBaz.human).to be == 'Foo Bar Baz'
       end
 
       it 'separates snake-cased, capitalized words' do
         stub_const 'FOO_BAR_BAZ', klass
-        FOO_BAR_BAZ.human.should == 'Foo Bar Baz'
+        expect(FOO_BAR_BAZ.human).to be == 'Foo Bar Baz'
       end
     end
   end

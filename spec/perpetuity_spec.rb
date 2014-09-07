@@ -5,7 +5,7 @@ describe Perpetuity do
   describe 'mapper generation' do
     it 'generates mappers' do
       Perpetuity.generate_mapper_for Object
-      Perpetuity[Object].should be_a Perpetuity::Mapper
+      expect(Perpetuity[Object]).to be_a Perpetuity::Mapper
     end
 
     it 'provides a DSL within the generated mapper' do
@@ -17,8 +17,8 @@ describe Perpetuity do
       mapper = Perpetuity[Object]
       object = Object.new
       mapper.insert object
-      mapper.id_for(object).should be == object.object_id + 1
-      mapper.attributes.should include :object_id
+      expect(mapper.id_for(object)).to be == object.object_id + 1
+      expect(mapper.attributes).to include :object_id
     end
   end
 
@@ -41,12 +41,12 @@ describe Perpetuity do
 
     it 'allows methods to act as scopes' do
       published_ids = mapper.published.to_a.map { |article| mapper.id_for(article) }
-      published_ids.should include published_id
-      published_ids.should_not include draft_id, not_yet_published_id
+      expect(published_ids).to include published_id
+      expect(published_ids).not_to include draft_id, not_yet_published_id
 
       unpublished_ids = mapper.unpublished.to_a.map { |article| mapper.id_for(article) }
-      unpublished_ids.should_not include published_id
-      unpublished_ids.should include draft_id, not_yet_published_id
+      expect(unpublished_ids).not_to include published_id
+      expect(unpublished_ids).to include draft_id, not_yet_published_id
     end
   end
 
@@ -57,19 +57,19 @@ describe Perpetuity do
 
     it 'registers an adapter' do
       Perpetuity.register_adapter :example => ExampleAdapter
-      Perpetuity::Configuration.adapters[:example].should == ExampleAdapter
+      expect(Perpetuity::Configuration.adapters[:example]).to be == ExampleAdapter
     end
 
     it 'can re-register an adapter' do
       Perpetuity.register_adapter :example => ExampleAdapter
       Perpetuity.register_adapter :example => ExampleAdapter
-      Perpetuity::Configuration.adapters[:example].should == ExampleAdapter
+      expect(Perpetuity::Configuration.adapters[:example]).to be == ExampleAdapter
     end
 
     it 'cannot re-register an adapter with a different class than originally registered' do
       Perpetuity.register_adapter :example => ExampleAdapter
       expect { Perpetuity.register_adapter :example => TrueClass }.to raise_exception
-      Perpetuity::Configuration.adapters[:example].should == ExampleAdapter
+      expect(Perpetuity::Configuration.adapters[:example]).to be == ExampleAdapter
     end
   end
 

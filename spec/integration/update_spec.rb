@@ -12,13 +12,13 @@ describe 'updating' do
 
   it 'updates an object in the database' do
     mapper.update article, title: new_title
-    mapper.find(mapper.id_for article).title.should eq new_title
+    expect(mapper.find(mapper.id_for article).title).to eq new_title
   end
 
   it 'resaves the object in the database' do
     article.title = new_title
     mapper.save article
-    mapper.find(mapper.id_for article).title.should eq new_title
+    expect(mapper.find(mapper.id_for article).title).to eq new_title
   end
 
   it 'only updates attributes which have changed since last retrieval' do
@@ -35,8 +35,8 @@ describe 'updating' do
     second_mapper.save second_article
 
     canonical_article = mapper.find(article_id)
-    canonical_article.title.should == 'New title'
-    canonical_article.views.should == 7
+    expect(canonical_article.title).to be == 'New title'
+    expect(canonical_article.views).to be == 7
   end
 
   it 'updates an object with referenced attributes' do
@@ -49,7 +49,7 @@ describe 'updating' do
     mapper.save retrieved_article
 
     retrieved_article = mapper.find(mapper.id_for retrieved_article)
-    retrieved_article.author.should be_a Perpetuity::Reference
+    expect(retrieved_article.author).to be_a Perpetuity::Reference
   end
 
   it 'updates an object with an array of referenced attributes' do
@@ -66,8 +66,8 @@ describe 'updating' do
     mapper.save retrieved_book
 
     retrieved_authors = Perpetuity[Book].find(mapper.id_for retrieved_book).authors
-    retrieved_authors.map(&:klass).should be == [User, User]
-    retrieved_authors.map(&:id).should be == [mapper.id_for(dave), mapper.id_for(andy)]
+    expect(retrieved_authors.map(&:klass)).to be == [User, User]
+    expect(retrieved_authors.map(&:id)).to be == [mapper.id_for(dave), mapper.id_for(andy)]
   end
 
   describe 'atomic increments/decrements' do
@@ -77,13 +77,13 @@ describe 'updating' do
     it 'increments attributes of objects in the database' do
       mapper.increment article, :views
       mapper.increment article, :views, 10
-      mapper.find(mapper.id_for(article)).views.should == view_count + 11
+      expect(mapper.find(mapper.id_for(article)).views).to be == view_count + 11
     end
 
     it 'decrements attributes of objects in the database' do
       mapper.decrement article, :views
       mapper.decrement article, :views, 10
-      mapper.find(mapper.id_for(article)).views.should == view_count - 11
+      expect(mapper.find(mapper.id_for(article)).views).to be == view_count - 11
     end
   end
 end

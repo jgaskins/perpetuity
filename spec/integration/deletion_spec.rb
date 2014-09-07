@@ -25,7 +25,7 @@ describe "deletion" do
     it "should delete all objects of a certain class" do
       Perpetuity[Article].insert Article.new
       Perpetuity[Article].delete_all
-      Perpetuity[Article].count.should eq 0
+      expect(Perpetuity[Article].count).to eq 0
     end
   end
 end

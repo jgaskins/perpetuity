@@ -30,32 +30,35 @@ describe 'indexing' do
   after { mapper.data_source.drop_collection Object }
 
   it 'adds indexes to database collections/tables' do
-    name_index.attribute.name.should be == :name
+    expect(name_index.attribute.name).to be == :name
   end
 
   it 'verifies that indexes are inactive' do
-    name_index.should be_inactive
+    expect(name_index).to be_inactive
   end
 
   it 'creates indexes' do
     mapper.reindex!
-    mapper.data_source.active_indexes(Object).map do |index|
+    index_names = mapper.data_source.active_indexes(Object).map do |index|
       index.attribute.name.to_s
-    end.should include 'name'
-    name_index.should be_active
+    end
+    expect(index_names).to include 'name'
+    expect(name_index).to be_active
   end
 
   it 'specifies uniqueness of the index' do
-    name_index.should be_unique
+    expect(name_index).to be_unique
   end
 
   it 'removes other indexes' do
     mapper.reindex!
     mapper_without_index = mapper_class_without_index.new
     mapper_without_index.reindex!
-    mapper.data_source.active_indexes(Object).any? do |index|
+    any_indexes = mapper.data_source.active_indexes(Object).any? do |index|
       index.attribute.name.to_s == 'name'
-    end.should be_falsey
+    end
+
+    expect(any_indexes).to be_falsey
   end
 end
 

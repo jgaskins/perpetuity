@@ -45,16 +45,16 @@ describe 'serialization' do
   end
 
   it 'serializes objects into hashes' do
-    mapper.serialize(article).should be == serialized_value
+    expect(mapper.serialize(article)).to be == serialized_value
   end
 
   it 'deserializes hashes into proper objects' do
     unserialized = mapper.find mapper.id_for(article)
-    unserialized.should be_a Article
-    unserialized.title.should be == article.title
-    unserialized.body.should be == article.body
+    expect(unserialized).to be_a Article
+    expect(unserialized.title).to be == article.title
+    expect(unserialized.body).to be == article.body
     unserialized.comments.first.tap do |unserialized_comment|
-      unserialized_comment.body.should be == comment.body
+      expect(unserialized_comment.body).to be == comment.body
     end
   end
 end
