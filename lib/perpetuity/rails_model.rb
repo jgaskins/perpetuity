@@ -20,6 +20,10 @@ module Perpetuity
       self.class.model_name
     end
 
+    def to_model
+      self
+    end
+
     module ActiveModelish
       def model_name
         self

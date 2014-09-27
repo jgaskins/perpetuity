@@ -34,6 +34,11 @@ module Perpetuity
       expect(klass.new.model_name).to be == klass
     end
 
+    it 'returns self as the model' do
+      model = klass.new
+      expect(model.to_model).to be model
+    end
+
     describe 'param_key' do
       it 'converts :: to _' do
         stub_const 'Foo::Bar', klass
