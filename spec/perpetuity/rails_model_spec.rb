@@ -31,6 +31,7 @@ module Perpetuity
 
     it 'returns the model name' do
       expect(klass.model_name).to be == klass
+      expect(klass.new.model_name).to be == klass
     end
 
     describe 'param_key' do

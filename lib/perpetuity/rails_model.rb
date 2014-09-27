@@ -16,6 +16,10 @@ module Perpetuity
       [to_param] if persisted?
     end
 
+    def model_name
+      self.class.model_name
+    end
+
     module ActiveModelish
       def model_name
         self
