@@ -39,6 +39,11 @@ module Perpetuity
       expect(model.to_model).to be model
     end
 
+    it 'returns its name in lowercase as the i18n key' do
+      stub_const 'Foo::BarBaz', klass
+      expect(klass.i18n_key).to be == 'foo.bar_baz'
+    end
+
     describe 'param_key' do
       it 'converts :: to _' do
         stub_const 'Foo::Bar', klass

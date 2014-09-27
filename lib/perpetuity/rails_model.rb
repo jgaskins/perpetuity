@@ -60,6 +60,10 @@ module Perpetuity
               .gsub(/(\w)([A-Z])/, '\1 \2')
         end
       end
+
+      def i18n_key
+        name.gsub(/::/, '.').gsub(/([a-z])([A-Z])/, '\1_\2').downcase
+      end
     end
   end
 end
