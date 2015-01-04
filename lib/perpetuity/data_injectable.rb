@@ -12,7 +12,7 @@ module Perpetuity
     end
 
     def give_id_to object, *args
-      if args.any?
+      unless args.empty?
         inject_attribute object, :id, args.first
       end
     end

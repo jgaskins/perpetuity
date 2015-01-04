@@ -190,6 +190,12 @@ module Perpetuity
         it 'returns a nil id' do
           expect(mapper.id_for(object)).to be_nil
         end
+
+        it 'knows an object is not persisted even when id is nil' do
+          mapper.give_id_to object, nil
+
+          expect(mapper.persisted?(object)).to be_falsey
+        end
       end
     end
 

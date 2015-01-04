@@ -240,11 +240,11 @@ module Perpetuity
     end
 
     def persisted? object
-      object.instance_variable_defined?(:@id)
+      !!id_for(object)
     end
 
     def id_for object
-      object.instance_variable_get(:@id) if persisted?(object)
+      object.instance_variable_get(:@id)
     end
 
     def data_source
