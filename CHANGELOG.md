@@ -1,3 +1,7 @@
+## Version 1.0.1
+
+- Fix bug that broke saving associated objects when declaring the `id` attribute with Virtus.
+
 ## Version 1.0.0
 
 - Invoke identity map when using `mapper.select` and `mapper.find` with a block.
